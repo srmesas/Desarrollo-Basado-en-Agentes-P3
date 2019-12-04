@@ -10,6 +10,8 @@ import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonObject;
 import es.upv.dsic.gti_ia.core.ACLMessage;
 import es.upv.dsic.gti_ia.core.AgentID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -40,7 +42,11 @@ class Dron extends SuperAgent{
     public void execute(){ // lo que hace el agente
         enviarMensajeJSON("login");
         
-        respuesta = recibirMensajeJSON();
+        try {
+            respuesta = recibirMensajeJSON();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     @Override// opcional
