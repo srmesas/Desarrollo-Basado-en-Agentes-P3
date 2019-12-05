@@ -1,0 +1,11 @@
+{
+"name":"agentXUI",
+"log":"./log/agentXUI_log.json",
+"controller":"XXX",
+"host":"isg2.ugr.es",
+"port":6000,
+"virtualhost":"Practica3",
+"username":"UUU",
+"password":"PPP",
+"ssl":false
+}
