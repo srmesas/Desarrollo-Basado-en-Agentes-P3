@@ -99,6 +99,15 @@ class Dron extends SuperAgent{
             JsonObject objetoRespuesta = Json.parse(fuente).asObject();
             String respuesta = objetoRespuesta.get("in-reply-to").asString();
             String resultado = objetoRespuesta.get("result").asString();
+            
+            if (inbox.getPerformativeInt() == ACLMessage.REFUSE)  {
+                
+            }else if (inbox.getPerformativeInt() == ACLMessage.NOT_UNDERSTOOD){
+                
+            }else if (inbox.getPerformativeInt() == ACLMessage.FAILURE){
+                
+            }
+            
         }catch (InterruptedException ex) {
             System.out.println(this.getName()+"*** ERROR en la recepción del mensaje\n");
             return "ERROR";
