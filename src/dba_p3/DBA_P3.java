@@ -19,7 +19,7 @@ public class DBA_P3 {
         AgentsConnection.connect(
             "isg2.ugr.es",              //hostr, "localhost"
             6000,
-            "Practica2",
+            "Practica3",
             "Kazi",			//user
             "moHhEBMN",			//password
             false			//SSL
@@ -36,7 +36,7 @@ public class DBA_P3 {
         
         Dron D;
         try{
-		D = new Dron(new AgentID("ert"));
+		D = new Dron(new AgentID("ert45"));
 	} catch (Exception ex){
 		System.err.println("El agente ya existe en la plataforma");
 		return;

@@ -19,16 +19,28 @@ import java.util.logging.Logger;
  */
 class Dron extends SuperAgent{
 
-    private final String mapa;
-    private final String user;
-    private final String password;
+    private String mapa;
+    private String user;
+    private String password;
+    private String comandoEnvi;
+    
+    private String rol;
+    private int gasto;
+    private int alturaMax;
+    private int visibilidad;
+    private int rango;
     
     private ACLMessage outbox;
     private String respuesta;
+    public String id;
+    public String session;
+    private int x;
+    private int dimx;
+    private int dimy;
 
     public Dron(AgentID aid) throws Exception {
         super(aid);
-        this.mapa = "map8";
+        this.mapa = "map1";
         this.user = "Kazi";
         this.password = "moHhEBMN";
     }
@@ -40,13 +52,21 @@ class Dron extends SuperAgent{
     
     @Override //obligatorio
     public void execute(){ // lo que hace el agente
-        enviarMensajeJSON("login");
-        
+        enviarMensajeJSON("suscribe");
+       
         try {
             respuesta = recibirMensajeJSON();
         } catch (InterruptedException ex) {
             Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
         }
+        enviarMensajeJSON("request");
+        try {
+            respuesta = recibirMensajeJSON();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        enviarMensajeJSON("logout");
+        
     }
     
     @Override// opcional
@@ -55,26 +75,46 @@ class Dron extends SuperAgent{
     }
 
     private void enviarMensajeJSON(String comando) {
+        comandoEnvi = comando;
+        JsonObject objeto;
+        String resultado = null;
+        ACLMessage outbox = new ACLMessage();
         switch(comando){
             case "suscribe": 
                 System.out.println("Suscribe \n");
-                JsonObject objeto = new JsonObject();
+                objeto = new JsonObject();
                 objeto.add("map",this.mapa);
                 objeto.add("user", this.user);
                 objeto.add("password", this.password);
 
-                String resultado = objeto.toString();
+                resultado = objeto.toString();
                 System.out.println("\nMensaje JSON enviado: \n <"+resultado+"> \n");
-                ACLMessage outbox = new ACLMessage(); 
                 outbox.setSender(this.getAid());
+                outbox.setConversationId(id);
                 outbox.setReceiver(new AgentID("Keid"));
                 outbox.setContent(resultado);
                 outbox.setPerformative(ACLMessage.SUBSCRIBE);
                 this.send(outbox);   
             break; 
             
-            case "login":
-
+            case "request":
+                System.out.println("request \n");
+                objeto = new JsonObject();
+                objeto.add("command","checkin");
+                objeto.add("session", session);
+                objeto.add("rol", "rescue");
+                objeto.add("x", 0);
+                objeto.add("y", 0);
+                
+                resultado = objeto.toString();
+                System.out.println("\nMensaje JSON enviado: \n <"+resultado+"> \n"); 
+                outbox.setSender(this.getAid());
+                outbox.setConversationId(id);
+                outbox.setReceiver(new AgentID("Keid"));
+                outbox.setContent(resultado);
+                outbox.setPerformative(ACLMessage.REQUEST);
+                this.send(outbox);   
+                
             break;
             
             case "move":
@@ -82,7 +122,11 @@ class Dron extends SuperAgent{
             break;
             
             case "logout":
-
+                outbox = new ACLMessage(); 
+                outbox.setSender(this.getAid());
+                outbox.setReceiver(new AgentID("Keid"));
+                outbox.setPerformative(ACLMessage.CANCEL);
+                this.send(outbox);
             break;
         }
     }
@@ -97,14 +141,21 @@ class Dron extends SuperAgent{
       
             String fuente = inbox.getContent();
             JsonObject objetoRespuesta = Json.parse(fuente).asObject();
-            String respuesta = objetoRespuesta.get("in-reply-to").asString();
             String resultado = objetoRespuesta.get("result").asString();
-            
+            System.out.println(inbox.getPerformativeInt());
             if (inbox.getPerformativeInt() == ACLMessage.REFUSE)  {
-                
+              String fallo = objetoRespuesta.get("details").asString();
+                System.out.println(fallo);
             }else if (inbox.getPerformativeInt() == ACLMessage.NOT_UNDERSTOOD){
-                
+                String fallo = objetoRespuesta.get("details").asString();
+                System.out.println(fallo);
             }else if (inbox.getPerformativeInt() == ACLMessage.FAILURE){
+                String fallo = objetoRespuesta.get("details").asString();
+                System.out.println(fallo);
+            }else if (inbox.getPerformativeInt() == ACLMessage.INFORM){
+                id = inbox.getConversationId();
+                percibirJSON(inbox);
+                System.out.println(" id : "+ id + "  session " + session);
                 
             }
             
@@ -114,6 +165,28 @@ class Dron extends SuperAgent{
         }  
         return "ok";
          
+    }
+    
+    protected void percibirJSON(ACLMessage inbox){
+
+            System.out.println("\nPercepciones: ");
+            String fuente = inbox.getContent();
+            JsonObject objetoPercepcion = Json.parse(fuente).asObject();
+            String percepcion = objetoPercepcion.toString();
+            System.out.println("\nMensaje JSON recibido: \n <"+percepcion+"> \n"); 
+            if(comandoEnvi == "suscribe"){
+                session = objetoPercepcion.get("session").asString();
+                this.dimx =objetoPercepcion.get("dimx").asInt();
+                this.dimy =objetoPercepcion.get("dimy").asInt();
+                System.out.println("x " + dimx +"  y:"+ dimy + " ");
+            }else if(comandoEnvi == "request"){
+                System.out.println(objetoPercepcion.get("result").asInt());
+                gasto = objetoPercepcion.get("fuelrate").asInt();
+//                rango = objetoPercepcion.get("range").asInt();
+//                alturaMax = objetoPercepcion.get("maxlevel").asInt();
+//                visibilidad = objetoPercepcion.get("visibility").asInt();
+            }
+            
     }
     
 }
