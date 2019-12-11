@@ -10,6 +10,8 @@ import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonObject;
 import es.upv.dsic.gti_ia.core.ACLMessage;
 import es.upv.dsic.gti_ia.core.AgentID;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,122 +19,55 @@ import java.util.logging.Logger;
  *
  * @author jopoku
  */
-class Dron extends SuperAgent{
+class Dron extends InterfazAgente {
+    
+    protected int alturaMaxima;
 
-    private String mapa;
-    private String user;
-    private String password;
-    private String comandoEnvi;
+    protected int dimX;
+    protected int dimY;
+    protected int alturaMin;
+    protected int alturaMax;
+
+    protected int x;
+    protected int y;
+    protected int z;
     
-    private String rol;
-    private int gasto;
-    private int alturaMax;
-    private int visibilidad;
-    private int rango;
+    protected float gasto;
     
-    private ACLMessage outbox;
-    private String respuesta;
-    public String id;
-    public String session;
-    private int x;
-    private int dimx;
-    private int dimy;
+    protected int mapaMemoria[][];
+    List<String> coordenadas = new ArrayList<>();
 
     public Dron(AgentID aid) throws Exception {
         super(aid);
-        this.mapa = "map1";
+        this.mapa = "map5";
         this.user = "Kazi";
         this.password = "moHhEBMN";
     }
 
-    @Override // opcional
-    public void init(){ // lo que hace el agente
+    protected void percibirJSON(ACLMessage inbox){
 
+            System.out.println("\nPercepciones: ");
+            String fuente = inbox.getContent();
+            JsonObject objetoPercepcion = Json.parse(fuente).asObject();
+            String percepcion = objetoPercepcion.toString();
+            System.out.println("\nMensaje JSON recibido: \n <"+percepcion+"> \n"); 
+            if(comandoEnvi == "suscribe"){
+                session = objetoPercepcion.get("session").asString();
+                this.dimX =objetoPercepcion.get("dimx").asInt();
+                this.dimY =objetoPercepcion.get("dimy").asInt();
+                System.out.println("x " + dimX +"  y:"+ dimY + " ");
+            }else if(comandoEnvi == "request"){
+                System.out.println(objetoPercepcion.get("result").asInt());
+                gasto = objetoPercepcion.get("fuelrate").asInt();
+//                rango = objetoPercepcion.get("range").asInt();
+//                alturaMax = objetoPercepcion.get("maxlevel").asInt();
+//                visibilidad = objetoPercepcion.get("visibility").asInt();
+            }
+            
     }
     
-    @Override //obligatorio
-    public void execute(){ // lo que hace el agente
-        enviarMensajeJSON("suscribe");
-       
-        try {
-            respuesta = recibirMensajeJSON();
-        } catch (InterruptedException ex) {
-            Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        enviarMensajeJSON("request");
-        try {
-            respuesta = recibirMensajeJSON();
-        } catch (InterruptedException ex) {
-            Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        enviarMensajeJSON("logout");
-        
-    }
-    
-    @Override// opcional
-    public void finalize(){ // lo que hace el agente
-
-    }
-
-    private void enviarMensajeJSON(String comando) {
-        comandoEnvi = comando;
-        JsonObject objeto;
-        String resultado = null;
-        ACLMessage outbox = new ACLMessage();
-        switch(comando){
-            case "suscribe": 
-                System.out.println("Suscribe \n");
-                objeto = new JsonObject();
-                objeto.add("map",this.mapa);
-                objeto.add("user", this.user);
-                objeto.add("password", this.password);
-
-                resultado = objeto.toString();
-                System.out.println("\nMensaje JSON enviado: \n <"+resultado+"> \n");
-                outbox.setSender(this.getAid());
-                outbox.setConversationId(id);
-                outbox.setReceiver(new AgentID("Keid"));
-                outbox.setContent(resultado);
-                outbox.setPerformative(ACLMessage.SUBSCRIBE);
-                this.send(outbox);   
-            break; 
-            
-            case "request":
-                System.out.println("request \n");
-                objeto = new JsonObject();
-                objeto.add("command","checkin");
-                objeto.add("session", session);
-                objeto.add("rol", "rescue");
-                objeto.add("x", 0);
-                objeto.add("y", 0);
-                
-                resultado = objeto.toString();
-                System.out.println("\nMensaje JSON enviado: \n <"+resultado+"> \n"); 
-                outbox.setSender(this.getAid());
-                outbox.setConversationId(id);
-                outbox.setReceiver(new AgentID("Keid"));
-                outbox.setContent(resultado);
-                outbox.setPerformative(ACLMessage.REQUEST);
-                this.send(outbox);   
-                
-            break;
-            
-            case "move":
-
-            break;
-            
-            case "logout":
-                outbox = new ACLMessage(); 
-                outbox.setSender(this.getAid());
-                outbox.setReceiver(new AgentID("Keid"));
-                outbox.setPerformative(ACLMessage.CANCEL);
-                this.send(outbox);
-            break;
-        }
-    }
-
-    private String recibirMensajeJSON() throws InterruptedException {
-        
+    @Override
+    protected String recibirMensajeJSON() throws InterruptedException {
         ACLMessage inbox;
         try {
             inbox = this.receiveACLMessage();
@@ -154,7 +89,7 @@ class Dron extends SuperAgent{
                 System.out.println(fallo);
             }else if (inbox.getPerformativeInt() == ACLMessage.INFORM){
                 id = inbox.getConversationId();
-                percibirJSON(inbox);
+                //percibirJSON(inbox);
                 System.out.println(" id : "+ id + "  session " + session);
                 
             }
@@ -163,30 +98,59 @@ class Dron extends SuperAgent{
             System.out.println(this.getName()+"*** ERROR en la recepción del mensaje\n");
             return "ERROR";
         }  
-        return "ok";
-         
+        return "ok";        
+    }
+
+    /**
+    *
+    * @author Ismael, Manuel
+    */
+    protected void checkFuel(){
+        
+        //if((z - radar[5][5])/5 > (this.fuel-10)/0.5){
+        //    System.out.println("\nNECESITA REPOSTAR");
+        //    commandmov = "moveDW";
+        //    if(z - radar[5][5] == 0){
+        //        commandmov = "refuel";
+        //    }
+        //}
     }
     
-    protected void percibirJSON(ACLMessage inbox){
-
-            System.out.println("\nPercepciones: ");
-            String fuente = inbox.getContent();
-            JsonObject objetoPercepcion = Json.parse(fuente).asObject();
-            String percepcion = objetoPercepcion.toString();
-            System.out.println("\nMensaje JSON recibido: \n <"+percepcion+"> \n"); 
-            if(comandoEnvi == "suscribe"){
-                session = objetoPercepcion.get("session").asString();
-                this.dimx =objetoPercepcion.get("dimx").asInt();
-                this.dimy =objetoPercepcion.get("dimy").asInt();
-                System.out.println("x " + dimx +"  y:"+ dimy + " ");
-            }else if(comandoEnvi == "request"){
-                System.out.println(objetoPercepcion.get("result").asInt());
-                gasto = objetoPercepcion.get("fuelrate").asInt();
-//                rango = objetoPercepcion.get("range").asInt();
-//                alturaMax = objetoPercepcion.get("maxlevel").asInt();
-//                visibilidad = objetoPercepcion.get("visibility").asInt();
+    /**
+    *
+    * @author Manuel
+    */
+    protected void crearMemoria(){
+        this.mapaMemoria = new int[this.dimY][this.dimX];
+        for(int i=0; i<this.dimY; i++)
+            for(int j=0; j<this.dimX; j++)
+                this.mapaMemoria[i][j]=0; 
+    }
+    
+    /**
+    *
+    * @author Manuel, Ismael
+    */
+    protected void guardarPosicionMemoria(){
+        this.mapaMemoria[this.y][this.x]++;
+    }
+    
+    /**
+    *
+    * @author Manuel
+    */
+    protected void mostrarMemoria(){
+        
+        for(int i=0; i<this.dimY; i++){
+            for(int j=0; j<this.dimX; j++){
+                if(this.mapaMemoria[i][j]!=0){
+                    //System.out.print(ANSI_GREEN_BACKGROUND +this.mapaMemoria[i][j]+ ANSI_RESET + "  ");
+                }else{
+                    System.out.print(this.mapaMemoria[i][j]+" ");
+                }
             }
-            
+            System.out.print("\n");
+        }
     }
     
 }
