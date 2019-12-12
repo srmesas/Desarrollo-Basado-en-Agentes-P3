@@ -5,11 +5,14 @@
  */
 package dba_p3;
 
+import DBAMap.DBAMap;
 import DBA.SuperAgent;
 import com.eclipsesource.json.Json;
+import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
 import es.upv.dsic.gti_ia.core.ACLMessage;
 import es.upv.dsic.gti_ia.core.AgentID;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -34,6 +37,7 @@ class Dron extends SuperAgent {
     public String id;
     public String session;
     
+    static String _filename="map500x500";
     
     protected ACLMessage outbox;
     protected String respuesta;
@@ -45,7 +49,9 @@ class Dron extends SuperAgent {
     protected int dimY;
 //    protected int alturaMin;
     protected int alturaMax;
-
+    protected float visibilidad;
+    protected float rango;
+    protected String quiensoy="rescue";
     protected int x;
     protected int y;
     protected int z;
@@ -54,6 +60,8 @@ class Dron extends SuperAgent {
 //    
     protected int mapaMemoria[][];
 //    List<String> coordenadas = new ArrayList<>();
+    private String reply;
+
 
     public Dron(AgentID aid) throws Exception {
         super(aid);
@@ -82,6 +90,13 @@ class Dron extends SuperAgent {
         } catch (InterruptedException ex) {
             Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
         }
+        enviarMensajeJSON("query");
+        try {
+            respuesta = recibirMensajeJSON();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
         enviarMensajeJSON("logout");
     }
     
@@ -118,7 +133,7 @@ class Dron extends SuperAgent {
                 objeto = new JsonObject();
                 objeto.add("command","checkin");
                 objeto.add("session", session);
-                objeto.add("rol", "rescue");
+                objeto.add("rol", quiensoy);
                 objeto.add("x", 0);
                 objeto.add("y", 0);
                 
@@ -141,6 +156,16 @@ class Dron extends SuperAgent {
 
             break;
             
+            case "query":
+                outbox = new ACLMessage(); 
+                outbox.setSender(this.getAid());
+                outbox.setReceiver(new AgentID("Keid"));
+                outbox.setConversationId(id);
+                outbox.setInReplyTo(reply);
+                outbox.setPerformative(ACLMessage.QUERY_REF);
+                this.send(outbox);
+            break;
+            
             case "logout":
                 outbox = new ACLMessage(); 
                 outbox.setSender(this.getAid());
@@ -156,21 +181,58 @@ class Dron extends SuperAgent {
 
             System.out.println("\nPercepciones: ");
             String fuente = inbox.getContent();
+            reply = inbox.getReplyWith();
+            System.out.println(reply);
             JsonObject objetoPercepcion = Json.parse(fuente).asObject();
-            String percepcion = objetoPercepcion.toString();
-            System.out.println("\nMensaje JSON recibido: \n <"+percepcion+"> \n"); 
+           
             if(comandoEnvi == "suscribe"){
-                session = objetoPercepcion.get("session").asString();
-                this.dimX =objetoPercepcion.get("dimx").asInt();
-                this.dimY =objetoPercepcion.get("dimy").asInt();
-                System.out.println("x " + dimX +"  y:"+ dimY + " ");
+                try {
+                    session = objetoPercepcion.get("session").asString();
+                    this.dimX =objetoPercepcion.get("dimx").asInt();
+                    this.dimY =objetoPercepcion.get("dimy").asInt();
+                    System.out.println("x " + dimX +"  y:"+ dimY + " ");
+                    
+                    JsonArray img = Json.parse(fuente).asObject().get("map").asArray();
+                    //System.out.println(img);
+                    DBAMap map = new DBAMap();
+                    map.fromJson(img);
+                    System.out.println("IMAGE DATA:");
+                    /// 3) Cuyas dimensiones se pueden consultar
+                    System.out.println(map.getWidth()+" pixs width & "+map.getHeight()+" pixs height");
+                    /// 4) Y cuyos valores se pueden consultar en getLevel(X,Y)
+                    System.out.print("First row starts with: ");
+                    for (int i=0; i<10; i++)
+                        System.out.print(map.getLevel(i, 0)+"-");
+                    System.out.print("\nLast row ends with: ");
+                    for (int i=0; i<10; i++)
+                        System.out.print(map.getLevel(map.getWidth()-1-i, map.getHeight()-1)+"-");
+                    System.out.println();
+                    System.out.println("Saving file ./maps/"+_filename+".png");
+                    map.save("./maps/"+_filename+".png");
+                    
+                } catch (IOException ex) {
+                     System.err.println("***ERROR "+ex.toString());
+                }
+                
             }else if(comandoEnvi == "request"){
-                System.out.println(objetoPercepcion.get("result").asInt());
-                gasto = objetoPercepcion.get("fuelrate").asInt();
-//                rango = objetoPercepcion.get("range").asInt();
+                System.out.println(objetoPercepcion.get("result").asString());
+                gasto = objetoPercepcion.get("fuelrate").asFloat();
+                rango = objetoPercepcion.get("range").asFloat();
                 alturaMax = objetoPercepcion.get("maxlevel").asInt();
-//                visibilidad = objetoPercepcion.get("visibility").asInt();
+                visibilidad = objetoPercepcion.get("visibility").asInt();
+                System.out.println("gasto "+  gasto + " rango "+ rango +  " altura max " + alturaMax + " visibilidad "+ visibilidad);
+            }else if(comandoEnvi == "query"){
+                System.out.println("query");
+                String percepcion = objetoPercepcion.toString();
+                System.out.println("\nMensaje JSON recibido: \n <"+percepcion+"> \n"); 
+                this.x = objetoPercepcion.get("result").asObject().get("gps").asObject().get("y").asInt();
+                this.y =objetoPercepcion.get("result").asObject().get("gps").asObject().get("y").asInt();
+                this.z =objetoPercepcion.get("result").asObject().get("gps").asObject().get("z").asInt();
+                
+                System.out.println("\n\tGPS: x:" + this.x + " y:" + this.y + " z:" + this.z);
+                
             }
+            
             
     }
     
@@ -179,12 +241,9 @@ class Dron extends SuperAgent {
         try {
             inbox = this.receiveACLMessage();
             System.out.println("\nRespuesta del controlador: ");
-            
-      
             String fuente = inbox.getContent();
             JsonObject objetoRespuesta = Json.parse(fuente).asObject();
-            String resultado = objetoRespuesta.get("result").asString();
-            System.out.println(inbox.getPerformativeInt());
+           // System.out.println(inbox.getPerformativeInt());
             if (inbox.getPerformativeInt() == ACLMessage.REFUSE)  {
               String fallo = objetoRespuesta.get("details").asString();
                 System.out.println(fallo);
@@ -197,8 +256,7 @@ class Dron extends SuperAgent {
             }else if (inbox.getPerformativeInt() == ACLMessage.INFORM){
                 id = inbox.getConversationId();
                 percibirJSON(inbox);
-                System.out.println(" id : "+ id + "  session " + session);
-                
+                //System.out.println(" id : "+ id + "  session " + session);
             }
             
         }catch (InterruptedException ex) {
