@@ -145,6 +145,7 @@ class Dron extends SuperAgent {
                 outbox = new ACLMessage(); 
                 outbox.setSender(this.getAid());
                 outbox.setReceiver(new AgentID("Keid"));
+                outbox.setConversationId(id);
                 outbox.setPerformative(ACLMessage.CANCEL);
                 this.send(outbox);
             break;
