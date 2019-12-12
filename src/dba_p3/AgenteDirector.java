@@ -11,7 +11,7 @@ import es.upv.dsic.gti_ia.core.AgentID;
  *
  * @author srmesas
  */
-public class AgenteDirector extends InterfazAgente{
+public class AgenteDirector extends Dron{
     
     public AgenteDirector(AgentID aid) throws Exception {
         super(aid);

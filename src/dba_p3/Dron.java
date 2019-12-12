@@ -19,23 +19,41 @@ import java.util.logging.Logger;
  *
  * @author jopoku
  */
-class Dron extends InterfazAgente {
+class Dron extends SuperAgent {
     
-    protected int alturaMaxima;
+    public static final String ANSI_RED_BACKGROUND = "\u001B[41m";
+    public static final String ANSI_GREEN_BACKGROUND = "\u001B[42m";
+    public static final String ANSI_YELLOW_BACKGROUND = "\u001B[43m";
+    public static final String ANSI_RED_BACKGROUND_2 = "\u001b[31m";
+    public static final String ANSI_RESET = "\u001B[0m";
+    
+    protected String mapa;
+    protected String user;
+    protected String password;
+    protected String comandoEnvi;
+    public String id;
+    public String session;
+    
+    
+    protected ACLMessage outbox;
+    protected String respuesta;
+    protected String key;
+    
+//    protected int alturaMaxima;
 
     protected int dimX;
     protected int dimY;
-    protected int alturaMin;
+//    protected int alturaMin;
     protected int alturaMax;
 
     protected int x;
     protected int y;
     protected int z;
-    
+//    
     protected float gasto;
-    
+//    
     protected int mapaMemoria[][];
-    List<String> coordenadas = new ArrayList<>();
+//    List<String> coordenadas = new ArrayList<>();
 
     public Dron(AgentID aid) throws Exception {
         super(aid);
@@ -43,7 +61,96 @@ class Dron extends InterfazAgente {
         this.user = "Kazi";
         this.password = "moHhEBMN";
     }
+    
+    @Override // opcional
+    public void init(){ // lo que hace el agente
 
+    }
+    
+    @Override //obligatorio
+    public void execute(){ // lo que hace el agente
+        enviarMensajeJSON("suscribe");
+       
+        try {
+            respuesta = recibirMensajeJSON();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        enviarMensajeJSON("request");
+        try {
+            respuesta = recibirMensajeJSON();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        enviarMensajeJSON("logout");
+    }
+    
+    @Override// opcional
+    public void finalize(){ // lo que hace el agente
+
+    }
+    
+    protected void enviarMensajeJSON(String comando) {
+        comandoEnvi = comando;
+        JsonObject objeto;
+        String resultado = null;
+        ACLMessage outbox = new ACLMessage();
+        switch(comando){
+            case "suscribe": 
+                System.out.println("Suscribe \n");
+                objeto = new JsonObject();
+                objeto.add("map",this.mapa);
+                objeto.add("user", this.user);
+                objeto.add("password", this.password);
+
+                resultado = objeto.toString();
+                System.out.println("\nMensaje JSON enviado: \n <"+resultado+"> \n");
+                outbox.setSender(this.getAid());
+                outbox.setConversationId(id);
+                outbox.setReceiver(new AgentID("Keid"));
+                outbox.setContent(resultado);
+                outbox.setPerformative(ACLMessage.SUBSCRIBE);
+                this.send(outbox);   
+            break; 
+            
+            case "request":
+                System.out.println("request \n");
+                objeto = new JsonObject();
+                objeto.add("command","checkin");
+                objeto.add("session", session);
+                objeto.add("rol", "rescue");
+                objeto.add("x", 0);
+                objeto.add("y", 0);
+                
+                resultado = objeto.toString();
+                System.out.println("\nMensaje JSON enviado: \n <"+resultado+"> \n"); 
+                outbox.setSender(this.getAid());
+                outbox.setConversationId(id);
+                outbox.setReceiver(new AgentID("Keid"));
+                outbox.setContent(resultado);
+                outbox.setPerformative(ACLMessage.REQUEST);
+                this.send(outbox);   
+                
+            break;
+            
+            case "move":
+
+            break;
+            
+            case "refuel":
+
+            break;
+            
+            case "logout":
+                outbox = new ACLMessage(); 
+                outbox.setSender(this.getAid());
+                outbox.setReceiver(new AgentID("Keid"));
+                outbox.setPerformative(ACLMessage.CANCEL);
+                this.send(outbox);
+            break;
+        }
+    }
+    
     protected void percibirJSON(ACLMessage inbox){
 
             System.out.println("\nPercepciones: ");
@@ -60,13 +167,12 @@ class Dron extends InterfazAgente {
                 System.out.println(objetoPercepcion.get("result").asInt());
                 gasto = objetoPercepcion.get("fuelrate").asInt();
 //                rango = objetoPercepcion.get("range").asInt();
-//                alturaMax = objetoPercepcion.get("maxlevel").asInt();
+                alturaMax = objetoPercepcion.get("maxlevel").asInt();
 //                visibilidad = objetoPercepcion.get("visibility").asInt();
             }
             
     }
     
-    @Override
     protected String recibirMensajeJSON() throws InterruptedException {
         ACLMessage inbox;
         try {
@@ -89,7 +195,7 @@ class Dron extends InterfazAgente {
                 System.out.println(fallo);
             }else if (inbox.getPerformativeInt() == ACLMessage.INFORM){
                 id = inbox.getConversationId();
-                //percibirJSON(inbox);
+                percibirJSON(inbox);
                 System.out.println(" id : "+ id + "  session " + session);
                 
             }
@@ -103,21 +209,6 @@ class Dron extends InterfazAgente {
 
     /**
     *
-    * @author Ismael, Manuel
-    */
-    protected void checkFuel(){
-        
-        //if((z - radar[5][5])/5 > (this.fuel-10)/0.5){
-        //    System.out.println("\nNECESITA REPOSTAR");
-        //    commandmov = "moveDW";
-        //    if(z - radar[5][5] == 0){
-        //        commandmov = "refuel";
-        //    }
-        //}
-    }
-    
-    /**
-    *
     * @author Manuel
     */
     protected void crearMemoria(){
@@ -129,7 +220,7 @@ class Dron extends InterfazAgente {
     
     /**
     *
-    * @author Manuel, Ismael
+    * @author Manuel
     */
     protected void guardarPosicionMemoria(){
         this.mapaMemoria[this.y][this.x]++;
