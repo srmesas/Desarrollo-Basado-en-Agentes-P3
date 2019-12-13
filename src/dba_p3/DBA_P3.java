@@ -36,7 +36,7 @@ public class DBA_P3 {
         
         Dron D;
         try{
-		D = new Dron(new AgentID("ert45"));
+		D = new Dron(new AgentID("ert46"));
 	} catch (Exception ex){
 		System.err.println("El agente ya existe en la plataforma");
 		return;

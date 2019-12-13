@@ -76,7 +76,7 @@ class Dron extends SuperAgent {
 
     public Dron(AgentID aid) throws Exception {
         super(aid);
-        this.mapa = "map5";
+        this.mapa = "playground";
         this.user = "Kazi";
         this.password = "moHhEBMN";
     }
@@ -107,16 +107,13 @@ class Dron extends SuperAgent {
         } catch (InterruptedException ex) {
             Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
         }
-        movimiento="moveX";
+        movimiento="moveNW";
         enviarMensajeJSON("moveRefuelStopRescue");
         try {
             respuesta = recibirMensajeJSON();
         } catch (InterruptedException ex) {
             Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        
-        
         enviarMensajeJSON("logout");
     }
     
@@ -129,7 +126,7 @@ class Dron extends SuperAgent {
         comandoEnvi = comando;
         JsonObject objeto;
         String resultado = null;
-        ACLMessage outbox = new ACLMessage();
+        ACLMessage outbox = null;
         switch(comando){
             case "suscribe": 
                 System.out.println("Suscribe \n");
@@ -140,6 +137,7 @@ class Dron extends SuperAgent {
 
                 resultado = objeto.toString();
                 System.out.println("\nMensaje JSON enviado: \n <"+resultado+"> \n");
+                outbox = new ACLMessage();
                 outbox.setSender(this.getAid());
                 outbox.setConversationId(id);
                 outbox.setReceiver(new AgentID("Keid"));
@@ -154,11 +152,12 @@ class Dron extends SuperAgent {
                 objeto.add("command","checkin");
                 objeto.add("session", session);
                 objeto.add("rol", quiensoy);
-                objeto.add("x", 0);
-                objeto.add("y", 0);
-                
+                objeto.add("x", 50);
+                objeto.add("y", 50);
+            
                 resultado = objeto.toString();
                 System.out.println("\nMensaje JSON enviado: \n <"+resultado+"> \n"); 
+                outbox = new ACLMessage();
                 outbox.setSender(this.getAid());
                 outbox.setConversationId(id);
                 outbox.setReceiver(new AgentID("Keid"));
@@ -172,8 +171,9 @@ class Dron extends SuperAgent {
                 objeto = new JsonObject();
                 objeto.add("command",movimiento);
                 resultado = objeto.toString();
+                
+                outbox = new ACLMessage();
                 outbox.setContent(resultado);
-                outbox = new ACLMessage(); 
                 outbox.setSender(this.getAid());
                 outbox.setReceiver(new AgentID("Keid"));
                 outbox.setConversationId(id);
@@ -187,9 +187,12 @@ class Dron extends SuperAgent {
             break;
             
             case "query":
-                outbox = new ACLMessage(); 
-                outbox.setSender(this.getAid());
+               // 
+                outbox = new ACLMessage();
+                
                 outbox.setReceiver(new AgentID("Keid"));
+                outbox.setSender(this.getAid());
+                
                 outbox.setConversationId(id);
                 outbox.setInReplyTo(reply);
                 outbox.setPerformative(ACLMessage.QUERY_REF);
@@ -197,7 +200,7 @@ class Dron extends SuperAgent {
             break;
             
             case "logout":
-                outbox = new ACLMessage(); 
+                outbox = new ACLMessage();
                 outbox.setSender(this.getAid());
                 outbox.setReceiver(new AgentID("Keid"));
                 outbox.setConversationId(id);
@@ -306,6 +309,10 @@ class Dron extends SuperAgent {
                     System.out.println(" ");
                 }
                 System.out.println("distancia " + distance + " angulo "+angle);
+            }else if(comandoEnvi == "moveRefuelStopRescue"){
+                System.out.println("hola estoy en moveRefuelStopRescue");
+                System.out.println(objetoPercepcion.get("result").asString());
+                
             }
             
             
@@ -369,7 +376,7 @@ class Dron extends SuperAgent {
         for(int i=0; i<this.dimY; i++){
             for(int j=0; j<this.dimX; j++){
                 if(this.mapaMemoria[i][j]!=0){
-                    //System.out.print(ANSI_GREEN_BACKGROUND +this.mapaMemoria[i][j]+ ANSI_RESET + "  ");
+                    System.out.print(ANSI_GREEN_BACKGROUND +this.mapaMemoria[i][j]+ ANSI_RESET + "  ");
                 }else{
                     System.out.print(this.mapaMemoria[i][j]+" ");
                 }
