@@ -60,7 +60,18 @@ class Dron extends SuperAgent {
 //    
     protected int mapaMemoria[][];
 //    List<String> coordenadas = new ArrayList<>();
-    private String reply;
+    protected String reply;
+    protected float distance;
+    protected float angle;
+    protected int fuel;
+    protected boolean goal;
+    protected String status;
+    protected int torescue;
+    protected int energy;
+    protected boolean cancel;
+    protected int prueba[] = new int [9999];
+    protected int[][] infrared;
+    protected String movimiento;
 
 
     public Dron(AgentID aid) throws Exception {
@@ -84,7 +95,7 @@ class Dron extends SuperAgent {
         } catch (InterruptedException ex) {
             Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
         }
-        enviarMensajeJSON("request");
+        enviarMensajeJSON("checkin");
         try {
             respuesta = recibirMensajeJSON();
         } catch (InterruptedException ex) {
@@ -96,6 +107,15 @@ class Dron extends SuperAgent {
         } catch (InterruptedException ex) {
             Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
         }
+        movimiento="moveX";
+        enviarMensajeJSON("moveRefuelStopRescue");
+        try {
+            respuesta = recibirMensajeJSON();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
         
         enviarMensajeJSON("logout");
     }
@@ -128,7 +148,7 @@ class Dron extends SuperAgent {
                 this.send(outbox);   
             break; 
             
-            case "request":
+            case "checkin":
                 System.out.println("request \n");
                 objeto = new JsonObject();
                 objeto.add("command","checkin");
@@ -148,8 +168,18 @@ class Dron extends SuperAgent {
                 
             break;
             
-            case "move":
-
+            case "moveRefuelStopRescue":
+                objeto = new JsonObject();
+                objeto.add("command",movimiento);
+                resultado = objeto.toString();
+                outbox.setContent(resultado);
+                outbox = new ACLMessage(); 
+                outbox.setSender(this.getAid());
+                outbox.setReceiver(new AgentID("Keid"));
+                outbox.setConversationId(id);
+                outbox.setInReplyTo(reply);
+                outbox.setPerformative(ACLMessage.REQUEST);
+                this.send(outbox);
             break;
             
             case "refuel":
@@ -214,7 +244,7 @@ class Dron extends SuperAgent {
                      System.err.println("***ERROR "+ex.toString());
                 }
                 
-            }else if(comandoEnvi == "request"){
+            }else if(comandoEnvi == "checkin"){
                 System.out.println(objetoPercepcion.get("result").asString());
                 gasto = objetoPercepcion.get("fuelrate").asFloat();
                 rango = objetoPercepcion.get("range").asFloat();
@@ -231,6 +261,51 @@ class Dron extends SuperAgent {
                 
                 System.out.println("\n\tGPS: x:" + this.x + " y:" + this.y + " z:" + this.z);
                 
+                distance = objetoPercepcion.get("result").asObject().get("gonio").asObject().get("distance").asFloat();
+                angle = objetoPercepcion.get("result").asObject().get("gonio").asObject().get("angle").asFloat();
+                
+                JsonArray radarJSON = objetoPercepcion.get("result").asObject().get("infrared").asArray();
+                
+                fuel = objetoPercepcion.get("result").asObject().get("fuel").asInt();
+                
+                goal = objetoPercepcion.get("result").asObject().get("goal").asBoolean();
+                
+                status = objetoPercepcion.get("result").asObject().get("status").asString();
+                torescue = objetoPercepcion.get("result").asObject().get("torescue").asInt();
+                energy = objetoPercepcion.get("result").asObject().get("torescue").asInt();
+                cancel = objetoPercepcion.get("result").asObject().get("cancel").asBoolean();
+                
+                int rangoconver = (int) rango;
+              
+                for (int i = 0; i < radarJSON.size(); i++) {
+                    prueba[i] = radarJSON.get(i).asInt();
+                }
+                int indice=0;
+                infrared = new int[rangoconver][rangoconver];
+                
+                for (int i = 0; i < infrared.length; i++) {
+                   for (int j = 0; j < infrared[i].length; j++) {
+                    infrared[i][j] = prueba[indice];
+                    indice++;
+                    }
+                }
+                
+                for (int i = 0; i < infrared.length; i++) {
+                System.out.print("\t\t\t\t");
+                for (int j = 0; j < infrared[i].length; j++) {
+                    if(i== rangoconver/2 && j== rangoconver/2){
+                        System.out.print(ANSI_GREEN_BACKGROUND +infrared[i][j] + ANSI_RESET + "  ");
+                    }else{
+                        if(infrared[i][j]==1){
+                            System.out.print(ANSI_YELLOW_BACKGROUND +infrared[i][j] + ANSI_RESET + "  ");
+                        }else{
+                            System.out.print(infrared[i][j] + "  ");
+                        }
+                    }
+                }
+                    System.out.println(" ");
+                }
+                System.out.println("distancia " + distance + " angulo "+angle);
             }
             
             
