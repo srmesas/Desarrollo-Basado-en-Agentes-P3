@@ -30,6 +30,7 @@ class Dron extends SuperAgent {
     public static final String ANSI_RED_BACKGROUND_2 = "\u001b[31m";
     public static final String ANSI_RESET = "\u001B[0m";
     
+    protected String agente="Keid";
     protected String mapa;
     protected String user;
     protected String password;
@@ -88,6 +89,7 @@ class Dron extends SuperAgent {
     
     @Override //obligatorio
     public void execute(){ // lo que hace el agente
+        System.out.println("primer drone "+quiensoy);
         enviarMensajeJSON("suscribe");
        
         try {
@@ -95,6 +97,7 @@ class Dron extends SuperAgent {
         } catch (InterruptedException ex) {
             Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
         }
+        enviarSession("ert46");
         enviarMensajeJSON("checkin");
         try {
             respuesta = recibirMensajeJSON();
@@ -140,7 +143,7 @@ class Dron extends SuperAgent {
                 outbox = new ACLMessage();
                 outbox.setSender(this.getAid());
                 outbox.setConversationId(id);
-                outbox.setReceiver(new AgentID("Keid"));
+                outbox.setReceiver(new AgentID(agente));
                 outbox.setContent(resultado);
                 outbox.setPerformative(ACLMessage.SUBSCRIBE);
                 this.send(outbox);   
@@ -160,7 +163,7 @@ class Dron extends SuperAgent {
                 outbox = new ACLMessage();
                 outbox.setSender(this.getAid());
                 outbox.setConversationId(id);
-                outbox.setReceiver(new AgentID("Keid"));
+                outbox.setReceiver(new AgentID(agente));
                 outbox.setContent(resultado);
                 outbox.setPerformative(ACLMessage.REQUEST);
                 this.send(outbox);   
@@ -175,7 +178,7 @@ class Dron extends SuperAgent {
                 outbox = new ACLMessage();
                 outbox.setContent(resultado);
                 outbox.setSender(this.getAid());
-                outbox.setReceiver(new AgentID("Keid"));
+                outbox.setReceiver(new AgentID(agente));
                 outbox.setConversationId(id);
                 outbox.setInReplyTo(reply);
                 outbox.setPerformative(ACLMessage.REQUEST);
@@ -190,7 +193,7 @@ class Dron extends SuperAgent {
                // 
                 outbox = new ACLMessage();
                 
-                outbox.setReceiver(new AgentID("Keid"));
+                outbox.setReceiver(new AgentID(agente));
                 outbox.setSender(this.getAid());
                 
                 outbox.setConversationId(id);
@@ -202,7 +205,7 @@ class Dron extends SuperAgent {
             case "logout":
                 outbox = new ACLMessage();
                 outbox.setSender(this.getAid());
-                outbox.setReceiver(new AgentID("Keid"));
+                outbox.setReceiver(new AgentID(agente));
                 outbox.setConversationId(id);
                 outbox.setPerformative(ACLMessage.CANCEL);
                 this.send(outbox);
@@ -338,7 +341,7 @@ class Dron extends SuperAgent {
             }else if (inbox.getPerformativeInt() == ACLMessage.INFORM){
                 id = inbox.getConversationId();
                 percibirJSON(inbox);
-                //System.out.println(" id : "+ id + "  session " + session);
+                //System.out.println(" id : "+ id + "  on " + session);
             }
             
         }catch (InterruptedException ex) {
@@ -384,5 +387,40 @@ class Dron extends SuperAgent {
             System.out.print("\n");
         }
     }
+
+    public String getSession() {
+        return session;
+    }
+
     
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    public void setQuiensoy(String quiensoy) {
+        this.quiensoy = quiensoy;
+    }
+    
+    public void setAgente(String agente) {
+        this.agente = agente;
+    }
+    
+    public void enviarSession(String agente){
+        JsonObject objeto = new JsonObject();
+        objeto.add("session",session);
+        String resultado = objeto.toString();
+                
+        outbox = new ACLMessage();
+        outbox.setContent(resultado);
+        outbox.setSender(this.getAid());
+        outbox.setReceiver(new AgentID(agente));
+        outbox.setConversationId(id);
+        outbox.setInReplyTo(reply);
+        outbox.setPerformative(ACLMessage.INFORM);
+        this.send(outbox);
+    }
 }

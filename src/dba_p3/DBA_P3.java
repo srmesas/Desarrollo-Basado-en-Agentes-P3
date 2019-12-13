@@ -29,20 +29,24 @@ public class DBA_P3 {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         // TODO code application logic here
         
          connect();
         
         Dron D;
+        DronHawk D1;
         try{
-		D = new Dron(new AgentID("ert46"));
+            D = new Dron(new AgentID("ert4"));
+            D1 = new DronHawk(new AgentID("ert46"));
 	} catch (Exception ex){
 		System.err.println("El agente ya existe en la plataforma");
 		return;
 	}
 
 	D.start();
+        Thread.sleep(1000);
+        D1.start();
     }
     
 }
