@@ -35,21 +35,28 @@ public class DronHawk extends Dron{
         
         System.out.println("segundo drone "+ quiensoy + " " + session+ " x " + inicioX + " y " + inicioY);
 
-        while (session==null) {            
-            try {
-                recibirSession();
-            } catch (InterruptedException ex) {
-                Logger.getLogger(DronHawk.class.getName()).log(Level.SEVERE, null, ex);
-            }
+//        while (session==null) {            
+//            try {
+//                recibirSession();
+//            } catch (InterruptedException ex) {
+//                Logger.getLogger(DronHawk.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//        }
+        enviarMensajeJSON("suscribe");
+       
+        try {
+            respuesta = recibirMensajeJSON();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-
+        
         enviarMensajeJSON("checkin");
         try {
             respuesta = recibirMensajeJSON();
         } catch (InterruptedException ex) {
             Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
         }
+        enviarSession("pedro");
         enviarMensajeJSON("query");
         try {
             respuesta = recibirMensajeJSON();
