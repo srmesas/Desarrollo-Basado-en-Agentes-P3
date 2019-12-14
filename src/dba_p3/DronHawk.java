@@ -26,28 +26,14 @@ public class DronHawk extends Dron{
         super(aid);
         setAgente("keid");
         setQuiensoy("hawk");
-        x=5;
-        y=5;
-        setX(x);
-        setY(y);
+        inicioX=5;
+        inicioY=5;
     }
     
     public void execute(){ // lo que hace el agente
         
         
-        System.out.println("segundo drone "+ quiensoy + " " + session);
-//        try {
-//            respuesta = recibirMensajeJSON();
-//        } catch (InterruptedException ex) {
-//            Logger.getLogger(DronHawk.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//        enviarMensajeJSON("suscribe");
-//       
-//        try {
-//            respuesta = recibirMensajeJSON();
-//        } catch (InterruptedException ex) {
-//            Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
-//        }
+        System.out.println("segundo drone "+ quiensoy + " " + session+ " x " + inicioX + " y " + inicioY);
 
         while (session==null) {            
             try {
