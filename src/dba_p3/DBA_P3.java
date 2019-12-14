@@ -13,7 +13,10 @@ import es.upv.dsic.gti_ia.core.AgentsConnection;
  * @author jopoku
  */
 public class DBA_P3 {
-    
+    public static final String NOMBRE_HAWK = "h01";
+    public static final String NOMBRE_FLY1 = "fl01";
+    public static final String NOMBRE_FLY2 = "f01";
+    public static final String NOMBRE_RESCUE = "r1";
     
      public static void connect(){
         AgentsConnection.connect(
@@ -35,10 +38,15 @@ public class DBA_P3 {
          connect();
         
         Dron D;
-        DronHawk D1;
+        DronHawk H;
+        DronFly F1,F2;
+        DronRescate R;
         try{
             D = new Dron(new AgentID("juan"));
-            D1 = new DronHawk(new AgentID("pedro"));
+            H = new DronHawk(new AgentID(NOMBRE_HAWK));
+            F1 = new DronFly(new AgentID(NOMBRE_FLY1), 30, 30);
+            F2 = new DronFly(new AgentID(NOMBRE_FLY2), 60, 60);
+            R = new DronRescate(new AgentID(NOMBRE_RESCUE));
 	} catch (Exception ex){
 		System.err.println("El agente ya existe en la plataforma");
 		return;
@@ -46,7 +54,10 @@ public class DBA_P3 {
 
 	D.start();
         //Thread.sleep(1000);
-        D1.start();
+        H.start();
+        F1.start();
+        F2.start();
+        R.start();
     }
     
 }

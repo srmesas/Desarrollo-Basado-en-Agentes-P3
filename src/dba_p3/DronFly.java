@@ -5,7 +5,12 @@
  */
 package dba_p3;
 
+import com.eclipsesource.json.Json;
+import com.eclipsesource.json.JsonObject;
+import es.upv.dsic.gti_ia.core.ACLMessage;
 import es.upv.dsic.gti_ia.core.AgentID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -13,8 +18,70 @@ import es.upv.dsic.gti_ia.core.AgentID;
  */
 public class DronFly extends Dron{
     
-    public DronFly(AgentID aid) throws Exception {
+    public DronFly(AgentID aid, int inicioX, int inicioY) throws Exception {
         super(aid);
+        this.inicioX = inicioX;
+        this.inicioY = inicioY;
+    }
+    
+    public void execute(){ // lo que hace el agente
+        
+        
+        System.out.println("\nDrone "+ quiensoy + " " + session+ " x " + inicioX + " y " + inicioY);
+
+        while (session==null) {            
+            try {
+                recibirSession();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(DronHawk.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+//        enviarMensajeJSON("suscribe");
+//       
+//        try {
+//            respuesta = recibirMensajeJSON();
+//        } catch (InterruptedException ex) {
+//            Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+        
+        enviarMensajeJSON("checkin");
+        try {
+            respuesta = recibirMensajeJSON();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        //enviarSession("pedro");
+        enviarMensajeJSON("query");
+        try {
+            respuesta = recibirMensajeJSON();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        movimiento="moveNW";
+        enviarMensajeJSON("moveRefuelStopRescue");
+        try {
+            respuesta = recibirMensajeJSON();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        enviarMensajeJSON("logout");
+    }
+    
+    protected String recibirSession() throws InterruptedException {
+        ACLMessage inbox;
+            inbox = this.receiveACLMessage();
+            System.out.println("\nRespuesta del controlador: ");
+            String fuente = inbox.getContent();
+            JsonObject objetoRespuesta = Json.parse(fuente).asObject();
+            if (inbox.getPerformativeInt() == ACLMessage.INFORM){
+                System.out.println("entrooooooooooo");
+                reply = inbox.getReplyWith();
+                System.out.println(reply);
+                JsonObject objetoPercepcion = Json.parse(fuente).asObject();
+                session = objetoPercepcion.get("session").asString();
+            }
+        return session;
+           
     }
     
 }

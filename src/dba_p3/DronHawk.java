@@ -17,15 +17,10 @@ import java.util.logging.Logger;
  * @author srmesas
  */
 public class DronHawk extends Dron{
-
-    
-    
-    
     
     public DronHawk(AgentID aid) throws Exception {
         super(aid);
-        setAgente("keid");
-        setQuiensoy("fly");
+        setQuiensoy("hawk");
         inicioX=5;
         inicioY=5;
     }
@@ -33,7 +28,7 @@ public class DronHawk extends Dron{
     public void execute(){ // lo que hace el agente
         
         
-        System.out.println("segundo drone "+ quiensoy + " " + session+ " x " + inicioX + " y " + inicioY);
+        System.out.println("\nDrone "+ quiensoy + " " + session+ " x " + inicioX + " y " + inicioY);
 
         while (session==null) {            
             try {
@@ -72,13 +67,6 @@ public class DronHawk extends Dron{
         }
         enviarMensajeJSON("logout");
     }
-
-
-    
-    @Override// opcional
-    public void finalize(){ // lo que hace el agente
-
-    }
     
     protected String recibirSession() throws InterruptedException {
         ACLMessage inbox;
@@ -93,7 +81,7 @@ public class DronHawk extends Dron{
                 JsonObject objetoPercepcion = Json.parse(fuente).asObject();
                 session = objetoPercepcion.get("session").asString();
             }
-            return session;
+        return session;
            
     }
     

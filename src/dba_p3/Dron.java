@@ -30,6 +30,11 @@ class Dron extends SuperAgent {
     public static final String ANSI_RED_BACKGROUND_2 = "\u001b[31m";
     public static final String ANSI_RESET = "\u001B[0m";
     
+    public String NOMBRE_HAWK;
+    public String NOMBRE_FLY1;
+    public String NOMBRE_FLY2;
+    public String NOMBRE_RESCUE;
+    
     protected String agente="Keid";
     protected String mapa;
     protected String user;
@@ -82,6 +87,11 @@ class Dron extends SuperAgent {
         this.mapa = "playground";
         this.user = "Kazi";
         this.password = "moHhEBMN";
+        
+        this.NOMBRE_HAWK = DBA_P3.NOMBRE_HAWK;
+        this.NOMBRE_FLY1 = DBA_P3.NOMBRE_FLY1;
+        this.NOMBRE_FLY2 = DBA_P3.NOMBRE_FLY2;
+        this.NOMBRE_RESCUE = DBA_P3.NOMBRE_RESCUE;
     }
     
     @Override // opcional
@@ -106,7 +116,10 @@ class Dron extends SuperAgent {
         } catch (InterruptedException ex) {
             Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
         }
-        enviarSession("pedro");
+        enviarSession(this.NOMBRE_HAWK);
+        enviarSession(this.NOMBRE_FLY1);
+        enviarSession(this.NOMBRE_FLY2);
+        enviarSession(this.NOMBRE_RESCUE);
         enviarMensajeJSON("query");
         try {
             respuesta = recibirMensajeJSON();
