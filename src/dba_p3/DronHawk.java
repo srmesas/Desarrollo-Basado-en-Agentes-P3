@@ -25,7 +25,7 @@ public class DronHawk extends Dron{
     public DronHawk(AgentID aid) throws Exception {
         super(aid);
         setAgente("keid");
-        setQuiensoy("hawk");
+        setQuiensoy("fly");
         inicioX=5;
         inicioY=5;
     }
@@ -35,20 +35,20 @@ public class DronHawk extends Dron{
         
         System.out.println("segundo drone "+ quiensoy + " " + session+ " x " + inicioX + " y " + inicioY);
 
-//        while (session==null) {            
-//            try {
-//                recibirSession();
-//            } catch (InterruptedException ex) {
-//                Logger.getLogger(DronHawk.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//        }
-        enviarMensajeJSON("suscribe");
-       
-        try {
-            respuesta = recibirMensajeJSON();
-        } catch (InterruptedException ex) {
-            Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
+        while (session==null) {            
+            try {
+                recibirSession();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(DronHawk.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
+//        enviarMensajeJSON("suscribe");
+//       
+//        try {
+//            respuesta = recibirMensajeJSON();
+//        } catch (InterruptedException ex) {
+//            Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
+//        }
         
         enviarMensajeJSON("checkin");
         try {
@@ -56,7 +56,7 @@ public class DronHawk extends Dron{
         } catch (InterruptedException ex) {
             Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
         }
-        enviarSession("pedro");
+        //enviarSession("pedro");
         enviarMensajeJSON("query");
         try {
             respuesta = recibirMensajeJSON();
