@@ -27,7 +27,9 @@ public class DronHawk extends Dron{
         setAgente("keid");
         setQuiensoy("hawk");
         x=5;
-        y=5; 
+        y=5;
+        setX(x);
+        setY(y);
     }
     
     public void execute(){ // lo que hace el agente
