@@ -37,15 +37,15 @@ public class DBA_P3 {
         Dron D;
         DronHawk D1;
         try{
-            D = new Dron(new AgentID("ert4"));
-            D1 = new DronHawk(new AgentID("ert46"));
+            D = new Dron(new AgentID("ert4889"));
+            D1 = new DronHawk(new AgentID("ert4689"));
 	} catch (Exception ex){
 		System.err.println("El agente ya existe en la plataforma");
 		return;
 	}
 
 	D.start();
-        Thread.sleep(1000);
+        //Thread.sleep(1000);
         D1.start();
     }
     

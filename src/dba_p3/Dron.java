@@ -97,7 +97,7 @@ class Dron extends SuperAgent {
         } catch (InterruptedException ex) {
             Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
         }
-        enviarSession("ert46");
+        enviarSession("ert4689");
         enviarMensajeJSON("checkin");
         try {
             respuesta = recibirMensajeJSON();
@@ -117,7 +117,7 @@ class Dron extends SuperAgent {
         } catch (InterruptedException ex) {
             Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
         }
-        enviarMensajeJSON("logout");
+        //enviarMensajeJSON("logout");
     }
     
     @Override// opcional
@@ -215,7 +215,7 @@ class Dron extends SuperAgent {
     
     protected void percibirJSON(ACLMessage inbox){
 
-            System.out.println("\nPercepciones: ");
+            System.out.println("\nPercepciones: "+ quiensoy);
             String fuente = inbox.getContent();
             reply = inbox.getReplyWith();
             System.out.println(reply);
@@ -325,7 +325,7 @@ class Dron extends SuperAgent {
         ACLMessage inbox;
         try {
             inbox = this.receiveACLMessage();
-            System.out.println("\nRespuesta del controlador: ");
+            System.out.println("\nRespuesta del controlador: "+quiensoy);
             String fuente = inbox.getContent();
             JsonObject objetoRespuesta = Json.parse(fuente).asObject();
            // System.out.println(inbox.getPerformativeInt());
