@@ -45,8 +45,8 @@ public class DBA_P3 {
         try{
             D = new Dron(new AgentID(Controlador));
             //H = new DronHawk(new AgentID(NOMBRE_HAWK));
-            F1 = new DronFly(new AgentID(NOMBRE_FLY1), 30, 30);
-//            F2 = new DronFly(new AgentID(NOMBRE_FLY2), 60, 60);
+            F1 = new DronFly(new AgentID(NOMBRE_FLY1));
+//            F2 = new DronFly(new AgentID(NOMBRE_FLY2));
             R = new DronRescate(new AgentID(NOMBRE_RESCUE));
 	} catch (Exception ex){
 		System.err.println("El agente ya existe en la plataforma");

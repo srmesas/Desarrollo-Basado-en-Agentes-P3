@@ -96,6 +96,7 @@ class Dron extends SuperAgent {
     private final String controlador;
     ArrayList<Aleman> arrayDeAlemanes = new ArrayList<Aleman>();
     private boolean esta;
+    private boolean primerAleman;
 
 
     public Dron(AgentID aid) throws Exception {
@@ -128,10 +129,9 @@ class Dron extends SuperAgent {
         }
         
         System.out.print("\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n");
-        enviarSession(this.NOMBRE_HAWK);
-        enviarSession(this.NOMBRE_FLY1);
-        enviarSession(this.NOMBRE_FLY2);
-        enviarSession(this.NOMBRE_RESCUE);
+        enviarSession(this.NOMBRE_HAWK, map.getWidth()/2, map.getHeight()/2);
+        enviarSession(this.NOMBRE_FLY1, 20, 20);
+        enviarSession(this.NOMBRE_FLY2, map.getWidth()-20, map.getHeight()-20);
         System.out.print("\nbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\n");
         do{
 //            enviarMensajeJSON("query");
@@ -268,6 +268,8 @@ class Dron extends SuperAgent {
                     System.out.println("IMAGE DATA:");
                     /// 3) Cuyas dimensiones se pueden consultar
                     System.out.println(map.getWidth()+" pixs width & "+map.getHeight()+" pixs height");
+                    this.dimX = map.getWidth();
+                    this.dimY = map.getHeight();
                     /// 4) Y cuyos valores se pueden consultar en getLevel(X,Y)
                     System.out.print("First row starts with: ");
                     for (int i=0; i<10; i++)
@@ -348,7 +350,7 @@ class Dron extends SuperAgent {
             }else if(comandoEnvi == "moveRefuelStopRescue"){
                 System.out.println("Estoy en moveRefuelStopRescue");
                 System.out.println(objetoPercepcion.get("result").asString());
-                siguienteMovimiento();
+                //siguienteMovimiento();
             }
             
             
@@ -434,10 +436,13 @@ class Dron extends SuperAgent {
         this.agente = agente;
     }
     
-    public void enviarSession(String agente){
+    public void enviarSession(String agente, int x, int y){
         JsonObject objeto = new JsonObject();
         objeto.add("session",session);
         String resultado = objeto.toString();
+        
+        //this.inicioX = x;
+        //this.inicioY = y;
                 
         outbox = new ACLMessage();
         outbox.setContent(resultado);
@@ -450,7 +455,12 @@ class Dron extends SuperAgent {
     }
     
     public void enviarMovimiento(AgentID agente){
-        siguienteMovimiento();
+        if(agente.name != this.NOMBRE_RESCUE){
+            siguienteMovimiento();
+        }else{
+            siguienteMovimientoRescue();
+        }
+        
         JsonObject objeto = new JsonObject();
         objeto.add("movimiento",commandmov);
         String resultado = objeto.toString();
@@ -470,6 +480,10 @@ class Dron extends SuperAgent {
        if(distance_rec <= 1){
            System.out.println("encontre una alemannn eeeeehhhh");
            if(distance_rec==0){
+               if(primerAleman){
+                   //enviarSession(this.NOMBRE_RESCUE, x_rec, y_rec);
+                   primerAleman = false;
+               }
                Aleman a = new Aleman(x_rec,y_rec); 
                esta = estaContenido(x_rec, y_rec);
                if(!esta)
@@ -545,7 +559,16 @@ class Dron extends SuperAgent {
         
     }
     
- 
+    public void siguienteMovimientoRescue(){
+        if (map.getLevel(x_rec, y_rec)<y_rec){
+            System.out.println("VOY BAJANDO; BAJANDO; BAJANDO");
+            commandmov = "moveDw";
+        }else{
+            System.out.println("RESCATO A UN ALEMAAAAAAAAANSSSSSS");
+            commandmov = "rescue";
+        }
+    }
+    
      protected void enviarMensajeJSONControlador(String comando) {
         comandoEnvi = comando;
         JsonObject objeto;

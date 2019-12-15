@@ -22,13 +22,12 @@ public class DronFly extends Dron{
     int contador=0;
     private String commandmov;
     
-    public DronFly(AgentID aid, int inicioX, int inicioY) throws Exception {
+    public DronFly(AgentID aid) throws Exception {
         super(aid);
         setQuiensoy("fly");
-        this.inicioX = inicioX;
-        this.inicioY = inicioY;
-        this.dimX = super.dimX;
-        this.dimY = super.dimY;
+        this.inicioX = 20;
+        this.inicioY = 5;
+
     }
     
     public void execute(){ // lo que hace el agente
@@ -50,15 +49,15 @@ public class DronFly extends Dron{
             Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
         }
         while(movimiento==null){
-        enviarMensajeJSON("query");
-        try {
-            respuesta = recibirMensajeJSON();
-        } catch (InterruptedException ex) {
-            Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        System.out.println("\n\tGPS: x:" + this.x + " y:" + this.y + " z:" + this.z);
-        enviarMensajeJSONControlador("moveRefuelStopRescue");
-        System.out.println("antes del while " +movimiento);
+            enviarMensajeJSON("query");//SERVIDOR
+            try {
+                respuesta = recibirMensajeJSON();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            System.out.println("\n\tGPS: x:" + this.x + " y:" + this.y + " z:" + this.z);
+            enviarMensajeJSONControlador("moveRefuelStopRescue");//HACIA DIRECTOR
+            System.out.println("antes del while " +movimiento);
        
             try {
                 movimiento = recibirMovimiento();
@@ -78,7 +77,7 @@ public class DronFly extends Dron{
                 System.out.println("me salgo");
                 break;
             }
-            contador++;
+            //contador++;
         }
     }
         

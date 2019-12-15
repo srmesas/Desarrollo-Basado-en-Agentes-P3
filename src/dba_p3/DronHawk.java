@@ -89,7 +89,70 @@ public class DronHawk extends Dron{
 //                Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
 //            }
 //            siguienteMovimiento();
+//            enviarMensajeJSON("moveR//        System.out.println("\nDrone "+ quiensoy + " " + session+ " x " + inicioX + " y " + inicioY);
+//
+//        while (session==null) {            
+//            try {
+//                recibirSession();
+//            } catch (InterruptedException ex) {
+//                Logger.getLogger(DronHawk.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//        }
+//        enviarMensajeJSON("checkin");
+//        try {
+//            respuesta = recibirMensajeJSON();
+//        } catch (InterruptedException ex) {
+//            Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        while(movimiento==null){
+//        enviarMensajeJSON("query");
+//        try {
+//            respuesta = recibirMensajeJSON();
+//        } catch (InterruptedException ex) {
+//            Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        System.out.println("\n\tGPS: x:" + this.x + " y:" + this.y + " z:" + this.z);
+//        enviarMensajeJSONControlador("moveRefuelStopRescue");
+//        System.out.println("antes del while " +movimiento);
+//       
+//            try {
+//                movimiento = recibirMovimiento();
+//            } catch (InterruptedException ex) {
+//                Logger.getLogger(DronHawk.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//            System.out.println(movimiento);
 //            enviarMensajeJSON("moveRefuelStopRescue");
+//            try {
+//                respuesta = recibirMensajeJSON();
+//            } catch (InterruptedException ex) {
+//                Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//            movimiento=null;
+//            
+//            if(contador == 20){
+//                System.out.println("me salgo");
+//                break;
+//            }
+//            contador++;
+//        }
+            
+            
+//        do"
+//            enviarMensajeJSON("query");
+//            try {
+//                respuesta = recibirMensajeJSON();
+//            } catch (InterruptedException ex) {
+//                Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//            siguienteMovimiento();
+//            enviarMensajeJSON("moveRefuelStopRescue");
+//            try {
+//                respuesta = recibirMensajeJSON();
+//            } catch (InterruptedException ex) {
+//                Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//        }while(this.torescue > 0);
+// efuelStopRescue");
 //            try {
 //                respuesta = recibirMensajeJSON();
 //            } catch (InterruptedException ex) {

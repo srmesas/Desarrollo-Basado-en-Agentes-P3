@@ -52,22 +52,37 @@ public class DronRescate extends Dron{
         } catch (InterruptedException ex) {
             Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
         }
-//        do{
-//            enviarMensajeJSON("query");
-//            try {
-//                respuesta = recibirMensajeJSON();
-//            } catch (InterruptedException ex) {
-//                Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//            siguienteMovimiento();
-//            enviarMensajeJSON("moveRefuelStopRescue");
-//            try {
-//                respuesta = recibirMensajeJSON();
-//            } catch (InterruptedException ex) {
-//                Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//        }while(this.torescue > 0);
-//        enviarMensajeJSON("logout");
+        while(movimiento==null){
+            enviarMensajeJSON("query");//SERVIDOR
+            try {
+                respuesta = recibirMensajeJSON();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            System.out.println("\n\tGPS: x:" + this.x + " y:" + this.y + " z:" + this.z);
+            enviarMensajeJSONControlador("moveRefuelStopRescue");//HACIA DIRECTOR
+            System.out.println("antes del while " +movimiento);
+       
+            try {
+                movimiento = recibirMovimiento();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(DronHawk.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            System.out.println(movimiento);
+            enviarMensajeJSON("moveRefuelStopRescue");
+            try {
+                respuesta = recibirMensajeJSON();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            movimiento=null;
+            
+            //if(contador == 20){
+            //    System.out.println("me salgo");
+            //    break;
+            //}
+            //contador++;
+        }
     }
     
     
