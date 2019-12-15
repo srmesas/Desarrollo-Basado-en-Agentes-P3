@@ -130,7 +130,7 @@ class Dron extends SuperAgent {
         
         System.out.print("\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n");
         enviarSession(this.NOMBRE_HAWK, map.getWidth()/2, map.getHeight()/2);
-        enviarSession(this.NOMBRE_FLY1, 20, 20);
+        enviarSession(this.NOMBRE_FLY1, 5, 5);
         enviarSession(this.NOMBRE_FLY2, map.getWidth()-20, map.getHeight()-20);
         System.out.print("\nbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\n");
         do{
@@ -439,10 +439,9 @@ class Dron extends SuperAgent {
     public void enviarSession(String agente, int x, int y){
         JsonObject objeto = new JsonObject();
         objeto.add("session",session);
+        objeto.add("inicioX", x);
+        objeto.add("inicioY", y);
         String resultado = objeto.toString();
-        
-        //this.inicioX = x;
-        //this.inicioY = y;
                 
         outbox = new ACLMessage();
         outbox.setContent(resultado);
@@ -492,8 +491,6 @@ class Dron extends SuperAgent {
            System.out.println(arrayDeAlemanes);
            
        }else{
-
-
             if (this.gonioAngle<0 && this.gonioAngle<=22.5 && this.gonioAngle>337.5 && this.gonioAngle <=360){
                 if (map.getLevel(x_rec+1, y_rec)>y_rec){
                     commandmov = "moveUP";
@@ -623,13 +620,14 @@ class Dron extends SuperAgent {
             inbox = this.receiveACLMessage();
             System.out.println("\nRespuesta del controlador: ");
             String fuente = inbox.getContent();
-            JsonObject objetoRespuesta = Json.parse(fuente).asObject();
             if (inbox.getPerformativeInt() == ACLMessage.INFORM){
                 System.out.println("entrooooooooooo");
                 reply = inbox.getReplyWith();
                 System.out.println(reply);
                 JsonObject objetoPercepcion = Json.parse(fuente).asObject();
                 session = objetoPercepcion.get("session").asString();
+                this.inicioX = objetoPercepcion.get("inicioX").asInt();
+                this.inicioY = objetoPercepcion.get("inicioY").asInt();
             }
 
             return session;   

@@ -28,10 +28,6 @@ public class DronRescate extends Dron{
     public DronRescate(AgentID aid) throws Exception {
         super(aid);
         setQuiensoy("rescue");
-        inicioX=25;
-        inicioY=35;
-        this.dimX = super.dimX;
-        this.dimY = super.dimY;
     }
     
     public void execute(){ // lo que hace el agente

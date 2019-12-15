@@ -25,8 +25,8 @@ public class DronFly extends Dron{
     public DronFly(AgentID aid) throws Exception {
         super(aid);
         setQuiensoy("fly");
-        this.inicioX = 20;
-        this.inicioY = 5;
+        //this.inicioX = 20;
+        //this.inicioY = 5;
 
     }
     
