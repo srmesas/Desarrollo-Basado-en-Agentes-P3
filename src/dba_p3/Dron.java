@@ -136,10 +136,8 @@ class Dron extends SuperAgent {
                 Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
             }
             System.out.print("\ncccccccccccccccccccccccccccccccccccccccccccccccc\n");
-            siguienteMovimiento();
-            enviarMensajeJSON("moveRefuelStopRescue");
             try {
-                respuesta = recibirMensajeJSON();
+                recibirPosiciones();
             } catch (InterruptedException ex) {
                 Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -443,575 +441,155 @@ class Dron extends SuperAgent {
         this.send(outbox);
     }
     
-    public void siguienteMovimiento(){}
-    
-    protected void checkFuel(){
-        
-        if((z - radar[5][5])/5 > (this.fuel-10)/0.5){
-            System.out.println("\nNECESITA REPOSTAR");
-            commandmov = "moveDW";
-            if(z - radar[5][5] == 0){
-                commandmov = "refuel";
+    public void siguienteMovimiento(){        
+            Random r = new Random();
+            int ran = r.nextInt((4 - 0) + 1) + 0;
+            
+            switch(ran){
+                
+                case 0:
+                    this.commandmov = "moveN";
+                    
+                case 1:
+                    this.commandmov = "moveS";
+                    
+                case 2:
+                    this.commandmov = "moveE";
+                    
+                case 3:
+                    this.commandmov = "moveW";
+                
             }
-        }
+    
     }
     
-    protected boolean esBueno(String movimiento){
-        if(movimiento.equals("moveN")){
-            if(radar[4][5]!=0 && radar[4][5] <= this.z){
-                return true;
-            }
-        }else if(movimiento.equals("moveNE")){
+ 
+     protected void enviarMensajeJSONControlador(String comando) {
+        comandoEnvi = comando;
+        JsonObject objeto;
+        String resultado = null;
+        ACLMessage outbox = null;
+        switch(comando){
+            case "moveRefuelStopRescue":
+                objeto = new JsonObject();
+                objeto.add("x",x);
+                objeto.add("y",y);
+                objeto.add("z",z);
+                resultado = objeto.toString();
+                
+                outbox = new ACLMessage();
+                outbox.setContent(resultado);
+                outbox.setSender(this.getAid());
+                outbox.setReceiver(new AgentID("juan"));
+                outbox.setConversationId(id);
+                outbox.setInReplyTo(reply);
+                outbox.setPerformative(ACLMessage.INFORM);
+                this.send(outbox);
+            break;
             
-            if(radar[4][6]!=0 && radar[4][6] <= this.z){
-                return true;
-            }
-        }else if(movimiento.equals("moveE")){
-            if(radar[5][6]!=0 && radar[5][6] <= this.z){
-                return true;
-            }
-        }else if(movimiento.equals("moveSE")){
-            if(radar[6][6]!=0 && radar[6][6] <= this.z){
-                return true;
-            }
-        }else if(movimiento.equals("moveS")){
-            if(radar[6][5]!=0 && radar[6][5] <= this.z){
-                return true;
-            }
-        }else if(movimiento.equals("moveSW")){
+            case "query":
+               // 
+                outbox = new ACLMessage();
+                
+                outbox.setReceiver(new AgentID("juan"));
+                outbox.setSender(this.getAid());
+                
+                outbox.setConversationId(id);
+                outbox.setInReplyTo(reply);
+                outbox.setPerformative(ACLMessage.QUERY_REF);
+                this.send(outbox);
+            break;
             
-           if(radar[6][4]!=0 && radar[6][4] <= this.z){
-                return true;
-            }
-        }else if(movimiento.equals("moveW")){
-            
-            if(radar[5][4]!=0 && radar[5][4] <= this.z){
-                return true;
-            }
-        }else if(movimiento.equals("moveNW")){
-             if(radar[4][4]!=0 && radar[4][4] <= this.z){
-                return true;
-            }
-        }else if(movimiento.equals("moveUP")){
-            if(this.z < this.alturaMax){
-                return true;
-            }
-        }else if(movimiento.equals("moveDW")){
-            if(this.z > radar[5][5]){
-                return true;
-            }
+            case "logout":
+                outbox = new ACLMessage();
+                outbox.setSender(this.getAid());
+                outbox.setReceiver(new AgentID("juan"));
+                outbox.setConversationId(id);
+                outbox.setPerformative(ACLMessage.CANCEL);
+                this.send(outbox);
+            break;
         }
-        return false;
     }
-    
-    protected Boolean esAceptable(String movimiento){
-        
-        
-        if(movimiento == "moveN"){
-            if(this.y==0){
-                return false;
-            }else if(this.y == this.dimY-1 && this.x == this.dimX-1){
-                if(this.mapaMemoria[this.y-1][this.x]<=this.mapaMemoria[this.y-1][this.x-1]
-                && this.mapaMemoria[this.y-1][this.x]<=this.mapaMemoria[this.y][this.x-1]){
-                    System.out.print("\nNo es un movimiento repe");
-                    return true;
-                }else{
-                    System.out.print("\nES UN MOVIMIENTO REPE");
-                    return false;
-                }
-            }else if(this.y == this.dimY && this.x == 0){
-                if(this.mapaMemoria[this.y-1][this.x]<=this.mapaMemoria[this.y-1][this.x+1] 
-                && this.mapaMemoria[this.y-1][this.x]<=this.mapaMemoria[this.y][this.x+1]){
-                    System.out.print("\nNo es un movimiento repe");
-                    return true;
-                }else{
-                    System.out.print("\nES UN MOVIMIENTO REPE");
-                    return false;
-                }
-            }else if(this.x==0){
-                if((this.mapaMemoria[this.y-1][this.x]<=this.mapaMemoria[this.y-1][this.x+1] 
-                && this.mapaMemoria[this.y-1][this.x]<=this.mapaMemoria[this.y][this.x+1] 
-                && this.mapaMemoria[this.y-1][this.x]<=this.mapaMemoria[this.y+1][this.x]
-                && this.mapaMemoria[this.y-1][this.x]<=this.mapaMemoria[this.y+1][this.x+1])){
-                    System.out.print("\nNo es un movimiento repe");
-                    return true;
-                }else{
-                    System.out.print("\nES UN MOVIMIENTO REPE");
-                    return false;
-                }
-            }else if(this.y == this.dimY-1){
-                if(this.mapaMemoria[this.y-1][this.x]<=this.mapaMemoria[this.y-1][this.x-1] 
-                && this.mapaMemoria[this.y-1][this.x]<=this.mapaMemoria[this.y-1][this.x+1] 
-                && this.mapaMemoria[this.y-1][this.x]<=this.mapaMemoria[this.y][this.x-1]
-                && this.mapaMemoria[this.y-1][this.x]<=this.mapaMemoria[this.y][this.x+1]){
-                    System.out.print("\nNo es un movimiento repe");
-                    return true;
-                }else{
-                    System.out.print("\nES UN MOVIMIENTO REPE");
-                    return false;
-                }
-            }else if(this.x == this.dimX-1){
-                if(this.mapaMemoria[this.y-1][this.x]<=this.mapaMemoria[this.y-1][this.x-1] 
-                && this.mapaMemoria[this.y-1][this.x]<=this.mapaMemoria[this.y][this.x-1]
-                && this.mapaMemoria[this.y-1][this.x]<=this.mapaMemoria[this.y+1][this.x-1]
-                && this.mapaMemoria[this.y-1][this.x]<=this.mapaMemoria[this.y+1][this.x]){
-                    System.out.print("\nNo es un movimiento repe");
-                    return true;
-                }else{
-                    System.out.print("\nES UN MOVIMIENTO REPE");
-                    return false;
-                }
-            }else{
-                if(this.mapaMemoria[this.y-1][this.x]<=this.mapaMemoria[this.y-1][this.x-1] 
-                && this.mapaMemoria[this.y-1][this.x]<=this.mapaMemoria[this.y-1][this.x+1] 
-                && this.mapaMemoria[this.y-1][this.x]<=this.mapaMemoria[this.y][this.x-1]
-                && this.mapaMemoria[this.y-1][this.x]<=this.mapaMemoria[this.y][this.x+1] 
-                && this.mapaMemoria[this.y-1][this.x]<=this.mapaMemoria[this.y+1][this.x-1]
-                && this.mapaMemoria[this.y-1][this.x]<=this.mapaMemoria[this.y+1][this.x]
-                && this.mapaMemoria[this.y-1][this.x]<=this.mapaMemoria[this.y+1][this.x+1]){
-                    System.out.print("\nNo es un movimiento repe");
-                    return true;
-                }else{
-                    System.out.print("\nES UN MOVIMIENTO REPE");
-                    return false;
-                }
-            }
-        }
-        
-        if(movimiento == "moveNE"){///////////////////////////////////////////////////////////////
-            if(this.y == 0){
-                return false;
-            }else if(this.x == this.dimX-1){
-                return false;
-            }else if(this.y == this.dimY-1 && this.x == 0){
-                if(this.mapaMemoria[this.y-1][this.x+1]<=this.mapaMemoria[this.y-1][this.x]
-                && this.mapaMemoria[this.y-1][this.x+1]<=this.mapaMemoria[this.y][this.x+1]){
-                    System.out.print("\nNo es un movimiento repe");
-                    return true;
-                }else{
-                    System.out.print("\nES UN MOVIMIENTO REPE");
-                    return false;
-                }    
-            }else if(this.x == 0){
-                if(this.mapaMemoria[this.y-1][this.x+1]<=this.mapaMemoria[this.y-1][this.x] 
-                && this.mapaMemoria[this.y-1][this.x+1]<=this.mapaMemoria[this.y][this.x+1] 
-                && this.mapaMemoria[this.y-1][this.x+1]<=this.mapaMemoria[this.y+1][this.x]
-                && this.mapaMemoria[this.y-1][this.x+1]<=this.mapaMemoria[this.y+1][this.x+1]){
-                    System.out.print("\nNo es un movimiento repe");
-                    return true;
-                }else{
-                    System.out.print("\nES UN MOVIMIENTO REPE");
-                    return false;
-                }
-            }else if(this.y == this.dimY-1){
-                if(this.mapaMemoria[this.y-1][this.x+1]<=this.mapaMemoria[this.y-1][this.x-1] 
-                && this.mapaMemoria[this.y-1][this.x+1]<=this.mapaMemoria[this.y-1][this.x] 
-                && this.mapaMemoria[this.y-1][this.x+1]<=this.mapaMemoria[this.y][this.x-1]
-                && this.mapaMemoria[this.y-1][this.x+1]<=this.mapaMemoria[this.y][this.x+1]){
-                    System.out.print("\nNo es un movimiento repe");
-                    return true;
-                }else{
-                    System.out.print("\nES UN MOVIMIENTO REPE");
-                    return false;
-                }
-            }else{
-                if(this.mapaMemoria[this.y-1][this.x+1]<=this.mapaMemoria[this.y-1][this.x-1] 
-                && this.mapaMemoria[this.y-1][this.x+1]<=this.mapaMemoria[this.y-1][this.x] 
-                && this.mapaMemoria[this.y-1][this.x+1]<=this.mapaMemoria[this.y][this.x-1]
-                && this.mapaMemoria[this.y-1][this.x+1]<=this.mapaMemoria[this.y][this.x+1] 
-                && this.mapaMemoria[this.y-1][this.x+1]<=this.mapaMemoria[this.y+1][this.x-1]
-                && this.mapaMemoria[this.y-1][this.x+1]<=this.mapaMemoria[this.y+1][this.x]
-                && this.mapaMemoria[this.y-1][this.x+1]<=this.mapaMemoria[this.y+1][this.x+1]){
-                    System.out.print("\nNo es un movimiento repe");
-                    return true;
-                }else{
-                    //mostrarMemoria();
-                    System.out.print("\nES UN MOVIMIENTO REPE");
-                    return false;
-                }
-            }
-        }
-        
-        if(movimiento == "moveE"){
-            if(this.x == this.dimX-1){
-                return false;
-            }else if(this.y == 0 && this.x == 0){
-                if(this.mapaMemoria[this.y][this.x+1]<=this.mapaMemoria[this.y][this.x] 
-                && this.mapaMemoria[this.y][this.x+1]<=this.mapaMemoria[this.y+1][this.x]){
-                    System.out.print("\nNo es un movimiento repe");
-                    return true;
-                }else{
-                    System.out.print("\nES UN MOVIMIENTO REPE");
-                    return false;
-                }
-            }else if(this.y == this.dimY-1 && this.x == 0){
-                if(this.mapaMemoria[this.y][this.x+1]<=this.mapaMemoria[this.y-1][this.x] 
-                && this.mapaMemoria[this.y][this.x+1]<=this.mapaMemoria[this.y-1][this.x+1]
-                && this.mapaMemoria[this.y][this.x+1]<=this.mapaMemoria[this.y][this.x] ){
-                    System.out.print("\nNo es un movimiento repe");
-                    return true;
-                }else{
-                    System.out.print("\nES UN MOVIMIENTO REPE");
-                    return false;
-                }
-            }else if(this.y == 0){
-                if(this.mapaMemoria[this.y][this.x+1]<=this.mapaMemoria[this.y][this.x-1] 
-                && this.mapaMemoria[this.y][this.x+1]<=this.mapaMemoria[this.y][this.x] 
-                && this.mapaMemoria[this.y][this.x+1]<=this.mapaMemoria[this.y+1][this.x-1]
-                && this.mapaMemoria[this.y][this.x+1]<=this.mapaMemoria[this.y+1][this.x]){
-                    System.out.print("\nNo es un movimiento repe");
-                    return true;
-                }else{
-                    System.out.print("\nES UN MOVIMIENTO REPE");
-                    return false;
-                }
-            }else if(this.x == 0){
-                if(this.mapaMemoria[this.y][this.x+1]<=this.mapaMemoria[this.y-1][this.x] 
-                && this.mapaMemoria[this.y][this.x+1]<=this.mapaMemoria[this.y-1][this.x+1]
-                && this.mapaMemoria[this.y][this.x+1]<=this.mapaMemoria[this.y][this.x]
-                && this.mapaMemoria[this.y][this.x+1]<=this.mapaMemoria[this.y+1][this.x]){
-                    System.out.print("\nNo es un movimiento repe");
-                    return true;
-                }else{
-                    System.out.print("\nES UN MOVIMIENTO REPE");
-                    return false;
-                }
-            }else if(this.y == this.dimY-1){
-                if(this.mapaMemoria[this.y][this.x+1]<=this.mapaMemoria[this.y-1][this.x-1] 
-                && this.mapaMemoria[this.y][this.x+1]<=this.mapaMemoria[this.y-1][this.x] 
-                && this.mapaMemoria[this.y][this.x+1]<=this.mapaMemoria[this.y-1][this.x+1]
-                && this.mapaMemoria[this.y][this.x+1]<=this.mapaMemoria[this.y][this.x-1] 
-                && this.mapaMemoria[this.y][this.x+1]<=this.mapaMemoria[this.y][this.x] ){
-                    System.out.print("\nNo es un movimiento repe");
-                    return true;
-                }else{
-                    System.out.print("\nES UN MOVIMIENTO REPE");
-                    return false;
-                }
-            }else{
-                if(this.mapaMemoria[this.y][this.x+1]<=this.mapaMemoria[this.y-1][this.x-1] 
-                && this.mapaMemoria[this.y][this.x+1]<=this.mapaMemoria[this.y-1][this.x] 
-                && this.mapaMemoria[this.y][this.x+1]<=this.mapaMemoria[this.y-1][this.x+1]
-                && this.mapaMemoria[this.y][this.x+1]<=this.mapaMemoria[this.y][this.x-1] 
-                && this.mapaMemoria[this.y][this.x+1]<=this.mapaMemoria[this.y][this.x] 
-                && this.mapaMemoria[this.y][this.x+1]<=this.mapaMemoria[this.y+1][this.x-1]
-                && this.mapaMemoria[this.y][this.x+1]<=this.mapaMemoria[this.y+1][this.x]){
-                    System.out.print("\nNo es un movimiento repe");
-                    return true;
-                }else{
-                    System.out.print("\nES UN MOVIMIENTO REPE");
-                    return false;
-                }
-            }
-        }
-        
-        if(movimiento == "moveSE"){
-            if(this.y == this.dimY-1){
-                return false;
-            }else if(this.x == this.dimX-1){
-                return false;
-            }else if(this.y == 0 && this.x == 0){
-                if(this.mapaMemoria[this.y+1][this.x+1]<=this.mapaMemoria[this.y][this.x+1]  
-                && this.mapaMemoria[this.y+1][this.x+1]<=this.mapaMemoria[this.y+1][this.x]){
-                    System.out.print("\nNo es un movimiento repe");
-                    return true;
-                }else{
-                    System.out.print("\nES UN MOVIMIENTO REPE");
-                    return false;
-                }
-            }else if(this.y == 0){
-                if(this.mapaMemoria[this.y+1][this.x+1]<=this.mapaMemoria[this.y][this.x-1]
-                && this.mapaMemoria[this.y+1][this.x+1]<=this.mapaMemoria[this.y][this.x+1] 
-                && this.mapaMemoria[this.y+1][this.x+1]<=this.mapaMemoria[this.y+1][this.x-1] 
-                && this.mapaMemoria[this.y+1][this.x+1]<=this.mapaMemoria[this.y+1][this.x]
-                && this.mapaMemoria[this.y+1][this.x+1]<=this.mapaMemoria[this.y-1][this.x]){
-                    System.out.print("\nNo es un movimiento repe");
-                    return true;
-                }else{
-                    System.out.print("\nES UN MOVIMIENTO REPE");
-                    return false;
-                }
-            }else if(this.x == 0){
-                if(this.mapaMemoria[this.y+1][this.x+1]<=this.mapaMemoria[this.y-1][this.x+1]
-                && this.mapaMemoria[this.y+1][this.x+1]<=this.mapaMemoria[this.y][this.x+1]
-                && this.mapaMemoria[this.y+1][this.x+1]<=this.mapaMemoria[this.y+1][this.x]
-                && this.mapaMemoria[this.y+1][this.x+1]<=this.mapaMemoria[this.y-1][this.x]){
-                    System.out.print("\nNo es un movimiento repe");
-                    return true;
-                }else{
-                    System.out.print("\nES UN MOVIMIENTO REPE");
-                    return false;
-                }
-            }else{
-                if(this.mapaMemoria[this.y+1][this.x+1]<=this.mapaMemoria[this.y-1][this.x-1] 
-                && this.mapaMemoria[this.y+1][this.x+1]<=this.mapaMemoria[this.y-1][this.x+1] 
-                && this.mapaMemoria[this.y+1][this.x+1]<=this.mapaMemoria[this.y][this.x-1]
-                && this.mapaMemoria[this.y+1][this.x+1]<=this.mapaMemoria[this.y][this.x+1] 
-                && this.mapaMemoria[this.y+1][this.x+1]<=this.mapaMemoria[this.y+1][this.x-1] 
-                && this.mapaMemoria[this.y+1][this.x+1]<=this.mapaMemoria[this.y+1][this.x]
-                && this.mapaMemoria[this.y+1][this.x+1]<=this.mapaMemoria[this.y-1][this.x]){
-                    System.out.print("\nNo es un movimiento repe");
-                    return true;
-                }else{
-                    System.out.print("\nES UN MOVIMIENTO REPE");
-                    return false;
-                }
-            }
-        }
-        
-        if(movimiento == "moveS"){
-            if(this.y == this.dimY-1){
-                return false;
-            }else if(this.y == 0 && this.x == 0){
-                if(this.mapaMemoria[this.y+1][this.x]<=this.mapaMemoria[this.y][this.x+1]
-                && this.mapaMemoria[this.y+1][this.x]<=this.mapaMemoria[this.y+1][this.x+1]){
-                    System.out.print("\nNo es un movimiento repe");
-                    return true;
-                }else{
-                    System.out.print("\nES UN MOVIMIENTO REPE");
-                    return false;
-                }
-            }else if(this.y == 0 && this.x == this.dimX-1){
-                if(this.mapaMemoria[this.y+1][this.x]<=this.mapaMemoria[this.y][this.x-1]
-                && this.mapaMemoria[this.y+1][this.x]<=this.mapaMemoria[this.y+1][this.x-1] 
-                && this.mapaMemoria[this.y+1][this.x]<=this.mapaMemoria[this.y-1][this.x]){
-                    System.out.print("\nNo es un movimiento repe");
-                    return true;
-                }else{
-                    System.out.print("\nES UN MOVIMIENTO REPE");
-                    return false;
-                }
-            }else if(this.y == 0){
-                if(this.mapaMemoria[this.y+1][this.x]<=this.mapaMemoria[this.y][this.x-1]
-                && this.mapaMemoria[this.y+1][this.x]<=this.mapaMemoria[this.y][this.x+1] 
-                && this.mapaMemoria[this.y+1][this.x]<=this.mapaMemoria[this.y+1][this.x-1]
-                && this.mapaMemoria[this.y+1][this.x]<=this.mapaMemoria[this.y+1][this.x+1]){
-                    System.out.print("\nNo es un movimiento repe");
-                    return true;
-                }else{
-                    System.out.print("\nES UN MOVIMIENTO REPE");
-                    return false;
-                }
-            }else if(this.y == 0){
-                if(this.mapaMemoria[this.y+1][this.x]<=this.mapaMemoria[this.y-1][this.x+1]
-                && this.mapaMemoria[this.y+1][this.x]<=this.mapaMemoria[this.y][this.x+1]
-                && this.mapaMemoria[this.y+1][this.x]<=this.mapaMemoria[this.y-1][this.x]
-                && this.mapaMemoria[this.y+1][this.x]<=this.mapaMemoria[this.y+1][this.x+1]){
-                    System.out.print("\nNo es un movimiento repe");
-                    return true;
-                }else{
-                    System.out.print("\nES UN MOVIMIENTO REPE");
-                    return false;
-                }
-            }else if(this.x == this.dimX-1){
-                if(this.mapaMemoria[this.y+1][this.x]<=this.mapaMemoria[this.y-1][this.x-1] 
-                && this.mapaMemoria[this.y+1][this.x]<=this.mapaMemoria[this.y][this.x-1]
-                && this.mapaMemoria[this.y+1][this.x]<=this.mapaMemoria[this.y+1][this.x-1] 
-                && this.mapaMemoria[this.y+1][this.x]<=this.mapaMemoria[this.y-1][this.x]){
-                    System.out.print("\nNo es un movimiento repe");
-                    return true;
-                }else{
-                    System.out.print("\nES UN MOVIMIENTO REPE");
-                    return false;
-                }
-            }else{
-                if(this.mapaMemoria[this.y+1][this.x]<=this.mapaMemoria[this.y-1][this.x-1] 
-                && this.mapaMemoria[this.y+1][this.x]<=this.mapaMemoria[this.y-1][this.x+1] 
-                && this.mapaMemoria[this.y+1][this.x]<=this.mapaMemoria[this.y][this.x-1]
-                && this.mapaMemoria[this.y+1][this.x]<=this.mapaMemoria[this.y][this.x+1] 
-                && this.mapaMemoria[this.y+1][this.x]<=this.mapaMemoria[this.y+1][this.x-1] 
-                && this.mapaMemoria[this.y+1][this.x]<=this.mapaMemoria[this.y-1][this.x]
-                && this.mapaMemoria[this.y+1][this.x]<=this.mapaMemoria[this.y+1][this.x+1]){
-                    System.out.print("\nNo es un movimiento repe");
-                    return true;
-                }else{
-                    System.out.print("\nES UN MOVIMIENTO REPE");
-                    return false;
-                }
-            }
-        }
-        
-        if(movimiento == "moveSW"){
-            if(this.y == this.dimY-1){
-                return false;
-            }else if(this.x == 0){
-                return false;
-            }else if(this.y == 0 && this.x == this.dimX-1){
-                if(this.mapaMemoria[this.y+1][this.x-1]<=this.mapaMemoria[this.y][this.x-1]
-                && this.mapaMemoria[this.y+1][this.x-1]<=this.mapaMemoria[this.y+1][this.x]){
-                    System.out.print("\nNo es un movimiento repe");
-                    return true;
-                }else{
-                    System.out.print("\nES UN MOVIMIENTO REPE");
-                    return false;
-                }
-            }else if(this.y == 0){
-                if(this.mapaMemoria[this.y+1][this.x-1]<=this.mapaMemoria[this.y][this.x-1]
-                && this.mapaMemoria[this.y+1][this.x-1]<=this.mapaMemoria[this.y][this.x+1] 
-                && this.mapaMemoria[this.y+1][this.x-1]<=this.mapaMemoria[this.y+1][this.x]
-                && this.mapaMemoria[this.y+1][this.x-1]<=this.mapaMemoria[this.y+1][this.x+1]){
-                    System.out.print("\nNo es un movimiento repe");
-                    return true;
-                }else{
-                    System.out.print("\nES UN MOVIMIENTO REPE");
-                    return false;
-                }
-            }else if(this.x == this.dimX-1){
-                if(this.mapaMemoria[this.y+1][this.x-1]<=this.mapaMemoria[this.y-1][this.x-1]
-                && this.mapaMemoria[this.y+1][this.x-1]<=this.mapaMemoria[this.y][this.x-1] 
-                && this.mapaMemoria[this.y+1][this.x-1]<=this.mapaMemoria[this.y-1][this.x] 
-                && this.mapaMemoria[this.y+1][this.x-1]<=this.mapaMemoria[this.y+1][this.x]){
-                    System.out.print("\nNo es un movimiento repe");
-                    return true;
-                }else{
-                    System.out.print("\nES UN MOVIMIENTO REPE");
-                    return false;
-                }
-            }else{
-                if(this.mapaMemoria[this.y+1][this.x-1]<=this.mapaMemoria[this.y-1][this.x-1] 
-                && this.mapaMemoria[this.y+1][this.x-1]<=this.mapaMemoria[this.y-1][this.x+1] 
-                && this.mapaMemoria[this.y+1][this.x-1]<=this.mapaMemoria[this.y][this.x-1]
-                && this.mapaMemoria[this.y+1][this.x-1]<=this.mapaMemoria[this.y][this.x+1] 
-                && this.mapaMemoria[this.y+1][this.x-1]<=this.mapaMemoria[this.y-1][this.x] 
-                && this.mapaMemoria[this.y+1][this.x-1]<=this.mapaMemoria[this.y+1][this.x]
-                && this.mapaMemoria[this.y+1][this.x-1]<=this.mapaMemoria[this.y+1][this.x+1]){
-                    System.out.print("\nNo es un movimiento repe");
-                    return true;
-                }else{
-                    System.out.print("\nES UN MOVIMIENTO REPE");
-                    return false;
-                }
-            }
-        }
-        
-        if(movimiento == "moveW"){
-            if(this.x == 0){
-                return false;
-            }else if(this.y == 0 && this.x == this.dimX-1){
-                if(this.mapaMemoria[this.y][this.x-1]<=this.mapaMemoria[this.y+1][this.x-1] 
-                && this.mapaMemoria[this.y][this.x-1]<=this.mapaMemoria[this.y+1][this.x]){
-                    System.out.print("\nNo es un movimiento repe");
-                    return true;
-                }else{
-                    System.out.print("\nES UN MOVIMIENTO REPE");
-                    return false;
-                }
-            }else if(this.y == this.dimY-1 && this.x == this.dimX-1){
-                if(this.mapaMemoria[this.y][this.x-1]<=this.mapaMemoria[this.y-1][this.x-1]
-                && this.mapaMemoria[this.y][this.x-1]<=this.mapaMemoria[this.y-1][this.x]){
-                    System.out.print("\nNo es un movimiento repe");
-                    return true;
-                }else{
-                    System.out.print("\nES UN MOVIMIENTO REPE");
-                    return false;
-                }
-            }else if(this.y == 0){
-                if(this.mapaMemoria[this.y][this.x-1]<=this.mapaMemoria[this.y][this.x+1] 
-                && this.mapaMemoria[this.y][this.x-1]<=this.mapaMemoria[this.y+1][this.x-1] 
-                && this.mapaMemoria[this.y][this.x-1]<=this.mapaMemoria[this.y+1][this.x]
-                && this.mapaMemoria[this.y][this.x-1]<=this.mapaMemoria[this.y+1][this.x+1]){
-                    System.out.print("\nNo es un movimiento repe");
-                    return true;
-                }else{
-                    System.out.print("\nES UN MOVIMIENTO REPE");
-                    return false;
-                }
-            }else if(this.y == this.dimY-1){
-                if(this.mapaMemoria[this.y][this.x-1]<=this.mapaMemoria[this.y-1][this.x-1] 
-                && this.mapaMemoria[this.y][this.x-1]<=this.mapaMemoria[this.y-1][this.x+1] 
-                && this.mapaMemoria[this.y][this.x-1]<=this.mapaMemoria[this.y-1][this.x]
-                && this.mapaMemoria[this.y][this.x-1]<=this.mapaMemoria[this.y][this.x+1]){
-                    System.out.print("\nNo es un movimiento repe");
-                    return true;
-                }else{
-                    System.out.print("\nES UN MOVIMIENTO REPE");
-                    return false;
-                }
-            }else if(this.x == this.dimX-1){
-                if(this.mapaMemoria[this.y][this.x-1]<=this.mapaMemoria[this.y-1][this.x-1]
-                && this.mapaMemoria[this.y][this.x-1]<=this.mapaMemoria[this.y-1][this.x]
-                && this.mapaMemoria[this.y][this.x-1]<=this.mapaMemoria[this.y+1][this.x-1] 
-                && this.mapaMemoria[this.y][this.x-1]<=this.mapaMemoria[this.y+1][this.x]){
-                    System.out.print("\nNo es un movimiento repe");
-                    return true;
-                }else{
-                    System.out.print("\nES UN MOVIMIENTO REPE");
-                    return false;
-                }
-            }else{
-                if(this.mapaMemoria[this.y][this.x-1]<=this.mapaMemoria[this.y-1][this.x-1] 
-                && this.mapaMemoria[this.y][this.x-1]<=this.mapaMemoria[this.y-1][this.x+1] 
-                && this.mapaMemoria[this.y][this.x-1]<=this.mapaMemoria[this.y-1][this.x]
-                && this.mapaMemoria[this.y][this.x-1]<=this.mapaMemoria[this.y][this.x+1] 
-                && this.mapaMemoria[this.y][this.x-1]<=this.mapaMemoria[this.y+1][this.x-1] 
-                && this.mapaMemoria[this.y][this.x-1]<=this.mapaMemoria[this.y+1][this.x]
-                && this.mapaMemoria[this.y][this.x-1]<=this.mapaMemoria[this.y+1][this.x+1]){
-                    System.out.print("\nNo es un movimiento repe");
-                    return true;
-                }else{
-                    System.out.print("\nES UN MOVIMIENTO REPE");
-                    return false;
-                }
+     
+        protected String recibirSession() throws InterruptedException {
+            ACLMessage inbox;
+            inbox = this.receiveACLMessage();
+            System.out.println("\nRespuesta del controlador: ");
+            String fuente = inbox.getContent();
+            JsonObject objetoRespuesta = Json.parse(fuente).asObject();
+            if (inbox.getPerformativeInt() == ACLMessage.INFORM){
+                System.out.println("entrooooooooooo");
+                reply = inbox.getReplyWith();
+                System.out.println(reply);
+                JsonObject objetoPercepcion = Json.parse(fuente).asObject();
+                session = objetoPercepcion.get("session").asString();
             }
 
+            return session;   
         }
         
-        if(movimiento == "moveNW"){
-            if(this.y == 0){
-                return false;
-            }else if(this.x == 0){
-                return false;
-            }else if(this.y == this.dimY-1 && this.x == this.dimX-1){
-                if(this.mapaMemoria[this.y-1][this.x-1]<=this.mapaMemoria[this.y-1][this.x]
-                && this.mapaMemoria[this.y-1][this.x-1]<=this.mapaMemoria[this.y][this.x-1]){
-                    System.out.print("\nNo es un movimiento repe");
-                    return true;
-                }else{
-                    System.out.print("\nES UN MOVIMIENTO REPE");
-                    return false;
-                }
-            }else if(this.y == this.dimY-1){
-                if(this.mapaMemoria[this.y-1][this.x-1]<=this.mapaMemoria[this.y-1][this.x] 
-                && this.mapaMemoria[this.y-1][this.x-1]<=this.mapaMemoria[this.y-1][this.x+1] 
-                && this.mapaMemoria[this.y-1][this.x-1]<=this.mapaMemoria[this.y][this.x-1]
-                && this.mapaMemoria[this.y-1][this.x-1]<=this.mapaMemoria[this.y][this.x+1]){
-                    System.out.print("\nNo es un movimiento repe");
-                    return true;
-                }else{
-                    System.out.print("\nES UN MOVIMIENTO REPE");
-                    return false;
-                }
-            }else if(this.x == this.dimX-1){
-                if(this.mapaMemoria[this.y-1][this.x-1]<=this.mapaMemoria[this.y-1][this.x]
-                && this.mapaMemoria[this.y-1][this.x-1]<=this.mapaMemoria[this.y][this.x-1]
-                && this.mapaMemoria[this.y-1][this.x-1]<=this.mapaMemoria[this.y+1][this.x-1] 
-                && this.mapaMemoria[this.y-1][this.x-1]<=this.mapaMemoria[this.y+1][this.x]){
-                    System.out.print("\nNo es un movimiento repe");
-                    return true;
-                }else{
-                    System.out.print("\nES UN MOVIMIENTO REPE");
-                    return false;
-                }
-            }else{
-                if(this.mapaMemoria[this.y-1][this.x-1]<=this.mapaMemoria[this.y-1][this.x] 
-                && this.mapaMemoria[this.y-1][this.x-1]<=this.mapaMemoria[this.y-1][this.x+1] 
-                && this.mapaMemoria[this.y-1][this.x-1]<=this.mapaMemoria[this.y][this.x-1]
-                && this.mapaMemoria[this.y-1][this.x-1]<=this.mapaMemoria[this.y][this.x+1] 
-                && this.mapaMemoria[this.y-1][this.x-1]<=this.mapaMemoria[this.y+1][this.x-1] 
-                && this.mapaMemoria[this.y-1][this.x-1]<=this.mapaMemoria[this.y+1][this.x]
-                && this.mapaMemoria[this.y-1][this.x-1]<=this.mapaMemoria[this.y+1][this.x+1]){
-                    System.out.print("\nNo es un movimiento repe");
-                    return true;
-                }else{
-                    System.out.print("\nES UN MOVIMIENTO REPE");
-                    return false;
-                }
+        protected void recibirPosiciones() throws InterruptedException {
+            ACLMessage inbox;
+            inbox = this.receiveACLMessage();
+            System.out.println("\nRespuesta del controlador: ");
+            String fuente = inbox.getContent();
+            JsonObject objetoRespuesta = Json.parse(fuente).asObject();
+            if (inbox.getPerformativeInt() == ACLMessage.INFORM){
+                
+                
             }
-
+  
         }
         
-        return false;
         
-    }
+        
+//    protected boolean esBueno(String movimiento){
+//        if(movimiento.equals("moveN")){
+//            if(radar[4][5]!=0 && radar[4][5] <= this.z){
+//                return true;
+//            }
+//        }else if(movimiento.equals("moveNE")){
+//            
+//            if(radar[4][6]!=0 && radar[4][6] <= this.z){
+//                return true;
+//            }
+//        }else if(movimiento.equals("moveE")){
+//            if(radar[5][6]!=0 && radar[5][6] <= this.z){
+//                return true;
+//            }
+//        }else if(movimiento.equals("moveSE")){
+//            if(radar[6][6]!=0 && radar[6][6] <= this.z){
+//                return true;
+//            }
+//        }else if(movimiento.equals("moveS")){
+//            if(radar[6][5]!=0 && radar[6][5] <= this.z){
+//                return true;
+//            }
+//        }else if(movimiento.equals("moveSW")){
+//            
+//           if(radar[6][4]!=0 && radar[6][4] <= this.z){
+//                return true;
+//            }
+//        }else if(movimiento.equals("moveW")){
+//            
+//            if(radar[5][4]!=0 && radar[5][4] <= this.z){
+//                return true;
+//            }
+//        }else if(movimiento.equals("moveNW")){
+//             if(radar[4][4]!=0 && radar[4][4] <= this.z){
+//                return true;
+//            }
+//        }else if(movimiento.equals("moveUP")){
+//            if(this.z < this.alturaMax){
+//                return true;
+//            }
+//        }else if(movimiento.equals("moveDW")){
+//            if(this.z > this.alturaMin || this.z > radar[5][5]){
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
+        
 }
 

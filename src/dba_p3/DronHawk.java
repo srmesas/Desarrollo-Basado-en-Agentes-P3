@@ -26,6 +26,8 @@ public class DronHawk extends Dron{
         setQuiensoy("hawk");
         inicioX=5;
         inicioY=5;
+        this.dimX = super.dimX;
+        this.dimY = super.dimY;
     }
     
     public void execute(){ // lo que hace el agente
@@ -46,62 +48,27 @@ public class DronHawk extends Dron{
         } catch (InterruptedException ex) {
             Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
         }
-        do{
-            enviarMensajeJSON("query");
-            try {
-                respuesta = recibirMensajeJSON();
-            } catch (InterruptedException ex) {
-                Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            siguienteMovimiento();
-            enviarMensajeJSON("moveRefuelStopRescue");
-            try {
-                respuesta = recibirMensajeJSON();
-            } catch (InterruptedException ex) {
-                Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }while(this.torescue > 0);
-        enviarMensajeJSON("logout");
+        enviarMensajeJSONControlador("moveRefuelStopRescue");
+//        do"
+//            enviarMensajeJSON("query");
+//            try {
+//                respuesta = recibirMensajeJSON();
+//            } catch (InterruptedException ex) {
+//                Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//            siguienteMovimiento();
+//            enviarMensajeJSON("moveRefuelStopRescue");
+//            try {
+//                respuesta = recibirMensajeJSON();
+//            } catch (InterruptedException ex) {
+//                Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//        }while(this.torescue > 0);
+//        enviarMensajeJSON("logout");
     }
     
-    protected String recibirSession() throws InterruptedException {
-        ACLMessage inbox;
-            inbox = this.receiveACLMessage();
-            System.out.println("\nRespuesta del controlador: ");
-            String fuente = inbox.getContent();
-            JsonObject objetoRespuesta = Json.parse(fuente).asObject();
-            if (inbox.getPerformativeInt() == ACLMessage.INFORM){
-                System.out.println("entrooooooooooo");
-                reply = inbox.getReplyWith();
-                System.out.println(reply);
-                JsonObject objetoPercepcion = Json.parse(fuente).asObject();
-                session = objetoPercepcion.get("session").asString();
-            }
-            this.dimX = super.dimX;
-            this.dimY = super.dimY;
-        return session;
-           
-    }
+
     
-    public void siguienteMovimiento(){
-            Random r = new Random();
-            int ran = r.nextInt((4 - 0) + 1) + 0;
-            
-            switch(ran){
-                
-                case 0:
-                    this.commandmov = "moveN";
-                    
-                case 1:
-                    this.commandmov = "moveS";
-                    
-                case 2:
-                    this.commandmov = "moveE";
-                    
-                case 3:
-                    this.commandmov = "moveW";
-                
-            }
-    }
+    
     
 }
