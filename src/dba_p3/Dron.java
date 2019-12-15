@@ -96,6 +96,8 @@ class Dron extends SuperAgent {
     private int z_rec;
     private float angule_rec;
     private float distance_rec;
+    private float distanceRescueDron;
+    private float rescueAngle;
     DBAMap map;
     private final String controlador;
     Set<Aleman> arrayDeAlemanes = new LinkedHashSet<>();
@@ -518,13 +520,108 @@ class Dron extends SuperAgent {
         
     }
     
+    private float calcularDistancia2Puntos(int x1, int y1, int x2, int y2){
+        float distancia = (float) Math.sqrt(Math.pow(x1-x2,2) + Math.pow(y1-y2,2));
+        return distancia;
+    }
+    
+    private void calcularRescate(){
+        int xAleman=0;// = arrayDeAlemanes.
+        int yAleman=0;//DATOS FALSEADOS
+        distanceRescueDron = calcularDistancia2Puntos(x_rec,xAleman,y_rec,yAleman);
+        int xCentro = map.getWidth()/2;
+        int yCentro = map.getHeight()/2;
+        float a = calcularDistancia2Puntos(x_rec,xCentro,y_rec,yCentro);
+        float b = calcularDistancia2Puntos(xAleman,xCentro,yAleman,yCentro);
+        //Cálculo del angulo del triángulo que se forma con el centro
+        float rescueAngle = (float) Math.acos((Math.pow(a, 2)+Math.pow(b, 2)-Math.pow(distanceRescueDron, 2)/(2*a*b)));
+    }
+    
     public void siguienteMovimientoRescue(){
-        if (map.getLevel(x_rec, y_rec)<y_rec){
-            System.out.println("VOY BAJANDO; BAJANDO; BAJANDO");
-            commandmov = "moveDw";
+        calcularRescate();
+        if(arrayDeAlemanes.size() == 0){
+            if (map.getLevel(x_rec, y_rec)>y_rec){
+                commandmov = "moveDW";
+            }else{
+                commandmov = "refuel";
+            }
         }else{
-            System.out.println("RESCATO A UN ALEMAAAAAAAAANSSSSSS");
-            commandmov = "rescue";
+            if(distanceRescueDron <= 1){
+                System.out.println("encontre una alemannn eeeeehhhh");
+                if(distanceRescueDron==0){
+                    if (map.getLevel(x_rec, y_rec)<y_rec){
+                        System.out.println("VOY BAJANDO; BAJANDO; BAJANDO");
+                        commandmov = "moveDW";
+                    }else{
+                        System.out.println("RESCATO A UN ALEMAAAAAAAAANSSSSSS");
+                        commandmov = "rescue";
+                        // arrayDeAlemanes.add(a); QUITAR DEL ARRAY
+                    }  
+                }
+            }else{
+                if (this.rescueAngle<0 && this.rescueAngle<=22.5 && this.rescueAngle>337.5 && this.rescueAngle <=360){
+                    if (map.getLevel(x_rec+1, y_rec)>y_rec){
+                        commandmov = "moveUP";
+                    }else{
+                        commandmov = "moveN";
+                    }
+                }
+
+                if (this.rescueAngle>22.5 && this.rescueAngle<=67.5){
+                    if (map.getLevel(x_rec-1, y_rec+1)>y_rec){
+                        commandmov = "moveUP";
+                    }else{
+                        commandmov = "moveNE";
+                    }
+                }
+
+                if (this.rescueAngle>67.5 && this.rescueAngle<=112.5){
+                    if (map.getLevel(x_rec, y_rec+1)>y_rec){
+                        commandmov = "moveUP";
+                    }else{
+                        commandmov = "moveE";
+                    }           
+                }
+
+                if (this.rescueAngle>112.5 && this.rescueAngle<=157.5){
+                    if (map.getLevel(x_rec+2, y_rec+1)>y_rec){
+                        commandmov = "moveUP";
+                    }else{
+                        commandmov = "moveSE";
+                    }
+                }
+
+                if (this.rescueAngle>157.5 && this.rescueAngle<=202.5){
+                    if (map.getLevel(x_rec+1, y_rec)>y_rec){
+                        commandmov = "moveUP";
+                    }else{
+                        commandmov = "moveS";
+                    }
+                }
+                if (this.rescueAngle>205.5 && this.rescueAngle<=247.5){
+                    if (map.getLevel(x_rec-1, y_rec-1)>y_rec){
+                        commandmov = "moveUP";
+                    }else{
+                        commandmov = "moveSW";
+                    }
+                }
+                if (this.rescueAngle>247.5 && this.rescueAngle<=292.5){
+                    if (map.getLevel(x_rec, y_rec-1)>y_rec){
+                        commandmov = "moveUP";
+                    }else{
+                        commandmov = "moveW";
+                    }
+                }
+
+                if (this.rescueAngle>292.5 && this.rescueAngle<=337.5){
+                    if (map.getLevel(x_rec-1, y_rec-1)>y_rec){
+                        commandmov = "moveUP";
+                    }else{
+                        commandmov = "moveNW";
+                    }
+                }
+            }
+            checkFuel();
         }
     }
     
