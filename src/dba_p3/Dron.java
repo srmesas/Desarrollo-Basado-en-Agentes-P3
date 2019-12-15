@@ -70,7 +70,7 @@ class Dron extends SuperAgent {
     protected String reply;
     protected float distance;
     protected float angle;
-    protected int fuel;
+    protected float fuel;
     protected boolean goal;
     protected String status;
     protected int torescue;
@@ -129,8 +129,8 @@ class Dron extends SuperAgent {
         }
         
         System.out.print("\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n");
-        enviarSession(this.NOMBRE_HAWK, map.getWidth()/2, map.getHeight()/2);
-        enviarSession(this.NOMBRE_FLY1, 5, 5);
+        enviarSession(this.NOMBRE_HAWK, 20, 20);
+        enviarSession(this.NOMBRE_FLY1, 20, 20);
         enviarSession(this.NOMBRE_FLY2, map.getWidth()-20, map.getHeight()-20);
         System.out.print("\nbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\n");
         do{
@@ -307,7 +307,7 @@ class Dron extends SuperAgent {
                 
                 JsonArray radarJSON = objetoPercepcion.get("result").asObject().get("infrared").asArray();
                 
-                fuel = objetoPercepcion.get("result").asObject().get("fuel").asInt();
+                fuel = objetoPercepcion.get("result").asObject().get("fuel").asFloat();
                 
                 goal = objetoPercepcion.get("result").asObject().get("goal").asBoolean();
                 
@@ -552,7 +552,8 @@ class Dron extends SuperAgent {
                     commandmov = "moveNW";
                 }
             }
-       }   
+       }
+       checkFuel();
         
     }
     
@@ -579,6 +580,7 @@ class Dron extends SuperAgent {
                 objeto.add("z",z);
                 objeto.add("distancia",distance);
                 objeto.add("angulo",angle);
+                objeto.add("fuel",fuel);
                 resultado = objeto.toString();
                 
                 outbox = new ACLMessage();
@@ -646,6 +648,7 @@ class Dron extends SuperAgent {
                 z_rec = objetoRespuesta.get("x").asInt();
                 gonioAngle = objetoRespuesta.get("angulo").asFloat();
                 distance_rec = objetoRespuesta.get("distancia").asFloat();
+                fuel = objetoRespuesta.get("fuel").asFloat();
             }
              System.out.println("\n\tGPS: x:" + x_rec + " y:" + y_rec + " z:" + z_rec + " distance " + distance_rec + " angulo " + gonioAngle);
             int level = map.getLevel(x_rec+25, y_rec+20);
@@ -729,6 +732,16 @@ class Dron extends SuperAgent {
             }
             return false;
             
+        }
+        protected void checkFuel(){
+            
+            if((z_rec - map.getLevel(x_rec, y_rec))/5 > (this.fuel-10)/gasto){
+                System.out.println("\nNECESITA REPOSTAR "+fuel + " " + z_rec);
+                commandmov = "moveDW";
+                if(z_rec - map.getLevel(x_rec, y_rec) == 0){
+                    commandmov = "refuel";
+                }
+            }
         }
 }
 
