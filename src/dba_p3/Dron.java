@@ -528,13 +528,13 @@ class Dron extends SuperAgent {
     private void calcularRescate(){
         int xAleman=0;// = arrayDeAlemanes.
         int yAleman=0;//DATOS FALSEADOS
-        distanceRescueDron = calcularDistancia2Puntos(x_rec,xAleman,y_rec,yAleman);
+        distanceRescueDron = calcularDistancia2Puntos(x_rec,xAleman,y_rec,yAleman);//c
         int xCentro = map.getWidth()/2;
         int yCentro = map.getHeight()/2;
         float a = calcularDistancia2Puntos(x_rec,xCentro,y_rec,yCentro);
         float b = calcularDistancia2Puntos(xAleman,xCentro,yAleman,yCentro);
         //Cálculo del angulo del triángulo que se forma con el centro
-        float rescueAngle = (float) Math.acos((Math.pow(a, 2)+Math.pow(b, 2)-Math.pow(distanceRescueDron, 2)/(2*a*b)));
+        rescueAngle = (float) Math.acos((Math.pow(a, 2)+Math.pow(b, 2)-Math.pow(distanceRescueDron, 2)/(2*a*b)));
     }
     
     public void siguienteMovimientoRescue(){
