@@ -48,6 +48,13 @@ public class DronHawk extends Dron{
         } catch (InterruptedException ex) {
             Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
         }
+        enviarMensajeJSON("query");
+        try {
+            respuesta = recibirMensajeJSON();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        System.out.println("\n\tGPS: x:" + this.x + " y:" + this.y + " z:" + this.z);
         enviarMensajeJSONControlador("moveRefuelStopRescue");
 //        do"
 //            enviarMensajeJSON("query");

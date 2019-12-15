@@ -86,6 +86,12 @@ class Dron extends SuperAgent {
     int [][] radar =  new int[11][11];
     private String commandmov;
     private int [][] elevation =  new int[11][11];
+    private AgentID emisor;
+    private int x_rec;
+    private int y_rec;
+    private int z_rec;
+    private float angule_rec;
+    private float distance_rec;
 
 
     public Dron(AgentID aid) throws Exception {
@@ -116,12 +122,12 @@ class Dron extends SuperAgent {
             Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        enviarMensajeJSON("checkin");
-        try {
-            respuesta = recibirMensajeJSON();
-        } catch (InterruptedException ex) {
-            Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        enviarMensajeJSON("checkin");
+//        try {
+//            respuesta = recibirMensajeJSON();
+//        } catch (InterruptedException ex) {
+//            Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
+//        }
         System.out.print("\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n");
         enviarSession(this.NOMBRE_HAWK);
         enviarSession(this.NOMBRE_FLY1);
@@ -129,12 +135,12 @@ class Dron extends SuperAgent {
         enviarSession(this.NOMBRE_RESCUE);
         System.out.print("\nbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\n");
         do{
-            enviarMensajeJSON("query");
-            try {
-                respuesta = recibirMensajeJSON();
-            } catch (InterruptedException ex) {
-                Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
-            }
+//            enviarMensajeJSON("query");
+//            try {
+//                respuesta = recibirMensajeJSON();
+//            } catch (InterruptedException ex) {
+//                Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
+//            }
             System.out.print("\ncccccccccccccccccccccccccccccccccccccccccccccccc\n");
             try {
                 recibirPosiciones();
@@ -441,26 +447,72 @@ class Dron extends SuperAgent {
         this.send(outbox);
     }
     
-    public void siguienteMovimiento(){        
-            Random r = new Random();
-            int ran = r.nextInt((4 - 0) + 1) + 0;
-            
-            switch(ran){
-                
-                case 0:
-                    this.commandmov = "moveN";
-                    
-                case 1:
-                    this.commandmov = "moveS";
-                    
-                case 2:
-                    this.commandmov = "moveE";
-                    
-                case 3:
-                    this.commandmov = "moveW";
-                
+    protected void siguienteMovimiento(){
+       
+
+            if (this.gonioAngle<0 && this.gonioAngle<=22.5 && this.gonioAngle>337.5 && this.gonioAngle <=360){
+                if (>y_rec){
+                    commandmov = "moveUP";
+                }else{
+                    commandmov = "moveN";
+                }
             }
-    
+            
+            if (this.gonioAngle>22.5 && this.gonioAngle<=67.5){
+                if (radar[4][6]>y_rec){
+                    commandmov = "moveUP";
+                }else{
+                    commandmov = "moveNE";
+                }
+            }
+            
+            if (this.gonioAngle>67.5 && this.gonioAngle<=112.5){
+                if (radar[5][6]>y_rec){
+                    commandmov = "moveUP";
+                }else{
+                    commandmov = "moveE";
+                }           
+            }
+            
+            if (this.gonioAngle>112.5 && this.gonioAngle<=157.5){
+                if (radar[6][6]>y_rec){
+                    commandmov = "moveUP";
+                }else{
+                    commandmov = "moveSE";
+                }
+            }
+
+            if (this.gonioAngle>157.5 && this.gonioAngle<=202.5){
+                if (radar[6][5]>y_rec){
+                    commandmov = "moveUP";
+                }else{
+                    commandmov = "moveS";
+                }
+            }
+            if (this.gonioAngle>205.5 && this.gonioAngle<=247.5){
+                if (radar[6][4]>y_rec){
+                    commandmov = "moveUP";
+                }else{
+                    commandmov = "moveSW";
+                }
+            }
+            if (this.gonioAngle>247.5 && this.gonioAngle<=292.5){
+                if (radar[5][4]>y_rec){
+                    commandmov = "moveUP";
+                }else{
+                    commandmov = "moveW";
+                }
+            }
+             
+            if (this.gonioAngle>292.5 && this.gonioAngle<=337.5){
+                if (radar[4][4]>y_rec){
+                    commandmov = "moveUP";
+                }else{
+                    commandmov = "moveNW";
+                }
+            }
+            
+        
     }
     
  
@@ -475,6 +527,8 @@ class Dron extends SuperAgent {
                 objeto.add("x",x);
                 objeto.add("y",y);
                 objeto.add("z",z);
+                objeto.add("distancia",distance);
+                objeto.add("angulo",angle);
                 resultado = objeto.toString();
                 
                 outbox = new ACLMessage();
@@ -531,17 +585,26 @@ class Dron extends SuperAgent {
         protected void recibirPosiciones() throws InterruptedException {
             ACLMessage inbox;
             inbox = this.receiveACLMessage();
-            System.out.println("\nRespuesta del controlador: ");
+            emisor = inbox.getReceiver();
+            System.out.println("\nRecibir posiciones de : "+ emisor );
             String fuente = inbox.getContent();
             JsonObject objetoRespuesta = Json.parse(fuente).asObject();
             if (inbox.getPerformativeInt() == ACLMessage.INFORM){
-                
-                
+                x_rec = objetoRespuesta.get("x").asInt();
+                y_rec = objetoRespuesta.get("x").asInt();
+                z_rec = objetoRespuesta.get("x").asInt();
+                gonioAngle = objetoRespuesta.get("angulo").asFloat();
+                distance_rec = objetoRespuesta.get("distancia").asFloat();
             }
+             System.out.println("\n\tGPS: x:" + x_rec + " y:" + y_rec + " z:" + z_rec + " distance " + distance_rec + " angulo " + angule_rec);
   
         }
         
-        
+        private float calcularGonio(){
+            
+           float resultado = 50;
+            return resultado;
+        }
         
 //    protected boolean esBueno(String movimiento){
 //        if(movimiento.equals("moveN")){
