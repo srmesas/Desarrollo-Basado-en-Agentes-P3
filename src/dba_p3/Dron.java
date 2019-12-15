@@ -15,6 +15,7 @@ import es.upv.dsic.gti_ia.core.AgentID;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -80,6 +81,11 @@ class Dron extends SuperAgent {
     protected String movimiento;
     protected int inicioX=50;
     protected int inicioY=50;
+    private float gonioDistance;
+    private float gonioAngle;
+    int [][] radar =  new int[11][11];
+    private String commandmov;
+    private int [][] elevation =  new int[11][11];
 
 
     public Dron(AgentID aid) throws Exception {
@@ -429,5 +435,1033 @@ class Dron extends SuperAgent {
         this.send(outbox);
     }
     
+    public void siguienteMovimientoScouter(){
+        
+        if (this.gonioDistance == -1 && this.gonioAngle == -1){ 
+            
+            Random r = new Random();
+            int ran = r.nextInt((4 - 0) + 1) + 0;
+            
+            switch(ran){
+                
+                case 0:
+                    this.commandmov = "moveN";
+                    
+                case 1:
+                    this.commandmov = "moveS";
+                    
+                case 2:
+                    this.commandmov = "moveE";
+                    
+                case 3:
+                    this.commandmov = "moveW";
+                
+            }
+        }
+        else{
+            //Ha encontrado un alemán
+            if (this.gonioDistance > 1){ 
+            
+                if (((this.gonioAngle>=0 && this.gonioAngle<=22.5) || (this.gonioAngle>337.5 && this.gonioAngle <=360))){
+                    if (radar[4][5]>z && esBueno("moveUP")){
+                        commandmov = "moveUP";
+                    }else if(radar[4][5]>0 && esAceptable("moveN") && esBueno("moveN")){
+                        commandmov = "moveN";
+                    }else{
+                        if(esAceptable("moveNW") && esBueno("moveNW")){
+                            commandmov = "moveNW";
+                        }else if(esAceptable("moveW") && esBueno("moveW")){
+                            commandmov = "moveW";
+                        }else if(esAceptable("moveSW") && esBueno("moveSW")){
+                            commandmov = "moveSW";
+                        }else if(esAceptable("moveS") && esBueno("moveS")){
+                            commandmov = "moveS";
+                        }else if(esAceptable("moveSE") && esBueno("moveSE")){
+                            commandmov = "moveSE";
+                        }else if(esAceptable("moveE") && esBueno("moveE")){
+                            commandmov = "moveE";
+                        }else if(esAceptable("moveNE") && esBueno("moveNE")){
+                            commandmov = "moveNE";
+                        }
+                    }
+                }
+                if (this.gonioAngle>22.5 && this.gonioAngle<=67.5 ){
+                    if (radar[4][6]>z && esBueno("moveUP")){
+                        commandmov = "moveUP";
+                    }else if (radar[4][6]>0 && esAceptable("moveNE") && esBueno("moveNE")){
+                        commandmov = "moveNE";
+                    }else{
+                        if(esAceptable("moveN") && esBueno("moveN")){
+                            commandmov = "moveN";
+                        }else if(esAceptable("moveNW") && esBueno("moveNW")){
+                            commandmov = "moveNW";
+                        }else if(esAceptable("moveW") && esBueno("moveW")){
+                            commandmov = "moveW";
+                        }else if(esAceptable("moveSW") && esBueno("moveSW")){
+                            commandmov = "moveSW";
+                        }else if(esAceptable("moveS") && esBueno("moveS")){
+                            commandmov = "moveS";
+                        }else if(esAceptable("moveSE") && esBueno("moveSE")){
+                            commandmov = "moveSE";
+                        }else if(esAceptable("moveE") && esBueno("moveE")){
+                            commandmov = "moveE";
+                        } 
+                    }
+                }
+                if ((this.gonioAngle>67.5 && this.gonioAngle<=112.5)){
+                    if (radar[5][6]>z && esBueno("moveUP")){
+                        commandmov = "moveUP";
+                    }else if(radar[5][6]>0 && esAceptable("moveE") && esBueno("moveE")){
+                        commandmov = "moveE";
+                    }else{
+                        if(esAceptable("moveNE") && esBueno("moveNE")){
+                            commandmov = "moveNE";
+                        }else if(esAceptable("moveN") && esBueno("moveN")){
+                            commandmov = "moveN";
+                        }else if(esAceptable("moveNW") && esBueno("moveNW")){
+                            commandmov = "moveNW";
+                        }else if(esAceptable("moveW") && esBueno("moveW")){
+                            commandmov = "moveW";
+                        }else if(esAceptable("moveSW") && esBueno("moveSW")){
+                            commandmov = "moveSW";
+                        }else if(esAceptable("moveS") && esBueno("moveS")){
+                            commandmov = "moveS";
+                        }else if(esAceptable("moveSE") && esBueno("moveSE")){
+                            commandmov = "moveSE";
+                        }
+                    }         
+                }
+
+                if ((this.gonioAngle>112.5 && this.gonioAngle<=157.5)){
+                    if (radar[6][6]>z && esBueno("moveUP")){
+                        commandmov = "moveUP";
+                    }else if(radar[6][6]>0 && esAceptable("moveSE") && esBueno("moveSE")){
+                        commandmov = "moveSE";
+                    }else{
+                        if(esAceptable("moveE") && esBueno("moveE")){
+                            commandmov = "moveE";
+                        }else if(esAceptable("moveNE") && esBueno("moveNE")){
+                            commandmov = "moveNE";
+                        }else if(esAceptable("moveN") && esBueno("moveN")){
+                            commandmov = "moveN";
+                        }else if(esAceptable("moveNW") && esBueno("moveNW")){
+                            commandmov = "moveNW";
+                        }else if(esAceptable("moveW") && esBueno("moveW")){
+                            commandmov = "moveW";
+                        }else if(esAceptable("moveSW") && esBueno("moveSW")){
+                            commandmov = "moveSW";
+                        }else if(esAceptable("moveS") && esBueno("moveS")){
+                            commandmov = "moveS";
+                        }
+                    }  
+                }
+
+                if ((this.gonioAngle>157.5 && this.gonioAngle<=205.5)){
+                    if (radar[6][5]>z && esBueno("moveUP")){
+                        commandmov = "moveUP";
+                    }else if(radar[6][5]>0 && esAceptable("moveS") && esBueno("moveS")){
+                        commandmov = "moveS";
+                    }else{
+                        if(esAceptable("moveSE") && esBueno("moveSE")){
+                            commandmov = "moveSE";
+                        }else if(esAceptable("moveE") && esBueno("moveE")){
+                            commandmov = "moveE";
+                        }else if(esAceptable("moveNE") && esBueno("moveNE")){
+                            commandmov = "moveNE";
+                        }else if(esAceptable("moveN") && esBueno("moveN")){
+                            commandmov = "moveN";
+                        }else if(esAceptable("moveNW") && esBueno("moveNW")){
+                            commandmov = "moveNW";
+                        }else if(esAceptable("moveW") && esBueno("moveW")){
+                            commandmov = "moveW";
+                        }else if(esAceptable("moveSW") && esBueno("moveSW")){
+                            commandmov = "moveSW";
+                        }
+                    } 
+                }
+
+                if ((this.gonioAngle>205.5 && this.gonioAngle<=247.5)){
+                    if (radar[6][4]>z && esBueno("moveUP")){
+                        commandmov = "moveUP";
+                    }else if(radar[6][4]>0 && esAceptable("moveSW") && esBueno("moveSW")){
+                        commandmov = "moveSW";
+                    }else{
+                        if(esAceptable("moveS") && esBueno("moveS")){
+                            commandmov = "moveS";
+                        }else if(esAceptable("moveSE") && esBueno("moveSE")){
+                            commandmov = "moveSE";
+                        }else if(esAceptable("moveE") && esBueno("moveE")){
+                            commandmov = "moveE";
+                        }else if(esAceptable("moveNE") && esBueno("moveNE")){
+                            commandmov = "moveNE";
+                        }else if(esAceptable("moveN") && esBueno("moveN")){
+                            commandmov = "moveN";
+                        }else if(esAceptable("moveNW") && esBueno("moveNW")){
+                            commandmov = "moveNW";
+                        }else if(esAceptable("moveW") && esBueno("moveW")){
+                            commandmov = "moveW";
+                        }
+                    } 
+                }
+
+                if ((this.gonioAngle>247.5 && this.gonioAngle<=292.5)){
+                    if (radar[5][4]>z && esBueno("moveUP")){
+                        commandmov = "moveUP";
+                    }else if(radar[5][4]>0 && esAceptable("moveW") && esBueno("moveW")){
+                        commandmov = "moveW";
+                    }else{
+                        if(esAceptable("moveSW") && esBueno("moveSW")){
+                            commandmov = "moveSW";
+                        }else if(esAceptable("moveS") && esBueno("moveS")){
+                            commandmov = "moveS";
+                        }else if(esAceptable("moveSE") && esBueno("moveSE")){
+                            commandmov = "moveE";
+                        }else if(esAceptable("moveE") && esBueno("moveE")){
+                            commandmov = "moveE";
+                        }else if(esAceptable("moveNE") && esBueno("moveNE")){
+                            commandmov = "moveNE";
+                        }else if(esAceptable("moveN") && esBueno("moveN")){
+                            commandmov = "moveN";
+                        }else if(esAceptable("moveNW") && esBueno("moveNW")){
+                            commandmov = "moveNW";
+                        } 
+                    } 
+                }
+
+                if (this.gonioAngle>292.5 && this.gonioAngle<=337.5){
+                    if (radar[4][4]>z && esBueno("moveUP")){
+                        commandmov = "moveUP";
+                    }else if (radar[4][4]>0 && esAceptable("moveNW") && esBueno("moveNW")){
+                        commandmov = "moveNW";
+                    }else{
+                        if(esAceptable("moveW") && esBueno("moveW")){
+                            commandmov = "moveW";
+                        }else if(esAceptable("moveSW") && esBueno("moveSW")){
+                            commandmov = "moveSW";
+                        }else if(esAceptable("moveS") && esBueno("moveS")){
+                            commandmov = "moveS";
+                        }else if(esAceptable("moveSE") && esBueno("moveSE")){
+                            commandmov = "moveSE";
+                        }else if(esAceptable("moveE") && esBueno("moveE")){
+                            commandmov = "moveE";
+                        }else if(esAceptable("moveNE") && esBueno("moveNE")){
+                            commandmov = "moveNE";
+                        }else if(esAceptable("moveN") && esBueno("moveN")){
+                            commandmov = "moveN";
+                        }
+                    } 
+                }
+
+            }else{
+                if(z > elevation[5][5]){
+                        commandmov = "moveDW";
+                        if(elevation[5][5]==0){
+                           //Rescatar
+                        }
+                }
+            }
+            
+            
+        }
+        checkFuel();
+        if(!esBueno(commandmov)){
+            System.out.println("\nQUE SE CAE");
+        }
+        if(this.commandmov != "moveUP" && this.commandmov != "moveDW"){
+            guardarPosicionMemoria();
+        }
+        
+        System.out.println(commandmov);
+        
+        
+        
+    }
     
+    public void siguienteMovimientoRescuer(){
+        
+        //Ha encontrado un alemán
+        if (this.gonioDistance > 1){ 
+            
+            if (((this.gonioAngle>=0 && this.gonioAngle<=22.5) || (this.gonioAngle>337.5 && this.gonioAngle <=360))){
+                if (radar[4][5]>z && esBueno("moveUP")){
+                    commandmov = "moveUP";
+                }else if(radar[4][5]>0 && esAceptable("moveN") && esBueno("moveN")){
+                    commandmov = "moveN";
+                }else{
+                    if(esAceptable("moveNW") && esBueno("moveNW")){
+                        commandmov = "moveNW";
+                    }else if(esAceptable("moveW") && esBueno("moveW")){
+                        commandmov = "moveW";
+                    }else if(esAceptable("moveSW") && esBueno("moveSW")){
+                        commandmov = "moveSW";
+                    }else if(esAceptable("moveS") && esBueno("moveS")){
+                        commandmov = "moveS";
+                    }else if(esAceptable("moveSE") && esBueno("moveSE")){
+                        commandmov = "moveSE";
+                    }else if(esAceptable("moveE") && esBueno("moveE")){
+                        commandmov = "moveE";
+                    }else if(esAceptable("moveNE") && esBueno("moveNE")){
+                        commandmov = "moveNE";
+                    }
+                }
+            }
+            if (this.gonioAngle>22.5 && this.gonioAngle<=67.5 ){
+                if (radar[4][6]>z && esBueno("moveUP")){
+                    commandmov = "moveUP";
+                }else if (radar[4][6]>0 && esAceptable("moveNE") && esBueno("moveNE")){
+                    commandmov = "moveNE";
+                }else{
+                    if(esAceptable("moveN") && esBueno("moveN")){
+                        commandmov = "moveN";
+                    }else if(esAceptable("moveNW") && esBueno("moveNW")){
+                        commandmov = "moveNW";
+                    }else if(esAceptable("moveW") && esBueno("moveW")){
+                        commandmov = "moveW";
+                    }else if(esAceptable("moveSW") && esBueno("moveSW")){
+                        commandmov = "moveSW";
+                    }else if(esAceptable("moveS") && esBueno("moveS")){
+                        commandmov = "moveS";
+                    }else if(esAceptable("moveSE") && esBueno("moveSE")){
+                        commandmov = "moveSE";
+                    }else if(esAceptable("moveE") && esBueno("moveE")){
+                        commandmov = "moveE";
+                    } 
+                }
+            }
+            if ((this.gonioAngle>67.5 && this.gonioAngle<=112.5)){
+                if (radar[5][6]>z && esBueno("moveUP")){
+                    commandmov = "moveUP";
+                }else if(radar[5][6]>0 && esAceptable("moveE") && esBueno("moveE")){
+                    commandmov = "moveE";
+                }else{
+                    if(esAceptable("moveNE") && esBueno("moveNE")){
+                        commandmov = "moveNE";
+                    }else if(esAceptable("moveN") && esBueno("moveN")){
+                        commandmov = "moveN";
+                    }else if(esAceptable("moveNW") && esBueno("moveNW")){
+                        commandmov = "moveNW";
+                    }else if(esAceptable("moveW") && esBueno("moveW")){
+                        commandmov = "moveW";
+                    }else if(esAceptable("moveSW") && esBueno("moveSW")){
+                        commandmov = "moveSW";
+                    }else if(esAceptable("moveS") && esBueno("moveS")){
+                        commandmov = "moveS";
+                    }else if(esAceptable("moveSE") && esBueno("moveSE")){
+                        commandmov = "moveSE";
+                    }
+                }         
+            }
+            
+            if ((this.gonioAngle>112.5 && this.gonioAngle<=157.5)){
+                if (radar[6][6]>z && esBueno("moveUP")){
+                    commandmov = "moveUP";
+                }else if(radar[6][6]>0 && esAceptable("moveSE") && esBueno("moveSE")){
+                    commandmov = "moveSE";
+                }else{
+                    if(esAceptable("moveE") && esBueno("moveE")){
+                        commandmov = "moveE";
+                    }else if(esAceptable("moveNE") && esBueno("moveNE")){
+                        commandmov = "moveNE";
+                    }else if(esAceptable("moveN") && esBueno("moveN")){
+                        commandmov = "moveN";
+                    }else if(esAceptable("moveNW") && esBueno("moveNW")){
+                        commandmov = "moveNW";
+                    }else if(esAceptable("moveW") && esBueno("moveW")){
+                        commandmov = "moveW";
+                    }else if(esAceptable("moveSW") && esBueno("moveSW")){
+                        commandmov = "moveSW";
+                    }else if(esAceptable("moveS") && esBueno("moveS")){
+                        commandmov = "moveS";
+                    }
+                }  
+            }
+
+            if ((this.gonioAngle>157.5 && this.gonioAngle<=205.5)){
+                if (radar[6][5]>z && esBueno("moveUP")){
+                    commandmov = "moveUP";
+                }else if(radar[6][5]>0 && esAceptable("moveS") && esBueno("moveS")){
+                    commandmov = "moveS";
+                }else{
+                    if(esAceptable("moveSE") && esBueno("moveSE")){
+                        commandmov = "moveSE";
+                    }else if(esAceptable("moveE") && esBueno("moveE")){
+                        commandmov = "moveE";
+                    }else if(esAceptable("moveNE") && esBueno("moveNE")){
+                        commandmov = "moveNE";
+                    }else if(esAceptable("moveN") && esBueno("moveN")){
+                        commandmov = "moveN";
+                    }else if(esAceptable("moveNW") && esBueno("moveNW")){
+                        commandmov = "moveNW";
+                    }else if(esAceptable("moveW") && esBueno("moveW")){
+                        commandmov = "moveW";
+                    }else if(esAceptable("moveSW") && esBueno("moveSW")){
+                        commandmov = "moveSW";
+                    }
+                } 
+            }
+            
+            if ((this.gonioAngle>205.5 && this.gonioAngle<=247.5)){
+                if (radar[6][4]>z && esBueno("moveUP")){
+                    commandmov = "moveUP";
+                }else if(radar[6][4]>0 && esAceptable("moveSW") && esBueno("moveSW")){
+                    commandmov = "moveSW";
+                }else{
+                    if(esAceptable("moveS") && esBueno("moveS")){
+                        commandmov = "moveS";
+                    }else if(esAceptable("moveSE") && esBueno("moveSE")){
+                        commandmov = "moveSE";
+                    }else if(esAceptable("moveE") && esBueno("moveE")){
+                        commandmov = "moveE";
+                    }else if(esAceptable("moveNE") && esBueno("moveNE")){
+                        commandmov = "moveNE";
+                    }else if(esAceptable("moveN") && esBueno("moveN")){
+                        commandmov = "moveN";
+                    }else if(esAceptable("moveNW") && esBueno("moveNW")){
+                        commandmov = "moveNW";
+                    }else if(esAceptable("moveW") && esBueno("moveW")){
+                        commandmov = "moveW";
+                    }
+                } 
+            }
+            
+            if ((this.gonioAngle>247.5 && this.gonioAngle<=292.5)){
+                if (radar[5][4]>z && esBueno("moveUP")){
+                    commandmov = "moveUP";
+                }else if(radar[5][4]>0 && esAceptable("moveW") && esBueno("moveW")){
+                    commandmov = "moveW";
+                }else{
+                    if(esAceptable("moveSW") && esBueno("moveSW")){
+                        commandmov = "moveSW";
+                    }else if(esAceptable("moveS") && esBueno("moveS")){
+                        commandmov = "moveS";
+                    }else if(esAceptable("moveSE") && esBueno("moveSE")){
+                        commandmov = "moveE";
+                    }else if(esAceptable("moveE") && esBueno("moveE")){
+                        commandmov = "moveE";
+                    }else if(esAceptable("moveNE") && esBueno("moveNE")){
+                        commandmov = "moveNE";
+                    }else if(esAceptable("moveN") && esBueno("moveN")){
+                        commandmov = "moveN";
+                    }else if(esAceptable("moveNW") && esBueno("moveNW")){
+                        commandmov = "moveNW";
+                    } 
+                } 
+            }
+            
+            if (this.gonioAngle>292.5 && this.gonioAngle<=337.5){
+                if (radar[4][4]>z && esBueno("moveUP")){
+                    commandmov = "moveUP";
+                }else if (radar[4][4]>0 && esAceptable("moveNW") && esBueno("moveNW")){
+                    commandmov = "moveNW";
+                }else{
+                    if(esAceptable("moveW") && esBueno("moveW")){
+                        commandmov = "moveW";
+                    }else if(esAceptable("moveSW") && esBueno("moveSW")){
+                        commandmov = "moveSW";
+                    }else if(esAceptable("moveS") && esBueno("moveS")){
+                        commandmov = "moveS";
+                    }else if(esAceptable("moveSE") && esBueno("moveSE")){
+                        commandmov = "moveSE";
+                    }else if(esAceptable("moveE") && esBueno("moveE")){
+                        commandmov = "moveE";
+                    }else if(esAceptable("moveNE") && esBueno("moveNE")){
+                        commandmov = "moveNE";
+                    }else if(esAceptable("moveN") && esBueno("moveN")){
+                        commandmov = "moveN";
+                    }
+                } 
+            }
+
+        }else{
+            if(z > elevation[5][5]){
+                    commandmov = "moveDW";
+                    if(elevation[5][5]==0){
+                       //Rescatar
+                    }
+                    
+            }
+            
+        }
+        checkFuel();
+        if(!esBueno(commandmov)){
+            System.out.println("\nQUE SE CAE");
+        }
+        if(this.commandmov != "moveUP" && this.commandmov != "moveDW"){
+            guardarPosicionMemoria();
+        }
+        
+        System.out.println(commandmov);
+        
+        
+        
+    }
+    
+    protected void checkFuel(){
+        
+        if((z - radar[5][5])/5 > (this.fuel-10)/0.5){
+            System.out.println("\nNECESITA REPOSTAR");
+            commandmov = "moveDW";
+            if(z - radar[5][5] == 0){
+                commandmov = "refuel";
+            }
+        }
+    }
+    
+    protected boolean esBueno(String movimiento){
+        if(movimiento.equals("moveN")){
+            if(radar[4][5]!=0 && radar[4][5] <= this.z){
+                return true;
+            }
+        }else if(movimiento.equals("moveNE")){
+            
+            if(radar[4][6]!=0 && radar[4][6] <= this.z){
+                return true;
+            }
+        }else if(movimiento.equals("moveE")){
+            if(radar[5][6]!=0 && radar[5][6] <= this.z){
+                return true;
+            }
+        }else if(movimiento.equals("moveSE")){
+            if(radar[6][6]!=0 && radar[6][6] <= this.z){
+                return true;
+            }
+        }else if(movimiento.equals("moveS")){
+            if(radar[6][5]!=0 && radar[6][5] <= this.z){
+                return true;
+            }
+        }else if(movimiento.equals("moveSW")){
+            
+           if(radar[6][4]!=0 && radar[6][4] <= this.z){
+                return true;
+            }
+        }else if(movimiento.equals("moveW")){
+            
+            if(radar[5][4]!=0 && radar[5][4] <= this.z){
+                return true;
+            }
+        }else if(movimiento.equals("moveNW")){
+             if(radar[4][4]!=0 && radar[4][4] <= this.z){
+                return true;
+            }
+        }else if(movimiento.equals("moveUP")){
+            if(this.z < this.alturaMax){
+                return true;
+            }
+        }else if(movimiento.equals("moveDW")){
+            if(this.z > radar[5][5]){
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    protected Boolean esAceptable(String movimiento){
+        
+        
+        if(movimiento == "moveN"){
+            if(this.y==0){
+                return false;
+            }else if(this.y == this.dimY-1 && this.x == this.dimX-1){
+                if(this.mapaMemoria[this.y-1][this.x]<=this.mapaMemoria[this.y-1][this.x-1]
+                && this.mapaMemoria[this.y-1][this.x]<=this.mapaMemoria[this.y][this.x-1]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else if(this.y == this.dimY && this.x == 0){
+                if(this.mapaMemoria[this.y-1][this.x]<=this.mapaMemoria[this.y-1][this.x+1] 
+                && this.mapaMemoria[this.y-1][this.x]<=this.mapaMemoria[this.y][this.x+1]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else if(this.x==0){
+                if((this.mapaMemoria[this.y-1][this.x]<=this.mapaMemoria[this.y-1][this.x+1] 
+                && this.mapaMemoria[this.y-1][this.x]<=this.mapaMemoria[this.y][this.x+1] 
+                && this.mapaMemoria[this.y-1][this.x]<=this.mapaMemoria[this.y+1][this.x]
+                && this.mapaMemoria[this.y-1][this.x]<=this.mapaMemoria[this.y+1][this.x+1])){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else if(this.y == this.dimY-1){
+                if(this.mapaMemoria[this.y-1][this.x]<=this.mapaMemoria[this.y-1][this.x-1] 
+                && this.mapaMemoria[this.y-1][this.x]<=this.mapaMemoria[this.y-1][this.x+1] 
+                && this.mapaMemoria[this.y-1][this.x]<=this.mapaMemoria[this.y][this.x-1]
+                && this.mapaMemoria[this.y-1][this.x]<=this.mapaMemoria[this.y][this.x+1]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else if(this.x == this.dimX-1){
+                if(this.mapaMemoria[this.y-1][this.x]<=this.mapaMemoria[this.y-1][this.x-1] 
+                && this.mapaMemoria[this.y-1][this.x]<=this.mapaMemoria[this.y][this.x-1]
+                && this.mapaMemoria[this.y-1][this.x]<=this.mapaMemoria[this.y+1][this.x-1]
+                && this.mapaMemoria[this.y-1][this.x]<=this.mapaMemoria[this.y+1][this.x]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else{
+                if(this.mapaMemoria[this.y-1][this.x]<=this.mapaMemoria[this.y-1][this.x-1] 
+                && this.mapaMemoria[this.y-1][this.x]<=this.mapaMemoria[this.y-1][this.x+1] 
+                && this.mapaMemoria[this.y-1][this.x]<=this.mapaMemoria[this.y][this.x-1]
+                && this.mapaMemoria[this.y-1][this.x]<=this.mapaMemoria[this.y][this.x+1] 
+                && this.mapaMemoria[this.y-1][this.x]<=this.mapaMemoria[this.y+1][this.x-1]
+                && this.mapaMemoria[this.y-1][this.x]<=this.mapaMemoria[this.y+1][this.x]
+                && this.mapaMemoria[this.y-1][this.x]<=this.mapaMemoria[this.y+1][this.x+1]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }
+        }
+        
+        if(movimiento == "moveNE"){///////////////////////////////////////////////////////////////
+            if(this.y == 0){
+                return false;
+            }else if(this.x == this.dimX-1){
+                return false;
+            }else if(this.y == this.dimY-1 && this.x == 0){
+                if(this.mapaMemoria[this.y-1][this.x+1]<=this.mapaMemoria[this.y-1][this.x]
+                && this.mapaMemoria[this.y-1][this.x+1]<=this.mapaMemoria[this.y][this.x+1]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }    
+            }else if(this.x == 0){
+                if(this.mapaMemoria[this.y-1][this.x+1]<=this.mapaMemoria[this.y-1][this.x] 
+                && this.mapaMemoria[this.y-1][this.x+1]<=this.mapaMemoria[this.y][this.x+1] 
+                && this.mapaMemoria[this.y-1][this.x+1]<=this.mapaMemoria[this.y+1][this.x]
+                && this.mapaMemoria[this.y-1][this.x+1]<=this.mapaMemoria[this.y+1][this.x+1]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else if(this.y == this.dimY-1){
+                if(this.mapaMemoria[this.y-1][this.x+1]<=this.mapaMemoria[this.y-1][this.x-1] 
+                && this.mapaMemoria[this.y-1][this.x+1]<=this.mapaMemoria[this.y-1][this.x] 
+                && this.mapaMemoria[this.y-1][this.x+1]<=this.mapaMemoria[this.y][this.x-1]
+                && this.mapaMemoria[this.y-1][this.x+1]<=this.mapaMemoria[this.y][this.x+1]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else{
+                if(this.mapaMemoria[this.y-1][this.x+1]<=this.mapaMemoria[this.y-1][this.x-1] 
+                && this.mapaMemoria[this.y-1][this.x+1]<=this.mapaMemoria[this.y-1][this.x] 
+                && this.mapaMemoria[this.y-1][this.x+1]<=this.mapaMemoria[this.y][this.x-1]
+                && this.mapaMemoria[this.y-1][this.x+1]<=this.mapaMemoria[this.y][this.x+1] 
+                && this.mapaMemoria[this.y-1][this.x+1]<=this.mapaMemoria[this.y+1][this.x-1]
+                && this.mapaMemoria[this.y-1][this.x+1]<=this.mapaMemoria[this.y+1][this.x]
+                && this.mapaMemoria[this.y-1][this.x+1]<=this.mapaMemoria[this.y+1][this.x+1]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    //mostrarMemoria();
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }
+        }
+        
+        if(movimiento == "moveE"){
+            if(this.x == this.dimX-1){
+                return false;
+            }else if(this.y == 0 && this.x == 0){
+                if(this.mapaMemoria[this.y][this.x+1]<=this.mapaMemoria[this.y][this.x] 
+                && this.mapaMemoria[this.y][this.x+1]<=this.mapaMemoria[this.y+1][this.x]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else if(this.y == this.dimY-1 && this.x == 0){
+                if(this.mapaMemoria[this.y][this.x+1]<=this.mapaMemoria[this.y-1][this.x] 
+                && this.mapaMemoria[this.y][this.x+1]<=this.mapaMemoria[this.y-1][this.x+1]
+                && this.mapaMemoria[this.y][this.x+1]<=this.mapaMemoria[this.y][this.x] ){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else if(this.y == 0){
+                if(this.mapaMemoria[this.y][this.x+1]<=this.mapaMemoria[this.y][this.x-1] 
+                && this.mapaMemoria[this.y][this.x+1]<=this.mapaMemoria[this.y][this.x] 
+                && this.mapaMemoria[this.y][this.x+1]<=this.mapaMemoria[this.y+1][this.x-1]
+                && this.mapaMemoria[this.y][this.x+1]<=this.mapaMemoria[this.y+1][this.x]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else if(this.x == 0){
+                if(this.mapaMemoria[this.y][this.x+1]<=this.mapaMemoria[this.y-1][this.x] 
+                && this.mapaMemoria[this.y][this.x+1]<=this.mapaMemoria[this.y-1][this.x+1]
+                && this.mapaMemoria[this.y][this.x+1]<=this.mapaMemoria[this.y][this.x]
+                && this.mapaMemoria[this.y][this.x+1]<=this.mapaMemoria[this.y+1][this.x]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else if(this.y == this.dimY-1){
+                if(this.mapaMemoria[this.y][this.x+1]<=this.mapaMemoria[this.y-1][this.x-1] 
+                && this.mapaMemoria[this.y][this.x+1]<=this.mapaMemoria[this.y-1][this.x] 
+                && this.mapaMemoria[this.y][this.x+1]<=this.mapaMemoria[this.y-1][this.x+1]
+                && this.mapaMemoria[this.y][this.x+1]<=this.mapaMemoria[this.y][this.x-1] 
+                && this.mapaMemoria[this.y][this.x+1]<=this.mapaMemoria[this.y][this.x] ){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else{
+                if(this.mapaMemoria[this.y][this.x+1]<=this.mapaMemoria[this.y-1][this.x-1] 
+                && this.mapaMemoria[this.y][this.x+1]<=this.mapaMemoria[this.y-1][this.x] 
+                && this.mapaMemoria[this.y][this.x+1]<=this.mapaMemoria[this.y-1][this.x+1]
+                && this.mapaMemoria[this.y][this.x+1]<=this.mapaMemoria[this.y][this.x-1] 
+                && this.mapaMemoria[this.y][this.x+1]<=this.mapaMemoria[this.y][this.x] 
+                && this.mapaMemoria[this.y][this.x+1]<=this.mapaMemoria[this.y+1][this.x-1]
+                && this.mapaMemoria[this.y][this.x+1]<=this.mapaMemoria[this.y+1][this.x]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }
+        }
+        
+        if(movimiento == "moveSE"){
+            if(this.y == this.dimY-1){
+                return false;
+            }else if(this.x == this.dimX-1){
+                return false;
+            }else if(this.y == 0 && this.x == 0){
+                if(this.mapaMemoria[this.y+1][this.x+1]<=this.mapaMemoria[this.y][this.x+1]  
+                && this.mapaMemoria[this.y+1][this.x+1]<=this.mapaMemoria[this.y+1][this.x]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else if(this.y == 0){
+                if(this.mapaMemoria[this.y+1][this.x+1]<=this.mapaMemoria[this.y][this.x-1]
+                && this.mapaMemoria[this.y+1][this.x+1]<=this.mapaMemoria[this.y][this.x+1] 
+                && this.mapaMemoria[this.y+1][this.x+1]<=this.mapaMemoria[this.y+1][this.x-1] 
+                && this.mapaMemoria[this.y+1][this.x+1]<=this.mapaMemoria[this.y+1][this.x]
+                && this.mapaMemoria[this.y+1][this.x+1]<=this.mapaMemoria[this.y-1][this.x]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else if(this.x == 0){
+                if(this.mapaMemoria[this.y+1][this.x+1]<=this.mapaMemoria[this.y-1][this.x+1]
+                && this.mapaMemoria[this.y+1][this.x+1]<=this.mapaMemoria[this.y][this.x+1]
+                && this.mapaMemoria[this.y+1][this.x+1]<=this.mapaMemoria[this.y+1][this.x]
+                && this.mapaMemoria[this.y+1][this.x+1]<=this.mapaMemoria[this.y-1][this.x]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else{
+                if(this.mapaMemoria[this.y+1][this.x+1]<=this.mapaMemoria[this.y-1][this.x-1] 
+                && this.mapaMemoria[this.y+1][this.x+1]<=this.mapaMemoria[this.y-1][this.x+1] 
+                && this.mapaMemoria[this.y+1][this.x+1]<=this.mapaMemoria[this.y][this.x-1]
+                && this.mapaMemoria[this.y+1][this.x+1]<=this.mapaMemoria[this.y][this.x+1] 
+                && this.mapaMemoria[this.y+1][this.x+1]<=this.mapaMemoria[this.y+1][this.x-1] 
+                && this.mapaMemoria[this.y+1][this.x+1]<=this.mapaMemoria[this.y+1][this.x]
+                && this.mapaMemoria[this.y+1][this.x+1]<=this.mapaMemoria[this.y-1][this.x]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }
+        }
+        
+        if(movimiento == "moveS"){
+            if(this.y == this.dimY-1){
+                return false;
+            }else if(this.y == 0 && this.x == 0){
+                if(this.mapaMemoria[this.y+1][this.x]<=this.mapaMemoria[this.y][this.x+1]
+                && this.mapaMemoria[this.y+1][this.x]<=this.mapaMemoria[this.y+1][this.x+1]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else if(this.y == 0 && this.x == this.dimX-1){
+                if(this.mapaMemoria[this.y+1][this.x]<=this.mapaMemoria[this.y][this.x-1]
+                && this.mapaMemoria[this.y+1][this.x]<=this.mapaMemoria[this.y+1][this.x-1] 
+                && this.mapaMemoria[this.y+1][this.x]<=this.mapaMemoria[this.y-1][this.x]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else if(this.y == 0){
+                if(this.mapaMemoria[this.y+1][this.x]<=this.mapaMemoria[this.y][this.x-1]
+                && this.mapaMemoria[this.y+1][this.x]<=this.mapaMemoria[this.y][this.x+1] 
+                && this.mapaMemoria[this.y+1][this.x]<=this.mapaMemoria[this.y+1][this.x-1]
+                && this.mapaMemoria[this.y+1][this.x]<=this.mapaMemoria[this.y+1][this.x+1]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else if(this.y == 0){
+                if(this.mapaMemoria[this.y+1][this.x]<=this.mapaMemoria[this.y-1][this.x+1]
+                && this.mapaMemoria[this.y+1][this.x]<=this.mapaMemoria[this.y][this.x+1]
+                && this.mapaMemoria[this.y+1][this.x]<=this.mapaMemoria[this.y-1][this.x]
+                && this.mapaMemoria[this.y+1][this.x]<=this.mapaMemoria[this.y+1][this.x+1]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else if(this.x == this.dimX-1){
+                if(this.mapaMemoria[this.y+1][this.x]<=this.mapaMemoria[this.y-1][this.x-1] 
+                && this.mapaMemoria[this.y+1][this.x]<=this.mapaMemoria[this.y][this.x-1]
+                && this.mapaMemoria[this.y+1][this.x]<=this.mapaMemoria[this.y+1][this.x-1] 
+                && this.mapaMemoria[this.y+1][this.x]<=this.mapaMemoria[this.y-1][this.x]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else{
+                if(this.mapaMemoria[this.y+1][this.x]<=this.mapaMemoria[this.y-1][this.x-1] 
+                && this.mapaMemoria[this.y+1][this.x]<=this.mapaMemoria[this.y-1][this.x+1] 
+                && this.mapaMemoria[this.y+1][this.x]<=this.mapaMemoria[this.y][this.x-1]
+                && this.mapaMemoria[this.y+1][this.x]<=this.mapaMemoria[this.y][this.x+1] 
+                && this.mapaMemoria[this.y+1][this.x]<=this.mapaMemoria[this.y+1][this.x-1] 
+                && this.mapaMemoria[this.y+1][this.x]<=this.mapaMemoria[this.y-1][this.x]
+                && this.mapaMemoria[this.y+1][this.x]<=this.mapaMemoria[this.y+1][this.x+1]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }
+        }
+        
+        if(movimiento == "moveSW"){
+            if(this.y == this.dimY-1){
+                return false;
+            }else if(this.x == 0){
+                return false;
+            }else if(this.y == 0 && this.x == this.dimX-1){
+                if(this.mapaMemoria[this.y+1][this.x-1]<=this.mapaMemoria[this.y][this.x-1]
+                && this.mapaMemoria[this.y+1][this.x-1]<=this.mapaMemoria[this.y+1][this.x]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else if(this.y == 0){
+                if(this.mapaMemoria[this.y+1][this.x-1]<=this.mapaMemoria[this.y][this.x-1]
+                && this.mapaMemoria[this.y+1][this.x-1]<=this.mapaMemoria[this.y][this.x+1] 
+                && this.mapaMemoria[this.y+1][this.x-1]<=this.mapaMemoria[this.y+1][this.x]
+                && this.mapaMemoria[this.y+1][this.x-1]<=this.mapaMemoria[this.y+1][this.x+1]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else if(this.x == this.dimX-1){
+                if(this.mapaMemoria[this.y+1][this.x-1]<=this.mapaMemoria[this.y-1][this.x-1]
+                && this.mapaMemoria[this.y+1][this.x-1]<=this.mapaMemoria[this.y][this.x-1] 
+                && this.mapaMemoria[this.y+1][this.x-1]<=this.mapaMemoria[this.y-1][this.x] 
+                && this.mapaMemoria[this.y+1][this.x-1]<=this.mapaMemoria[this.y+1][this.x]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else{
+                if(this.mapaMemoria[this.y+1][this.x-1]<=this.mapaMemoria[this.y-1][this.x-1] 
+                && this.mapaMemoria[this.y+1][this.x-1]<=this.mapaMemoria[this.y-1][this.x+1] 
+                && this.mapaMemoria[this.y+1][this.x-1]<=this.mapaMemoria[this.y][this.x-1]
+                && this.mapaMemoria[this.y+1][this.x-1]<=this.mapaMemoria[this.y][this.x+1] 
+                && this.mapaMemoria[this.y+1][this.x-1]<=this.mapaMemoria[this.y-1][this.x] 
+                && this.mapaMemoria[this.y+1][this.x-1]<=this.mapaMemoria[this.y+1][this.x]
+                && this.mapaMemoria[this.y+1][this.x-1]<=this.mapaMemoria[this.y+1][this.x+1]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }
+        }
+        
+        if(movimiento == "moveW"){
+            if(this.x == 0){
+                return false;
+            }else if(this.y == 0 && this.x == this.dimX-1){
+                if(this.mapaMemoria[this.y][this.x-1]<=this.mapaMemoria[this.y+1][this.x-1] 
+                && this.mapaMemoria[this.y][this.x-1]<=this.mapaMemoria[this.y+1][this.x]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else if(this.y == this.dimY-1 && this.x == this.dimX-1){
+                if(this.mapaMemoria[this.y][this.x-1]<=this.mapaMemoria[this.y-1][this.x-1]
+                && this.mapaMemoria[this.y][this.x-1]<=this.mapaMemoria[this.y-1][this.x]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else if(this.y == 0){
+                if(this.mapaMemoria[this.y][this.x-1]<=this.mapaMemoria[this.y][this.x+1] 
+                && this.mapaMemoria[this.y][this.x-1]<=this.mapaMemoria[this.y+1][this.x-1] 
+                && this.mapaMemoria[this.y][this.x-1]<=this.mapaMemoria[this.y+1][this.x]
+                && this.mapaMemoria[this.y][this.x-1]<=this.mapaMemoria[this.y+1][this.x+1]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else if(this.y == this.dimY-1){
+                if(this.mapaMemoria[this.y][this.x-1]<=this.mapaMemoria[this.y-1][this.x-1] 
+                && this.mapaMemoria[this.y][this.x-1]<=this.mapaMemoria[this.y-1][this.x+1] 
+                && this.mapaMemoria[this.y][this.x-1]<=this.mapaMemoria[this.y-1][this.x]
+                && this.mapaMemoria[this.y][this.x-1]<=this.mapaMemoria[this.y][this.x+1]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else if(this.x == this.dimX-1){
+                if(this.mapaMemoria[this.y][this.x-1]<=this.mapaMemoria[this.y-1][this.x-1]
+                && this.mapaMemoria[this.y][this.x-1]<=this.mapaMemoria[this.y-1][this.x]
+                && this.mapaMemoria[this.y][this.x-1]<=this.mapaMemoria[this.y+1][this.x-1] 
+                && this.mapaMemoria[this.y][this.x-1]<=this.mapaMemoria[this.y+1][this.x]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else{
+                if(this.mapaMemoria[this.y][this.x-1]<=this.mapaMemoria[this.y-1][this.x-1] 
+                && this.mapaMemoria[this.y][this.x-1]<=this.mapaMemoria[this.y-1][this.x+1] 
+                && this.mapaMemoria[this.y][this.x-1]<=this.mapaMemoria[this.y-1][this.x]
+                && this.mapaMemoria[this.y][this.x-1]<=this.mapaMemoria[this.y][this.x+1] 
+                && this.mapaMemoria[this.y][this.x-1]<=this.mapaMemoria[this.y+1][this.x-1] 
+                && this.mapaMemoria[this.y][this.x-1]<=this.mapaMemoria[this.y+1][this.x]
+                && this.mapaMemoria[this.y][this.x-1]<=this.mapaMemoria[this.y+1][this.x+1]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }
+
+        }
+        
+        if(movimiento == "moveNW"){
+            if(this.y == 0){
+                return false;
+            }else if(this.x == 0){
+                return false;
+            }else if(this.y == this.dimY-1 && this.x == this.dimX-1){
+                if(this.mapaMemoria[this.y-1][this.x-1]<=this.mapaMemoria[this.y-1][this.x]
+                && this.mapaMemoria[this.y-1][this.x-1]<=this.mapaMemoria[this.y][this.x-1]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else if(this.y == this.dimY-1){
+                if(this.mapaMemoria[this.y-1][this.x-1]<=this.mapaMemoria[this.y-1][this.x] 
+                && this.mapaMemoria[this.y-1][this.x-1]<=this.mapaMemoria[this.y-1][this.x+1] 
+                && this.mapaMemoria[this.y-1][this.x-1]<=this.mapaMemoria[this.y][this.x-1]
+                && this.mapaMemoria[this.y-1][this.x-1]<=this.mapaMemoria[this.y][this.x+1]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else if(this.x == this.dimX-1){
+                if(this.mapaMemoria[this.y-1][this.x-1]<=this.mapaMemoria[this.y-1][this.x]
+                && this.mapaMemoria[this.y-1][this.x-1]<=this.mapaMemoria[this.y][this.x-1]
+                && this.mapaMemoria[this.y-1][this.x-1]<=this.mapaMemoria[this.y+1][this.x-1] 
+                && this.mapaMemoria[this.y-1][this.x-1]<=this.mapaMemoria[this.y+1][this.x]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else{
+                if(this.mapaMemoria[this.y-1][this.x-1]<=this.mapaMemoria[this.y-1][this.x] 
+                && this.mapaMemoria[this.y-1][this.x-1]<=this.mapaMemoria[this.y-1][this.x+1] 
+                && this.mapaMemoria[this.y-1][this.x-1]<=this.mapaMemoria[this.y][this.x-1]
+                && this.mapaMemoria[this.y-1][this.x-1]<=this.mapaMemoria[this.y][this.x+1] 
+                && this.mapaMemoria[this.y-1][this.x-1]<=this.mapaMemoria[this.y+1][this.x-1] 
+                && this.mapaMemoria[this.y-1][this.x-1]<=this.mapaMemoria[this.y+1][this.x]
+                && this.mapaMemoria[this.y-1][this.x-1]<=this.mapaMemoria[this.y+1][this.x+1]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }
+
+        }
+        
+        return false;
+        
+    }
 }
