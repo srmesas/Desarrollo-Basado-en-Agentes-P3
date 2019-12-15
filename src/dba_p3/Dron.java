@@ -94,6 +94,8 @@ class Dron extends SuperAgent {
     private float distance_rec;
     DBAMap map;
     private final String controlador;
+    ArrayList<Aleman> arrayDeAlemanes = new ArrayList<Aleman>();
+    private boolean esta;
 
 
     public Dron(AgentID aid) throws Exception {
@@ -467,6 +469,14 @@ class Dron extends SuperAgent {
        
        if(distance_rec <= 1){
            System.out.println("encontre una alemannn eeeeehhhh");
+           if(distance_rec==0){
+               Aleman a = new Aleman(x_rec,y_rec); 
+               esta = estaContenido(x_rec, y_rec);
+               if(!esta)
+                   arrayDeAlemanes.add(a);   
+           }
+           System.out.println(arrayDeAlemanes);
+           
        }else{
 
 
@@ -690,6 +700,14 @@ class Dron extends SuperAgent {
             return movimiento;   
         }
        
-        
+        private boolean estaContenido(int x, int y){
+            for (int i = 0; i < arrayDeAlemanes.size(); i++) {
+                   if((x_rec!= arrayDeAlemanes.get(i).getX())&& (y_rec!= arrayDeAlemanes.get(i).getY())){
+                        return true;
+                   }
+            }
+            return false;
+            
+        }
 }
 
