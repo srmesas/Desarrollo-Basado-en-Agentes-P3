@@ -85,4 +85,9 @@ public class DronHawk extends Dron{
            
     }
     
+    public void siguienteMovimiento(){
+        
+        //Que de vueltas en círculos
+    }
+    
 }
