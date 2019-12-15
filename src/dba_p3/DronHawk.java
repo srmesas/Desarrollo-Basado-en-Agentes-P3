@@ -24,8 +24,8 @@ public class DronHawk extends Dron{
     public DronHawk(AgentID aid) throws Exception {
         super(aid);
         setQuiensoy("hawk");
-        inicioX=5;
-        inicioY=5;
+        inicioX=50;
+        inicioY=50;
         this.dimX = super.dimX;
         this.dimY = super.dimY;
     }
@@ -48,6 +48,7 @@ public class DronHawk extends Dron{
         } catch (InterruptedException ex) {
             Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
         }
+        while(movimiento==null){
         enviarMensajeJSON("query");
         try {
             respuesta = recibirMensajeJSON();
@@ -56,6 +57,24 @@ public class DronHawk extends Dron{
         }
         System.out.println("\n\tGPS: x:" + this.x + " y:" + this.y + " z:" + this.z);
         enviarMensajeJSONControlador("moveRefuelStopRescue");
+        System.out.println("antes del while " +movimiento);
+       
+            try {
+                movimiento = recibirMovimiento();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(DronHawk.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            System.out.println(movimiento);
+            enviarMensajeJSON(movimiento);
+            try {
+                respuesta = recibirMensajeJSON();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            movimiento=null;
+        }
+            
+            
 //        do"
 //            enviarMensajeJSON("query");
 //            try {
@@ -72,6 +91,7 @@ public class DronHawk extends Dron{
 //            }
 //        }while(this.torescue > 0);
 //        enviarMensajeJSON("logout");
+
     }
     
 
