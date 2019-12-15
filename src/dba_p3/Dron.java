@@ -58,7 +58,7 @@ class Dron extends SuperAgent {
     protected int alturaMax;
     protected float visibilidad;
     protected float rango;
-    protected String quiensoy="rescue";
+    protected String quiensoy="hawk";
     protected int x;
     protected int y;
     protected int z;
@@ -93,6 +93,7 @@ class Dron extends SuperAgent {
     private float angule_rec;
     private float distance_rec;
     DBAMap map;
+    private final String controlador;
 
 
     public Dron(AgentID aid) throws Exception {
@@ -101,6 +102,7 @@ class Dron extends SuperAgent {
         this.user = "Kazi";
         this.password = "moHhEBMN";
         
+        this.controlador = DBA_P3.Controlador;
         this.NOMBRE_HAWK = DBA_P3.NOMBRE_HAWK;
         this.NOMBRE_FLY1 = DBA_P3.NOMBRE_FLY1;
         this.NOMBRE_FLY2 = DBA_P3.NOMBRE_FLY2;
@@ -123,12 +125,6 @@ class Dron extends SuperAgent {
             Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-//        enviarMensajeJSON("checkin");
-//        try {
-//            respuesta = recibirMensajeJSON();
-//        } catch (InterruptedException ex) {
-//            Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
-//        }
         System.out.print("\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n");
         enviarSession(this.NOMBRE_HAWK);
         enviarSession(this.NOMBRE_FLY1);
@@ -216,6 +212,7 @@ class Dron extends SuperAgent {
                 outbox = new ACLMessage();
                 outbox.setContent(resultado);
                 outbox.setSender(this.getAid());
+                System.out.println(this.getAid());
                 outbox.setReceiver(new AgentID(agente));
                 outbox.setConversationId(id);
                 outbox.setInReplyTo(reply);
@@ -468,6 +465,10 @@ class Dron extends SuperAgent {
     
     protected void siguienteMovimiento(){
        
+       if(distance_rec <= 1){
+           System.out.println("encontre una alemannn eeeeehhhh");
+       }else{
+
 
             if (this.gonioAngle<0 && this.gonioAngle<=22.5 && this.gonioAngle>337.5 && this.gonioAngle <=360){
                 if (map.getLevel(x_rec+1, y_rec)>y_rec){
@@ -530,7 +531,7 @@ class Dron extends SuperAgent {
                     commandmov = "moveNW";
                 }
             }
-            
+       }   
         
     }
     
@@ -553,7 +554,7 @@ class Dron extends SuperAgent {
                 outbox = new ACLMessage();
                 outbox.setContent(resultado);
                 outbox.setSender(this.getAid());
-                outbox.setReceiver(new AgentID("juan"));
+                outbox.setReceiver(new AgentID(controlador));
                 outbox.setConversationId(id);
                 outbox.setInReplyTo(reply);
                 outbox.setPerformative(ACLMessage.INFORM);
@@ -564,7 +565,7 @@ class Dron extends SuperAgent {
                // 
                 outbox = new ACLMessage();
                 
-                outbox.setReceiver(new AgentID("juan"));
+                outbox.setReceiver(new AgentID(controlador));
                 outbox.setSender(this.getAid());
                 
                 outbox.setConversationId(id);
@@ -576,7 +577,7 @@ class Dron extends SuperAgent {
             case "logout":
                 outbox = new ACLMessage();
                 outbox.setSender(this.getAid());
-                outbox.setReceiver(new AgentID("juan"));
+                outbox.setReceiver(new AgentID(controlador));
                 outbox.setConversationId(id);
                 outbox.setPerformative(ACLMessage.CANCEL);
                 this.send(outbox);
