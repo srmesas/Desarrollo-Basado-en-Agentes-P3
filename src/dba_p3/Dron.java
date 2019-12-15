@@ -14,8 +14,12 @@ import es.upv.dsic.gti_ia.core.ACLMessage;
 import es.upv.dsic.gti_ia.core.AgentID;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.Random;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -94,7 +98,7 @@ class Dron extends SuperAgent {
     private float distance_rec;
     DBAMap map;
     private final String controlador;
-    ArrayList<Aleman> arrayDeAlemanes = new ArrayList<Aleman>();
+    Set<Aleman> arrayDeAlemanes = new LinkedHashSet<>();
     private boolean esta;
     private boolean primerAleman;
 
@@ -476,84 +480,41 @@ class Dron extends SuperAgent {
     
     protected void siguienteMovimiento(){
        
-       if(distance_rec <= 1){
-           System.out.println("encontre una alemannn eeeeehhhh");
-           if(distance_rec==0){
-               if(primerAleman){
-                   //enviarSession(this.NOMBRE_RESCUE, x_rec, y_rec);
-                   primerAleman = false;
-               }
-               Aleman a = new Aleman(x_rec,y_rec); 
-               esta = estaContenido(x_rec, y_rec);
-               if(!esta)
-                   arrayDeAlemanes.add(a);   
-           }
-           System.out.println(arrayDeAlemanes);
-           
-       }else{
-            if (this.gonioAngle<0 && this.gonioAngle<=22.5 && this.gonioAngle>337.5 && this.gonioAngle <=360){
-                if (map.getLevel(x_rec+1, y_rec)>y_rec){
-                    commandmov = "moveUP";
-                }else{
-                    commandmov = "moveN";
+        
+        for(int i=0; i<infrared.length; i++){
+            for(int j=0; j<infrared[i].length; j++){
+                if(infrared[i][j]==1){
+                    arrayDeAlemanes.add(new Aleman(i, j));
                 }
             }
-            
-            if (this.gonioAngle>22.5 && this.gonioAngle<=67.5){
-                if (map.getLevel(x_rec-1, y_rec+1)>y_rec){
-                    commandmov = "moveUP";
-                }else{
-                    commandmov = "moveNE";
-                }
-            }
-            
-            if (this.gonioAngle>67.5 && this.gonioAngle<=112.5){
-                if (map.getLevel(x_rec, y_rec+1)>y_rec){
-                    commandmov = "moveUP";
-                }else{
-                    commandmov = "moveE";
-                }           
-            }
-            
-            if (this.gonioAngle>112.5 && this.gonioAngle<=157.5){
-                if (map.getLevel(x_rec+2, y_rec+1)>y_rec){
-                    commandmov = "moveUP";
-                }else{
-                    commandmov = "moveSE";
-                }
-            }
+        }
+        
+        Random r = new Random();
+        int ran = r.nextInt((4 - 0) + 1) + 0;
 
-            if (this.gonioAngle>157.5 && this.gonioAngle<=202.5){
-                if (map.getLevel(x_rec+1, y_rec)>y_rec){
-                    commandmov = "moveUP";
-                }else{
-                    commandmov = "moveS";
-                }
-            }
-            if (this.gonioAngle>205.5 && this.gonioAngle<=247.5){
-                if (map.getLevel(x_rec-1, y_rec-1)>y_rec){
-                    commandmov = "moveUP";
-                }else{
-                    commandmov = "moveSW";
-                }
-            }
-            if (this.gonioAngle>247.5 && this.gonioAngle<=292.5){
-                if (map.getLevel(x_rec, y_rec-1)>y_rec){
-                    commandmov = "moveUP";
-                }else{
-                    commandmov = "moveW";
-                }
-            }
+        switch(ran){
+
+            case 0:
+                this.commandmov = "moveN";
+
+            case 1:
+                this.commandmov = "moveS";
+
+            case 2:
+                this.commandmov = "moveE";
+
+            case 3:
+                this.commandmov = "moveW";
+
+        }
+        
+        if(!esBueno(this.commandmov)){
+            this.commandmov = "moveUP";
+        }
              
-            if (this.gonioAngle>292.5 && this.gonioAngle<=337.5){
-                if (map.getLevel(x_rec-1, y_rec-1)>y_rec){
-                    commandmov = "moveUP";
-                }else{
-                    commandmov = "moveNW";
-                }
-            }
-       }
-       checkFuel();
+        checkFuel();
+        
+        System.out.println(arrayDeAlemanes);
         
     }
     
@@ -656,59 +617,54 @@ class Dron extends SuperAgent {
             return emisor;
         }
         
-        private float calcularGonio(){
+        protected boolean esBueno(String movimiento){
             
-           float resultado = 50;
-            return resultado;
+            if(movimiento.equals("moveN")){
+                if(radar[4][5]!=0 && radar[4][5] <= this.z){
+                    return true;
+                }
+            }else if(movimiento.equals("moveNE")){
+
+                if(radar[4][6]!=0 && radar[4][6] <= this.z){
+                    return true;
+                }
+            }else if(movimiento.equals("moveE")){
+                if(radar[5][6]!=0 && radar[5][6] <= this.z){
+                    return true;
+                }
+            }else if(movimiento.equals("moveSE")){
+                if(radar[6][6]!=0 && radar[6][6] <= this.z){
+                    return true;
+                }
+            }else if(movimiento.equals("moveS")){
+                if(radar[6][5]!=0 && radar[6][5] <= this.z){
+                    return true;
+                }
+            }else if(movimiento.equals("moveSW")){
+
+               if(radar[6][4]!=0 && radar[6][4] <= this.z){
+                    return true;
+                }
+            }else if(movimiento.equals("moveW")){
+
+                if(radar[5][4]!=0 && radar[5][4] <= this.z){
+                    return true;
+                }
+            }else if(movimiento.equals("moveNW")){
+                 if(radar[4][4]!=0 && radar[4][4] <= this.z){
+                    return true;
+                }
+            }else if(movimiento.equals("moveUP")){
+                if(this.z < this.alturaMax){
+                    return true;
+                }
+            }else if(movimiento.equals("moveDW")){
+                if(this.z > radar[5][5]){
+                    return true;
+                }
+            }
+            return false;
         }
-        
-//    protected boolean esBueno(String movimiento){
-//        if(movimiento.equals("moveN")){
-//            if(radar[4][5]!=0 && radar[4][5] <= this.z){
-//                return true;
-//            }
-//        }else if(movimiento.equals("moveNE")){
-//            
-//            if(radar[4][6]!=0 && radar[4][6] <= this.z){
-//                return true;
-//            }
-//        }else if(movimiento.equals("moveE")){
-//            if(radar[5][6]!=0 && radar[5][6] <= this.z){
-//                return true;
-//            }
-//        }else if(movimiento.equals("moveSE")){
-//            if(radar[6][6]!=0 && radar[6][6] <= this.z){
-//                return true;
-//            }
-//        }else if(movimiento.equals("moveS")){
-//            if(radar[6][5]!=0 && radar[6][5] <= this.z){
-//                return true;
-//            }
-//        }else if(movimiento.equals("moveSW")){
-//            
-//           if(radar[6][4]!=0 && radar[6][4] <= this.z){
-//                return true;
-//            }
-//        }else if(movimiento.equals("moveW")){
-//            
-//            if(radar[5][4]!=0 && radar[5][4] <= this.z){
-//                return true;
-//            }
-//        }else if(movimiento.equals("moveNW")){
-//             if(radar[4][4]!=0 && radar[4][4] <= this.z){
-//                return true;
-//            }
-//        }else if(movimiento.equals("moveUP")){
-//            if(this.z < this.alturaMax){
-//                return true;
-//            }
-//        }else if(movimiento.equals("moveDW")){
-//            if(this.z > this.alturaMin || this.z > radar[5][5]){
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
         
         protected String recibirMovimiento() throws InterruptedException {
             ACLMessage inbox;
@@ -724,15 +680,6 @@ class Dron extends SuperAgent {
             return movimiento;   
         }
        
-        private boolean estaContenido(int x, int y){
-            for (int i = 0; i < arrayDeAlemanes.size(); i++) {
-                   if((x_rec!= arrayDeAlemanes.get(i).getX())&& (y_rec!= arrayDeAlemanes.get(i).getY())){
-                        return true;
-                   }
-            }
-            return false;
-            
-        }
         protected void checkFuel(){
             
             if((z_rec - map.getLevel(x_rec, y_rec))/5 > (this.fuel-10)/gasto){
