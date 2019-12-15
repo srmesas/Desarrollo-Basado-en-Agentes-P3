@@ -9,6 +9,7 @@ import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonObject;
 import es.upv.dsic.gti_ia.core.ACLMessage;
 import es.upv.dsic.gti_ia.core.AgentID;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,6 +18,8 @@ import java.util.logging.Logger;
  * @author srmesas
  */
 public class DronHawk extends Dron{
+    
+    private String commandmov;
     
     public DronHawk(AgentID aid) throws Exception {
         super(aid);
@@ -37,34 +40,27 @@ public class DronHawk extends Dron{
                 Logger.getLogger(DronHawk.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-//        enviarMensajeJSON("suscribe");
-//       
-//        try {
-//            respuesta = recibirMensajeJSON();
-//        } catch (InterruptedException ex) {
-//            Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-        
         enviarMensajeJSON("checkin");
         try {
             respuesta = recibirMensajeJSON();
         } catch (InterruptedException ex) {
             Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
         }
-        //enviarSession("pedro");
-        enviarMensajeJSON("query");
-        try {
-            respuesta = recibirMensajeJSON();
-        } catch (InterruptedException ex) {
-            Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        movimiento="moveNW";
-        enviarMensajeJSON("moveRefuelStopRescue");
-        try {
-            respuesta = recibirMensajeJSON();
-        } catch (InterruptedException ex) {
-            Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        do{
+            enviarMensajeJSON("query");
+            try {
+                respuesta = recibirMensajeJSON();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            siguienteMovimiento();
+            enviarMensajeJSON("moveRefuelStopRescue");
+            try {
+                respuesta = recibirMensajeJSON();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }while(this.torescue > 0);
         enviarMensajeJSON("logout");
     }
     
@@ -81,13 +77,31 @@ public class DronHawk extends Dron{
                 JsonObject objetoPercepcion = Json.parse(fuente).asObject();
                 session = objetoPercepcion.get("session").asString();
             }
+            this.dimX = super.dimX;
+            this.dimY = super.dimY;
         return session;
            
     }
     
     public void siguienteMovimiento(){
-        
-        //Que de vueltas en círculos
+            Random r = new Random();
+            int ran = r.nextInt((4 - 0) + 1) + 0;
+            
+            switch(ran){
+                
+                case 0:
+                    this.commandmov = "moveN";
+                    
+                case 1:
+                    this.commandmov = "moveS";
+                    
+                case 2:
+                    this.commandmov = "moveE";
+                    
+                case 3:
+                    this.commandmov = "moveW";
+                
+            }
     }
     
 }

@@ -122,23 +122,31 @@ class Dron extends SuperAgent {
         } catch (InterruptedException ex) {
             Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
         }
+        System.out.print("\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n");
         enviarSession(this.NOMBRE_HAWK);
         enviarSession(this.NOMBRE_FLY1);
         enviarSession(this.NOMBRE_FLY2);
         enviarSession(this.NOMBRE_RESCUE);
-        enviarMensajeJSON("query");
-        try {
-            respuesta = recibirMensajeJSON();
-        } catch (InterruptedException ex) {
-            Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        movimiento="moveNW";
-        enviarMensajeJSON("moveRefuelStopRescue");
-        try {
-            respuesta = recibirMensajeJSON();
-        } catch (InterruptedException ex) {
-            Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        System.out.print("\nbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\n");
+        do{
+            enviarMensajeJSON("query");
+            try {
+                respuesta = recibirMensajeJSON();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            System.out.print("\ncccccccccccccccccccccccccccccccccccccccccccccccc\n");
+            siguienteMovimiento();
+            enviarMensajeJSON("moveRefuelStopRescue");
+            try {
+                respuesta = recibirMensajeJSON();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }while(this.torescue > 0);
+        System.out.print("//////////////////////////////////////////////////////////////////\n");
+        System.out.print(this.torescue);
+        System.out.print("\n//////////////////////////////////////////////////////////////////\n");
         enviarMensajeJSON("logout");
     }
     
@@ -332,9 +340,9 @@ class Dron extends SuperAgent {
                 }
                 System.out.println("distancia " + distance + " angulo "+angle);
             }else if(comandoEnvi == "moveRefuelStopRescue"){
-                System.out.println("hola estoy en moveRefuelStopRescue");
+                System.out.println("Estoy en moveRefuelStopRescue");
                 System.out.println(objetoPercepcion.get("result").asString());
-                
+                siguienteMovimiento();
             }
             
             
@@ -435,466 +443,7 @@ class Dron extends SuperAgent {
         this.send(outbox);
     }
     
-    public void siguienteMovimientoScouter(){
-        
-        if (this.gonioDistance == -1 && this.gonioAngle == -1){ 
-            
-            Random r = new Random();
-            int ran = r.nextInt((4 - 0) + 1) + 0;
-            
-            switch(ran){
-                
-                case 0:
-                    this.commandmov = "moveN";
-                    
-                case 1:
-                    this.commandmov = "moveS";
-                    
-                case 2:
-                    this.commandmov = "moveE";
-                    
-                case 3:
-                    this.commandmov = "moveW";
-                
-            }
-        }
-        else{
-            //Ha encontrado un alemán
-            if (this.gonioDistance > 1){ 
-            
-                if (((this.gonioAngle>=0 && this.gonioAngle<=22.5) || (this.gonioAngle>337.5 && this.gonioAngle <=360))){
-                    if (radar[4][5]>z && esBueno("moveUP")){
-                        commandmov = "moveUP";
-                    }else if(radar[4][5]>0 && esAceptable("moveN") && esBueno("moveN")){
-                        commandmov = "moveN";
-                    }else{
-                        if(esAceptable("moveNW") && esBueno("moveNW")){
-                            commandmov = "moveNW";
-                        }else if(esAceptable("moveW") && esBueno("moveW")){
-                            commandmov = "moveW";
-                        }else if(esAceptable("moveSW") && esBueno("moveSW")){
-                            commandmov = "moveSW";
-                        }else if(esAceptable("moveS") && esBueno("moveS")){
-                            commandmov = "moveS";
-                        }else if(esAceptable("moveSE") && esBueno("moveSE")){
-                            commandmov = "moveSE";
-                        }else if(esAceptable("moveE") && esBueno("moveE")){
-                            commandmov = "moveE";
-                        }else if(esAceptable("moveNE") && esBueno("moveNE")){
-                            commandmov = "moveNE";
-                        }
-                    }
-                }
-                if (this.gonioAngle>22.5 && this.gonioAngle<=67.5 ){
-                    if (radar[4][6]>z && esBueno("moveUP")){
-                        commandmov = "moveUP";
-                    }else if (radar[4][6]>0 && esAceptable("moveNE") && esBueno("moveNE")){
-                        commandmov = "moveNE";
-                    }else{
-                        if(esAceptable("moveN") && esBueno("moveN")){
-                            commandmov = "moveN";
-                        }else if(esAceptable("moveNW") && esBueno("moveNW")){
-                            commandmov = "moveNW";
-                        }else if(esAceptable("moveW") && esBueno("moveW")){
-                            commandmov = "moveW";
-                        }else if(esAceptable("moveSW") && esBueno("moveSW")){
-                            commandmov = "moveSW";
-                        }else if(esAceptable("moveS") && esBueno("moveS")){
-                            commandmov = "moveS";
-                        }else if(esAceptable("moveSE") && esBueno("moveSE")){
-                            commandmov = "moveSE";
-                        }else if(esAceptable("moveE") && esBueno("moveE")){
-                            commandmov = "moveE";
-                        } 
-                    }
-                }
-                if ((this.gonioAngle>67.5 && this.gonioAngle<=112.5)){
-                    if (radar[5][6]>z && esBueno("moveUP")){
-                        commandmov = "moveUP";
-                    }else if(radar[5][6]>0 && esAceptable("moveE") && esBueno("moveE")){
-                        commandmov = "moveE";
-                    }else{
-                        if(esAceptable("moveNE") && esBueno("moveNE")){
-                            commandmov = "moveNE";
-                        }else if(esAceptable("moveN") && esBueno("moveN")){
-                            commandmov = "moveN";
-                        }else if(esAceptable("moveNW") && esBueno("moveNW")){
-                            commandmov = "moveNW";
-                        }else if(esAceptable("moveW") && esBueno("moveW")){
-                            commandmov = "moveW";
-                        }else if(esAceptable("moveSW") && esBueno("moveSW")){
-                            commandmov = "moveSW";
-                        }else if(esAceptable("moveS") && esBueno("moveS")){
-                            commandmov = "moveS";
-                        }else if(esAceptable("moveSE") && esBueno("moveSE")){
-                            commandmov = "moveSE";
-                        }
-                    }         
-                }
-
-                if ((this.gonioAngle>112.5 && this.gonioAngle<=157.5)){
-                    if (radar[6][6]>z && esBueno("moveUP")){
-                        commandmov = "moveUP";
-                    }else if(radar[6][6]>0 && esAceptable("moveSE") && esBueno("moveSE")){
-                        commandmov = "moveSE";
-                    }else{
-                        if(esAceptable("moveE") && esBueno("moveE")){
-                            commandmov = "moveE";
-                        }else if(esAceptable("moveNE") && esBueno("moveNE")){
-                            commandmov = "moveNE";
-                        }else if(esAceptable("moveN") && esBueno("moveN")){
-                            commandmov = "moveN";
-                        }else if(esAceptable("moveNW") && esBueno("moveNW")){
-                            commandmov = "moveNW";
-                        }else if(esAceptable("moveW") && esBueno("moveW")){
-                            commandmov = "moveW";
-                        }else if(esAceptable("moveSW") && esBueno("moveSW")){
-                            commandmov = "moveSW";
-                        }else if(esAceptable("moveS") && esBueno("moveS")){
-                            commandmov = "moveS";
-                        }
-                    }  
-                }
-
-                if ((this.gonioAngle>157.5 && this.gonioAngle<=205.5)){
-                    if (radar[6][5]>z && esBueno("moveUP")){
-                        commandmov = "moveUP";
-                    }else if(radar[6][5]>0 && esAceptable("moveS") && esBueno("moveS")){
-                        commandmov = "moveS";
-                    }else{
-                        if(esAceptable("moveSE") && esBueno("moveSE")){
-                            commandmov = "moveSE";
-                        }else if(esAceptable("moveE") && esBueno("moveE")){
-                            commandmov = "moveE";
-                        }else if(esAceptable("moveNE") && esBueno("moveNE")){
-                            commandmov = "moveNE";
-                        }else if(esAceptable("moveN") && esBueno("moveN")){
-                            commandmov = "moveN";
-                        }else if(esAceptable("moveNW") && esBueno("moveNW")){
-                            commandmov = "moveNW";
-                        }else if(esAceptable("moveW") && esBueno("moveW")){
-                            commandmov = "moveW";
-                        }else if(esAceptable("moveSW") && esBueno("moveSW")){
-                            commandmov = "moveSW";
-                        }
-                    } 
-                }
-
-                if ((this.gonioAngle>205.5 && this.gonioAngle<=247.5)){
-                    if (radar[6][4]>z && esBueno("moveUP")){
-                        commandmov = "moveUP";
-                    }else if(radar[6][4]>0 && esAceptable("moveSW") && esBueno("moveSW")){
-                        commandmov = "moveSW";
-                    }else{
-                        if(esAceptable("moveS") && esBueno("moveS")){
-                            commandmov = "moveS";
-                        }else if(esAceptable("moveSE") && esBueno("moveSE")){
-                            commandmov = "moveSE";
-                        }else if(esAceptable("moveE") && esBueno("moveE")){
-                            commandmov = "moveE";
-                        }else if(esAceptable("moveNE") && esBueno("moveNE")){
-                            commandmov = "moveNE";
-                        }else if(esAceptable("moveN") && esBueno("moveN")){
-                            commandmov = "moveN";
-                        }else if(esAceptable("moveNW") && esBueno("moveNW")){
-                            commandmov = "moveNW";
-                        }else if(esAceptable("moveW") && esBueno("moveW")){
-                            commandmov = "moveW";
-                        }
-                    } 
-                }
-
-                if ((this.gonioAngle>247.5 && this.gonioAngle<=292.5)){
-                    if (radar[5][4]>z && esBueno("moveUP")){
-                        commandmov = "moveUP";
-                    }else if(radar[5][4]>0 && esAceptable("moveW") && esBueno("moveW")){
-                        commandmov = "moveW";
-                    }else{
-                        if(esAceptable("moveSW") && esBueno("moveSW")){
-                            commandmov = "moveSW";
-                        }else if(esAceptable("moveS") && esBueno("moveS")){
-                            commandmov = "moveS";
-                        }else if(esAceptable("moveSE") && esBueno("moveSE")){
-                            commandmov = "moveE";
-                        }else if(esAceptable("moveE") && esBueno("moveE")){
-                            commandmov = "moveE";
-                        }else if(esAceptable("moveNE") && esBueno("moveNE")){
-                            commandmov = "moveNE";
-                        }else if(esAceptable("moveN") && esBueno("moveN")){
-                            commandmov = "moveN";
-                        }else if(esAceptable("moveNW") && esBueno("moveNW")){
-                            commandmov = "moveNW";
-                        } 
-                    } 
-                }
-
-                if (this.gonioAngle>292.5 && this.gonioAngle<=337.5){
-                    if (radar[4][4]>z && esBueno("moveUP")){
-                        commandmov = "moveUP";
-                    }else if (radar[4][4]>0 && esAceptable("moveNW") && esBueno("moveNW")){
-                        commandmov = "moveNW";
-                    }else{
-                        if(esAceptable("moveW") && esBueno("moveW")){
-                            commandmov = "moveW";
-                        }else if(esAceptable("moveSW") && esBueno("moveSW")){
-                            commandmov = "moveSW";
-                        }else if(esAceptable("moveS") && esBueno("moveS")){
-                            commandmov = "moveS";
-                        }else if(esAceptable("moveSE") && esBueno("moveSE")){
-                            commandmov = "moveSE";
-                        }else if(esAceptable("moveE") && esBueno("moveE")){
-                            commandmov = "moveE";
-                        }else if(esAceptable("moveNE") && esBueno("moveNE")){
-                            commandmov = "moveNE";
-                        }else if(esAceptable("moveN") && esBueno("moveN")){
-                            commandmov = "moveN";
-                        }
-                    } 
-                }
-
-            }else{
-                if(z > elevation[5][5]){
-                        commandmov = "moveDW";
-                        if(elevation[5][5]==0){
-                           //Rescatar
-                        }
-                }
-            }
-            
-            
-        }
-        checkFuel();
-        if(!esBueno(commandmov)){
-            System.out.println("\nQUE SE CAE");
-        }
-        if(this.commandmov != "moveUP" && this.commandmov != "moveDW"){
-            guardarPosicionMemoria();
-        }
-        
-        System.out.println(commandmov);
-        
-        
-        
-    }
-    
-    public void siguienteMovimientoRescuer(){
-        
-        //Ha encontrado un alemán
-        if (this.gonioDistance > 1){ 
-            
-            if (((this.gonioAngle>=0 && this.gonioAngle<=22.5) || (this.gonioAngle>337.5 && this.gonioAngle <=360))){
-                if (radar[4][5]>z && esBueno("moveUP")){
-                    commandmov = "moveUP";
-                }else if(radar[4][5]>0 && esAceptable("moveN") && esBueno("moveN")){
-                    commandmov = "moveN";
-                }else{
-                    if(esAceptable("moveNW") && esBueno("moveNW")){
-                        commandmov = "moveNW";
-                    }else if(esAceptable("moveW") && esBueno("moveW")){
-                        commandmov = "moveW";
-                    }else if(esAceptable("moveSW") && esBueno("moveSW")){
-                        commandmov = "moveSW";
-                    }else if(esAceptable("moveS") && esBueno("moveS")){
-                        commandmov = "moveS";
-                    }else if(esAceptable("moveSE") && esBueno("moveSE")){
-                        commandmov = "moveSE";
-                    }else if(esAceptable("moveE") && esBueno("moveE")){
-                        commandmov = "moveE";
-                    }else if(esAceptable("moveNE") && esBueno("moveNE")){
-                        commandmov = "moveNE";
-                    }
-                }
-            }
-            if (this.gonioAngle>22.5 && this.gonioAngle<=67.5 ){
-                if (radar[4][6]>z && esBueno("moveUP")){
-                    commandmov = "moveUP";
-                }else if (radar[4][6]>0 && esAceptable("moveNE") && esBueno("moveNE")){
-                    commandmov = "moveNE";
-                }else{
-                    if(esAceptable("moveN") && esBueno("moveN")){
-                        commandmov = "moveN";
-                    }else if(esAceptable("moveNW") && esBueno("moveNW")){
-                        commandmov = "moveNW";
-                    }else if(esAceptable("moveW") && esBueno("moveW")){
-                        commandmov = "moveW";
-                    }else if(esAceptable("moveSW") && esBueno("moveSW")){
-                        commandmov = "moveSW";
-                    }else if(esAceptable("moveS") && esBueno("moveS")){
-                        commandmov = "moveS";
-                    }else if(esAceptable("moveSE") && esBueno("moveSE")){
-                        commandmov = "moveSE";
-                    }else if(esAceptable("moveE") && esBueno("moveE")){
-                        commandmov = "moveE";
-                    } 
-                }
-            }
-            if ((this.gonioAngle>67.5 && this.gonioAngle<=112.5)){
-                if (radar[5][6]>z && esBueno("moveUP")){
-                    commandmov = "moveUP";
-                }else if(radar[5][6]>0 && esAceptable("moveE") && esBueno("moveE")){
-                    commandmov = "moveE";
-                }else{
-                    if(esAceptable("moveNE") && esBueno("moveNE")){
-                        commandmov = "moveNE";
-                    }else if(esAceptable("moveN") && esBueno("moveN")){
-                        commandmov = "moveN";
-                    }else if(esAceptable("moveNW") && esBueno("moveNW")){
-                        commandmov = "moveNW";
-                    }else if(esAceptable("moveW") && esBueno("moveW")){
-                        commandmov = "moveW";
-                    }else if(esAceptable("moveSW") && esBueno("moveSW")){
-                        commandmov = "moveSW";
-                    }else if(esAceptable("moveS") && esBueno("moveS")){
-                        commandmov = "moveS";
-                    }else if(esAceptable("moveSE") && esBueno("moveSE")){
-                        commandmov = "moveSE";
-                    }
-                }         
-            }
-            
-            if ((this.gonioAngle>112.5 && this.gonioAngle<=157.5)){
-                if (radar[6][6]>z && esBueno("moveUP")){
-                    commandmov = "moveUP";
-                }else if(radar[6][6]>0 && esAceptable("moveSE") && esBueno("moveSE")){
-                    commandmov = "moveSE";
-                }else{
-                    if(esAceptable("moveE") && esBueno("moveE")){
-                        commandmov = "moveE";
-                    }else if(esAceptable("moveNE") && esBueno("moveNE")){
-                        commandmov = "moveNE";
-                    }else if(esAceptable("moveN") && esBueno("moveN")){
-                        commandmov = "moveN";
-                    }else if(esAceptable("moveNW") && esBueno("moveNW")){
-                        commandmov = "moveNW";
-                    }else if(esAceptable("moveW") && esBueno("moveW")){
-                        commandmov = "moveW";
-                    }else if(esAceptable("moveSW") && esBueno("moveSW")){
-                        commandmov = "moveSW";
-                    }else if(esAceptable("moveS") && esBueno("moveS")){
-                        commandmov = "moveS";
-                    }
-                }  
-            }
-
-            if ((this.gonioAngle>157.5 && this.gonioAngle<=205.5)){
-                if (radar[6][5]>z && esBueno("moveUP")){
-                    commandmov = "moveUP";
-                }else if(radar[6][5]>0 && esAceptable("moveS") && esBueno("moveS")){
-                    commandmov = "moveS";
-                }else{
-                    if(esAceptable("moveSE") && esBueno("moveSE")){
-                        commandmov = "moveSE";
-                    }else if(esAceptable("moveE") && esBueno("moveE")){
-                        commandmov = "moveE";
-                    }else if(esAceptable("moveNE") && esBueno("moveNE")){
-                        commandmov = "moveNE";
-                    }else if(esAceptable("moveN") && esBueno("moveN")){
-                        commandmov = "moveN";
-                    }else if(esAceptable("moveNW") && esBueno("moveNW")){
-                        commandmov = "moveNW";
-                    }else if(esAceptable("moveW") && esBueno("moveW")){
-                        commandmov = "moveW";
-                    }else if(esAceptable("moveSW") && esBueno("moveSW")){
-                        commandmov = "moveSW";
-                    }
-                } 
-            }
-            
-            if ((this.gonioAngle>205.5 && this.gonioAngle<=247.5)){
-                if (radar[6][4]>z && esBueno("moveUP")){
-                    commandmov = "moveUP";
-                }else if(radar[6][4]>0 && esAceptable("moveSW") && esBueno("moveSW")){
-                    commandmov = "moveSW";
-                }else{
-                    if(esAceptable("moveS") && esBueno("moveS")){
-                        commandmov = "moveS";
-                    }else if(esAceptable("moveSE") && esBueno("moveSE")){
-                        commandmov = "moveSE";
-                    }else if(esAceptable("moveE") && esBueno("moveE")){
-                        commandmov = "moveE";
-                    }else if(esAceptable("moveNE") && esBueno("moveNE")){
-                        commandmov = "moveNE";
-                    }else if(esAceptable("moveN") && esBueno("moveN")){
-                        commandmov = "moveN";
-                    }else if(esAceptable("moveNW") && esBueno("moveNW")){
-                        commandmov = "moveNW";
-                    }else if(esAceptable("moveW") && esBueno("moveW")){
-                        commandmov = "moveW";
-                    }
-                } 
-            }
-            
-            if ((this.gonioAngle>247.5 && this.gonioAngle<=292.5)){
-                if (radar[5][4]>z && esBueno("moveUP")){
-                    commandmov = "moveUP";
-                }else if(radar[5][4]>0 && esAceptable("moveW") && esBueno("moveW")){
-                    commandmov = "moveW";
-                }else{
-                    if(esAceptable("moveSW") && esBueno("moveSW")){
-                        commandmov = "moveSW";
-                    }else if(esAceptable("moveS") && esBueno("moveS")){
-                        commandmov = "moveS";
-                    }else if(esAceptable("moveSE") && esBueno("moveSE")){
-                        commandmov = "moveE";
-                    }else if(esAceptable("moveE") && esBueno("moveE")){
-                        commandmov = "moveE";
-                    }else if(esAceptable("moveNE") && esBueno("moveNE")){
-                        commandmov = "moveNE";
-                    }else if(esAceptable("moveN") && esBueno("moveN")){
-                        commandmov = "moveN";
-                    }else if(esAceptable("moveNW") && esBueno("moveNW")){
-                        commandmov = "moveNW";
-                    } 
-                } 
-            }
-            
-            if (this.gonioAngle>292.5 && this.gonioAngle<=337.5){
-                if (radar[4][4]>z && esBueno("moveUP")){
-                    commandmov = "moveUP";
-                }else if (radar[4][4]>0 && esAceptable("moveNW") && esBueno("moveNW")){
-                    commandmov = "moveNW";
-                }else{
-                    if(esAceptable("moveW") && esBueno("moveW")){
-                        commandmov = "moveW";
-                    }else if(esAceptable("moveSW") && esBueno("moveSW")){
-                        commandmov = "moveSW";
-                    }else if(esAceptable("moveS") && esBueno("moveS")){
-                        commandmov = "moveS";
-                    }else if(esAceptable("moveSE") && esBueno("moveSE")){
-                        commandmov = "moveSE";
-                    }else if(esAceptable("moveE") && esBueno("moveE")){
-                        commandmov = "moveE";
-                    }else if(esAceptable("moveNE") && esBueno("moveNE")){
-                        commandmov = "moveNE";
-                    }else if(esAceptable("moveN") && esBueno("moveN")){
-                        commandmov = "moveN";
-                    }
-                } 
-            }
-
-        }else{
-            if(z > elevation[5][5]){
-                    commandmov = "moveDW";
-                    if(elevation[5][5]==0){
-                       //Rescatar
-                    }
-                    
-            }
-            
-        }
-        checkFuel();
-        if(!esBueno(commandmov)){
-            System.out.println("\nQUE SE CAE");
-        }
-        if(this.commandmov != "moveUP" && this.commandmov != "moveDW"){
-            guardarPosicionMemoria();
-        }
-        
-        System.out.println(commandmov);
-        
-        
-        
-    }
+    public void siguienteMovimiento(){}
     
     protected void checkFuel(){
         
@@ -1465,3 +1014,4 @@ class Dron extends SuperAgent {
         
     }
 }
+

@@ -20,14 +20,15 @@ import java.util.logging.Logger;
 public class DronFly extends Dron{
     
     
-    private float gonioDistance;
-    private float gonioAngle;
+    private float gonioDistance = 5;
+    private float gonioAngle = 5;
     int [][] radar =  new int[11][11];
     private String commandmov;
     private int [][] elevation =  new int[11][11];
     
     public DronFly(AgentID aid, int inicioX, int inicioY) throws Exception {
         super(aid);
+        setQuiensoy("fly");
         this.inicioX = inicioX;
         this.inicioY = inicioY;
     }
@@ -44,34 +45,27 @@ public class DronFly extends Dron{
                 Logger.getLogger(DronHawk.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-//        enviarMensajeJSON("suscribe");
-//       
-//        try {
-//            respuesta = recibirMensajeJSON();
-//        } catch (InterruptedException ex) {
-//            Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-        
         enviarMensajeJSON("checkin");
         try {
             respuesta = recibirMensajeJSON();
         } catch (InterruptedException ex) {
             Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
         }
-        //enviarSession("pedro");
-        enviarMensajeJSON("query");
-        try {
-            respuesta = recibirMensajeJSON();
-        } catch (InterruptedException ex) {
-            Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        movimiento="moveNW";
-        enviarMensajeJSON("moveRefuelStopRescue");
-        try {
-            respuesta = recibirMensajeJSON();
-        } catch (InterruptedException ex) {
-            Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        do{
+            enviarMensajeJSON("query");
+            try {
+                respuesta = recibirMensajeJSON();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            siguienteMovimiento();
+            enviarMensajeJSON("moveRefuelStopRescue");
+            try {
+                respuesta = recibirMensajeJSON();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }while(this.torescue > 0);
         enviarMensajeJSON("logout");
     }
     
@@ -88,6 +82,8 @@ public class DronFly extends Dron{
                 JsonObject objetoPercepcion = Json.parse(fuente).asObject();
                 session = objetoPercepcion.get("session").asString();
             }
+            this.dimX = super.dimX;
+            this.dimY = super.dimY;
         return session;
            
     }
