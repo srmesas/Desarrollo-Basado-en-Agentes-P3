@@ -486,6 +486,17 @@ class Dron extends SuperAgent {
         for(int i=0; i<infrared.length; i++){
             for(int j=0; j<infrared[i].length; j++){
                 if(infrared[i][j]==1){
+                    
+                    int rel_i, rel_j;
+                    
+                    if(i<5 && j==5){
+                        rel_i = i+x_rec;
+                        rel_j = j+y_rec;
+                    }
+                    
+                    
+                    
+                    
                     arrayDeAlemanes.add(new Aleman(i, j));
                 }
             }
@@ -497,67 +508,67 @@ class Dron extends SuperAgent {
         switch(ran){
 
             case 0:
-                if (map.getLevel(x_rec-1, y_rec)<=y_rec){
-                    this.commandmov = "moveN";
+                if (map.getLevel(x_rec-1, y_rec)>y_rec && map.getLevel(x_rec-1, y_rec) < alturaMax){
+                    siguienteMovimiento();
                 }
                 else{
-                    siguienteMovimiento();
+                    this.commandmov = "moveN";
                 }
 
             case 1:
-                if (map.getLevel(x_rec+1, y_rec)<=y_rec){
-                    this.commandmov = "moveS";
+                if (map.getLevel(x_rec+1, y_rec)>y_rec && map.getLevel(x_rec+1, y_rec) < alturaMax){
+                    siguienteMovimiento();
                 }
                 else{
-                    siguienteMovimiento();
+                    this.commandmov = "moveS";
                 }
 
             case 2:
-                if (map.getLevel(x_rec, y_rec+1)<=y_rec){
-                    this.commandmov = "moveE";
+                if (map.getLevel(x_rec, y_rec+1)>y_rec && map.getLevel(x_rec, y_rec+1) < alturaMax){
+                    siguienteMovimiento();
                 }
                 else{
-                    siguienteMovimiento();
+                    this.commandmov = "moveE";
                 }
 
             case 3:
-                if (map.getLevel(x_rec, y_rec-1)<=y_rec){
-                    this.commandmov = "moveW";
+                if (map.getLevel(x_rec, y_rec-1)>y_rec && map.getLevel(x_rec, y_rec-1) < alturaMax){
+                    siguienteMovimiento();
                 }
                 else{
-                    siguienteMovimiento();
+                    this.commandmov = "moveW";
                 }
                 
             case 4:
-                if (map.getLevel(x_rec-1, y_rec+1)<=y_rec){
-                    this.commandmov = "moveNE";
+                if (map.getLevel(x_rec-1, y_rec+1)>y_rec && map.getLevel(x_rec-1, y_rec+1) < alturaMax){
+                    siguienteMovimiento();
                 }
                 else{
-                    siguienteMovimiento();
+                    this.commandmov = "moveNE";
                 }
                 
             case 5:
-                if (map.getLevel(x_rec+1, y_rec+1)<=y_rec){
-                    this.commandmov = "moveSE";
+                if (map.getLevel(x_rec+1, y_rec+1)>y_rec && map.getLevel(x_rec+1, y_rec+1) < alturaMax){
+                    siguienteMovimiento();
                 }
                 else{
-                    siguienteMovimiento();
+                    this.commandmov = "moveSE";
                 }
                 
             case 6:
-                if (map.getLevel(x_rec+1, y_rec-1)<=y_rec){
-                    this.commandmov = "moveSW";
+                if (map.getLevel(x_rec+1, y_rec-1)>y_rec && map.getLevel(x_rec+1, y_rec-1) < alturaMax){
+                    siguienteMovimiento();
                 }
                 else{
-                    siguienteMovimiento();
+                    this.commandmov = "moveSW";
                 }
                 
             case 7:
-                if (map.getLevel(x_rec-1, y_rec-1)<=y_rec){
-                    this.commandmov = "moveNW";
+                if (map.getLevel(x_rec-1, y_rec-1)>y_rec && map.getLevel(x_rec-1, y_rec-1) < alturaMax){
+                    siguienteMovimiento();
                 }
                 else{
-                    siguienteMovimiento();
+                    this.commandmov = "moveNW";
                 }
 
         }
