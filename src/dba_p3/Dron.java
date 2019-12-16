@@ -852,38 +852,37 @@ class Dron extends SuperAgent {
         protected boolean esBueno(String movimiento){
             
             if(movimiento.equals("moveN")){
-                if(x_rec-1>=0){
+                if(infrared[4][5]!=-1){
                     return true;
                 }
             }else if(movimiento.equals("moveNE")){
-
-                if(x_rec+1 <= dimX || y_rec+1 <= dimX || (x_rec+1 <= dimX && y_rec+1 <= dimX) ){
+                if(infrared[4][6]!=-1){
                     return true;
                 }
             }else if(movimiento.equals("moveE")){
-                if(y_rec+1 <= dimY){
+                if(infrared[5][6]!=-1){
                     return true;
                 }
             }else if(movimiento.equals("moveSE")){
-                if(x_rec+1 <= dimX || y_rec+1 <= dimX || (x_rec+1 <= dimX && y_rec+1 <= dimX) ){
+                if(infrared[6][6]!= -1 ){
                     return true;
                 }
             }else if(movimiento.equals("moveS")){
-                if(y_rec+1 <= dimY){
+                if(infrared[6][5]!=-1){
                     return true;
                 }
             }else if(movimiento.equals("moveSW")){
 
-               if(x_rec-1 >= 0 || y_rec-1 >= 0 || (x_rec-1 >= 0 && y_rec-1 >= 0) ){
+               if(infrared[6][4]!=-1){
                     return true;
                 }
             }else if(movimiento.equals("moveW")){
 
-                if(x_rec-1 >= 0 || y_rec-1 >= 0){
+                if(infrared[5][4]!=-1){
                     return true;
                 }
             }else if(movimiento.equals("moveNW")){
-                 if(x_rec-1 >= 0 || (x_rec-1 >= 0 && y_rec-1 >= 0)){
+                 if(infrared[4][4]!=-1){
                     return true;
                 }
             }else if(movimiento.equals("moveUP")){

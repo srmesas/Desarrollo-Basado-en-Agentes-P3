@@ -14,8 +14,8 @@ import es.upv.dsic.gti_ia.core.AgentsConnection;
  */
 public class DBA_P3 {
     public static final String NOMBRE_HAWK = "h02";
-    public static final String Controlador = "juan";
-    public static final String NOMBRE_FLY1 = "fl01";
+    public static final String Controlador = "juan144";
+    public static final String NOMBRE_FLY1 = "fl0444";
     public static final String NOMBRE_FLY2 = "f01";
     public static final String NOMBRE_RESCUE = "r1";
     
