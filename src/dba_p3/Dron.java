@@ -487,17 +487,54 @@ class Dron extends SuperAgent {
             for(int j=0; j<infrared[i].length; j++){
                 if(infrared[i][j]==1){
                     
-                    int rel_i, rel_j;
+                    int rel_i=0, rel_j=0;
                     
-                    if(i<5 && j==5){
+                    if(i<5 && j==5){ //N
+                        rel_i = i-x_rec;
+                        rel_j = j;
+                    }
+                    
+                    if(i>5 && j==5){ //S
+                        rel_i = i+x_rec;
+                        rel_j = j;
+                    }
+                    
+                    if(i==5 && j>5){ //E
+                        rel_i = i;
+                        rel_j = j+y_rec;
+                    }
+                    
+                    if(i==5 && j<5){ //W
+                        rel_i = i;
+                        rel_j = j-y_rec;
+                    }
+                    
+                    if(i<5 && j>5){ //NE
+                        rel_i = i-x_rec;
+                        rel_j = j+y_rec;
+                    }
+                    
+                    if(i>5 && j>5){ //SE
                         rel_i = i+x_rec;
                         rel_j = j+y_rec;
                     }
                     
+                    if(i>5 && j<5){ //SW
+                        rel_i = i+x_rec;
+                        rel_j = j-y_rec;
+                    }
                     
+                    if(i<5 && j<5){ //NW
+                        rel_i = i-x_rec;
+                        rel_j = j-y_rec;
+                    }
                     
+                    if(i==5 && j==5){ //Igual
+                        rel_i = i;
+                        rel_j = j;
+                    }
                     
-                    arrayDeAlemanes.add(new Aleman(i, j));
+                    arrayDeAlemanes.add(new Aleman(rel_i, rel_j));
                 }
             }
         }
