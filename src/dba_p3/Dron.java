@@ -545,7 +545,7 @@ class Dron extends SuperAgent {
         switch(ran){
 
             case 0:
-                if (map.getLevel(x_rec-1, y_rec)>y_rec && map.getLevel(x_rec-1, y_rec) < alturaMax){
+                if (map.getLevel(x_rec-1, z_rec)>y_rec && map.getLevel(x_rec-1, y_rec) < alturaMax){
                     siguienteMovimiento();
                 }
                 else{
@@ -553,7 +553,7 @@ class Dron extends SuperAgent {
                 }
 
             case 1:
-                if (map.getLevel(x_rec+1, y_rec)>y_rec && map.getLevel(x_rec+1, y_rec) < alturaMax){
+                if (map.getLevel(x_rec+1, z_rec)>y_rec && map.getLevel(x_rec+1, y_rec) < alturaMax){
                     siguienteMovimiento();
                 }
                 else{
@@ -561,7 +561,7 @@ class Dron extends SuperAgent {
                 }
 
             case 2:
-                if (map.getLevel(x_rec, y_rec+1)>y_rec && map.getLevel(x_rec, y_rec+1) < alturaMax){
+                if (map.getLevel(x_rec, y_rec+1)>z_rec && map.getLevel(x_rec, y_rec+1) < alturaMax){
                     siguienteMovimiento();
                 }
                 else{
@@ -569,7 +569,7 @@ class Dron extends SuperAgent {
                 }
 
             case 3:
-                if (map.getLevel(x_rec, y_rec-1)>y_rec && map.getLevel(x_rec, y_rec-1) < alturaMax){
+                if (map.getLevel(x_rec, y_rec-1)>z_rec && map.getLevel(x_rec, y_rec-1) < alturaMax){
                     siguienteMovimiento();
                 }
                 else{
@@ -577,7 +577,7 @@ class Dron extends SuperAgent {
                 }
                 
             case 4:
-                if (map.getLevel(x_rec-1, y_rec+1)>y_rec && map.getLevel(x_rec-1, y_rec+1) < alturaMax){
+                if (map.getLevel(x_rec-1, y_rec+1)>z_rec && map.getLevel(x_rec-1, y_rec+1) < alturaMax){
                     siguienteMovimiento();
                 }
                 else{
@@ -585,7 +585,7 @@ class Dron extends SuperAgent {
                 }
                 
             case 5:
-                if (map.getLevel(x_rec+1, y_rec+1)>y_rec && map.getLevel(x_rec+1, y_rec+1) < alturaMax){
+                if (map.getLevel(x_rec+1, y_rec+1)>z_rec && map.getLevel(x_rec+1, y_rec+1) < alturaMax){
                     siguienteMovimiento();
                 }
                 else{
@@ -593,7 +593,7 @@ class Dron extends SuperAgent {
                 }
                 
             case 6:
-                if (map.getLevel(x_rec+1, y_rec-1)>y_rec && map.getLevel(x_rec+1, y_rec-1) < alturaMax){
+                if (map.getLevel(x_rec+1, y_rec-1)>z_rec && map.getLevel(x_rec+1, y_rec-1) < alturaMax){
                     siguienteMovimiento();
                 }
                 else{
@@ -601,7 +601,7 @@ class Dron extends SuperAgent {
                 }
                 
             case 7:
-                if (map.getLevel(x_rec-1, y_rec-1)>y_rec && map.getLevel(x_rec-1, y_rec-1) < alturaMax){
+                if (map.getLevel(x_rec-1, y_rec-1)>z_rec && map.getLevel(x_rec-1, y_rec-1) < alturaMax){
                     siguienteMovimiento();
                 }
                 else{
@@ -637,7 +637,7 @@ class Dron extends SuperAgent {
     public void siguienteMovimientoRescue(){
         calcularRescate();
         if(arrayDeAlemanes.size() == 0){
-            if (map.getLevel(x_rec, y_rec)>y_rec){
+            if (map.getLevel(x_rec, y_rec)>z_rec){
                 commandmov = "moveDW";
             }else{
                 commandmov = "refuel";
@@ -646,7 +646,7 @@ class Dron extends SuperAgent {
             if(distanceRescueDron <= 1){
                 System.out.println("encontre una alemannn eeeeehhhh");
                 if(distanceRescueDron==0){
-                    if (map.getLevel(x_rec, y_rec)<y_rec){
+                    if (map.getLevel(x_rec, y_rec)<z_rec){
                         System.out.println("VOY BAJANDO; BAJANDO; BAJANDO");
                         commandmov = "moveDW";
                     }else{
@@ -657,7 +657,7 @@ class Dron extends SuperAgent {
                 }
             }else{
                 if (this.rescueAngle<0 && this.rescueAngle<=22.5 && this.rescueAngle>337.5 && this.rescueAngle <=360){
-                    if (map.getLevel(x_rec-1, y_rec)>y_rec){
+                    if (map.getLevel(x_rec-1, y_rec)>z_rec){
                         commandmov = "moveUP";
                     }else{
                         commandmov = "moveN";
@@ -665,7 +665,7 @@ class Dron extends SuperAgent {
                 }
 
                 if (this.rescueAngle>22.5 && this.rescueAngle<=67.5){
-                    if (map.getLevel(x_rec-1, y_rec+1)>y_rec){
+                    if (map.getLevel(x_rec-1, y_rec+1)>z_rec){
                         commandmov = "moveUP";
                     }else{
                         commandmov = "moveNE";
@@ -673,7 +673,7 @@ class Dron extends SuperAgent {
                 }
 
                 if (this.rescueAngle>67.5 && this.rescueAngle<=112.5){
-                    if (map.getLevel(x_rec, y_rec+1)>y_rec){
+                    if (map.getLevel(x_rec, y_rec+1)>z_rec){
                         commandmov = "moveUP";
                     }else{
                         commandmov = "moveE";
@@ -681,7 +681,7 @@ class Dron extends SuperAgent {
                 }
 
                 if (this.rescueAngle>112.5 && this.rescueAngle<=157.5){
-                    if (map.getLevel(x_rec+1, y_rec+1)>y_rec){
+                    if (map.getLevel(x_rec+1, y_rec+1)>z_rec){
                         commandmov = "moveUP";
                     }else{
                         commandmov = "moveSE";
@@ -689,21 +689,21 @@ class Dron extends SuperAgent {
                 }
 
                 if (this.rescueAngle>157.5 && this.rescueAngle<=202.5){
-                    if (map.getLevel(x_rec+1, y_rec)>y_rec){
+                    if (map.getLevel(x_rec+1, y_rec)>z_rec){
                         commandmov = "moveUP";
                     }else{
                         commandmov = "moveS";
                     }
                 }
                 if (this.rescueAngle>205.5 && this.rescueAngle<=247.5){
-                    if (map.getLevel(x_rec+1, y_rec-1)>y_rec){
+                    if (map.getLevel(x_rec+1, y_rec-1)>z_rec){
                         commandmov = "moveUP";
                     }else{
                         commandmov = "moveSW";
                     }
                 }
                 if (this.rescueAngle>247.5 && this.rescueAngle<=292.5){
-                    if (map.getLevel(x_rec, y_rec-1)>y_rec){
+                    if (map.getLevel(x_rec, y_rec-1)>z_rec){
                         commandmov = "moveUP";
                     }else{
                         commandmov = "moveW";
@@ -711,7 +711,7 @@ class Dron extends SuperAgent {
                 }
 
                 if (this.rescueAngle>292.5 && this.rescueAngle<=337.5){
-                    if (map.getLevel(x_rec-1, y_rec-1)>y_rec){
+                    if (map.getLevel(x_rec-1, y_rec-1)>z_rec){
                         commandmov = "moveUP";
                     }else{
                         commandmov = "moveNW";
@@ -814,38 +814,38 @@ class Dron extends SuperAgent {
         protected boolean esBueno(String movimiento){
             
             if(movimiento.equals("moveN")){
-                if(map.getLevel(x_rec, y_rec-1) <= z_rec){
+                if(map.getLevel(x_rec, y_rec-1) <= z_rec && map.getLevel(x_rec, y_rec-1) != -1){
                     return true;
                 }
             }else if(movimiento.equals("moveNE")){
 
-                if(map.getLevel(x_rec+1, y_rec-1) <= z_rec){
+                if(map.getLevel(x_rec+1, y_rec-1) <= z_rec && map.getLevel(x_rec+1, y_rec-1) != -1){
                     return true;
                 }
             }else if(movimiento.equals("moveE")){
-                if(map.getLevel(x_rec+1, y_rec) <= z_rec){
+                if(map.getLevel(x_rec+1, y_rec) <= z_rec && map.getLevel(x_rec+1, y_rec) != -1){
                     return true;
                 }
             }else if(movimiento.equals("moveSE")){
-                if(map.getLevel(x_rec+1, y_rec+1) <= z_rec){
+                if(map.getLevel(x_rec+1, y_rec+1) <= z_rec && map.getLevel(x_rec+1, y_rec+1) != -1){
                     return true;
                 }
             }else if(movimiento.equals("moveS")){
-                if(map.getLevel(x_rec, y_rec+1) <= z_rec){
+                if(map.getLevel(x_rec, y_rec+1) <= z_rec && map.getLevel(x_rec, y_rec+1) != -1){
                     return true;
                 }
             }else if(movimiento.equals("moveSW")){
 
-               if(map.getLevel(x_rec-1, y_rec+1) <= z_rec){
+               if(map.getLevel(x_rec-1, y_rec+1) <= z_rec && map.getLevel(x_rec-1, y_rec+1) != -1){
                     return true;
                 }
             }else if(movimiento.equals("moveW")){
 
-                if(map.getLevel(x_rec-1, y_rec) <= z_rec){
+                if(map.getLevel(x_rec-1, y_rec) <= z_rec && map.getLevel(x_rec-1, y_rec) != -1){
                     return true;
                 }
             }else if(movimiento.equals("moveNW")){
-                 if(map.getLevel(x_rec-1, y_rec-1) <= z_rec){
+                 if(map.getLevel(x_rec-1, y_rec-1) <= z_rec && map.getLevel(x_rec-1, y_rec-1) != -1){
                     return true;
                 }
             }else if(movimiento.equals("moveUP")){
