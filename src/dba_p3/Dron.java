@@ -497,21 +497,69 @@ class Dron extends SuperAgent {
         switch(ran){
 
             case 0:
-                this.commandmov = "moveN";
+                if (map.getLevel(x_rec-1, y_rec)<=y_rec){
+                    this.commandmov = "moveN";
+                }
+                else{
+                    siguienteMovimiento();
+                }
 
             case 1:
-                this.commandmov = "moveS";
+                if (map.getLevel(x_rec+1, y_rec)<=y_rec){
+                    this.commandmov = "moveS";
+                }
+                else{
+                    siguienteMovimiento();
+                }
 
             case 2:
-                this.commandmov = "moveE";
+                if (map.getLevel(x_rec, y_rec+1)<=y_rec){
+                    this.commandmov = "moveE";
+                }
+                else{
+                    siguienteMovimiento();
+                }
 
             case 3:
-                this.commandmov = "moveW";
+                if (map.getLevel(x_rec, y_rec-1)<=y_rec){
+                    this.commandmov = "moveW";
+                }
+                else{
+                    siguienteMovimiento();
+                }
+                
+            case 4:
+                if (map.getLevel(x_rec-1, y_rec+1)<=y_rec){
+                    this.commandmov = "moveNE";
+                }
+                else{
+                    siguienteMovimiento();
+                }
+                
+            case 5:
+                if (map.getLevel(x_rec+1, y_rec+1)<=y_rec){
+                    this.commandmov = "moveSE";
+                }
+                else{
+                    siguienteMovimiento();
+                }
+                
+            case 6:
+                if (map.getLevel(x_rec+1, y_rec-1)<=y_rec){
+                    this.commandmov = "moveSW";
+                }
+                else{
+                    siguienteMovimiento();
+                }
+                
+            case 7:
+                if (map.getLevel(x_rec-1, y_rec-1)<=y_rec){
+                    this.commandmov = "moveNW";
+                }
+                else{
+                    siguienteMovimiento();
+                }
 
-        }
-        
-        if(!esBueno(this.commandmov)){
-            this.commandmov = "moveUP";
         }
              
         checkFuel();
@@ -560,7 +608,7 @@ class Dron extends SuperAgent {
                 }
             }else{
                 if (this.rescueAngle<0 && this.rescueAngle<=22.5 && this.rescueAngle>337.5 && this.rescueAngle <=360){
-                    if (map.getLevel(x_rec+1, y_rec)>y_rec){
+                    if (map.getLevel(x_rec-1, y_rec)>y_rec){
                         commandmov = "moveUP";
                     }else{
                         commandmov = "moveN";
@@ -584,7 +632,7 @@ class Dron extends SuperAgent {
                 }
 
                 if (this.rescueAngle>112.5 && this.rescueAngle<=157.5){
-                    if (map.getLevel(x_rec+2, y_rec+1)>y_rec){
+                    if (map.getLevel(x_rec+1, y_rec+1)>y_rec){
                         commandmov = "moveUP";
                     }else{
                         commandmov = "moveSE";
@@ -599,7 +647,7 @@ class Dron extends SuperAgent {
                     }
                 }
                 if (this.rescueAngle>205.5 && this.rescueAngle<=247.5){
-                    if (map.getLevel(x_rec-1, y_rec-1)>y_rec){
+                    if (map.getLevel(x_rec+1, y_rec-1)>y_rec){
                         commandmov = "moveUP";
                     }else{
                         commandmov = "moveSW";
