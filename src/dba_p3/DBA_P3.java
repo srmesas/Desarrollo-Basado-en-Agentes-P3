@@ -58,7 +58,7 @@ public class DBA_P3 {
        // H.start();
         F1.start();
 //        F2.start();
-        R.start();
+      //  R.start();
     }
     
 }
