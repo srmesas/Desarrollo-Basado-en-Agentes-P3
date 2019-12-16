@@ -799,8 +799,8 @@ class Dron extends SuperAgent {
             JsonObject objetoRespuesta = Json.parse(fuente).asObject();
             if (inbox.getPerformativeInt() == ACLMessage.INFORM){
                 x_rec = objetoRespuesta.get("x").asInt();
-                y_rec = objetoRespuesta.get("x").asInt();
-                z_rec = objetoRespuesta.get("x").asInt();
+                y_rec = objetoRespuesta.get("y").asInt();
+                z_rec = objetoRespuesta.get("z").asInt();
                 gonioAngle = objetoRespuesta.get("angulo").asFloat();
                 distance_rec = objetoRespuesta.get("distancia").asFloat();
                 fuel = objetoRespuesta.get("fuel").asFloat();
@@ -814,46 +814,46 @@ class Dron extends SuperAgent {
         protected boolean esBueno(String movimiento){
             
             if(movimiento.equals("moveN")){
-                if(radar[4][5]!=0 && radar[4][5] <= this.z){
+                if(map.getLevel(x_rec, y_rec-1) <= z_rec){
                     return true;
                 }
             }else if(movimiento.equals("moveNE")){
 
-                if(radar[4][6]!=0 && radar[4][6] <= this.z){
+                if(map.getLevel(x_rec+1, y_rec-1) <= z_rec){
                     return true;
                 }
             }else if(movimiento.equals("moveE")){
-                if(radar[5][6]!=0 && radar[5][6] <= this.z){
+                if(map.getLevel(x_rec+1, y_rec) <= z_rec){
                     return true;
                 }
             }else if(movimiento.equals("moveSE")){
-                if(radar[6][6]!=0 && radar[6][6] <= this.z){
+                if(map.getLevel(x_rec+1, y_rec+1) <= z_rec){
                     return true;
                 }
             }else if(movimiento.equals("moveS")){
-                if(radar[6][5]!=0 && radar[6][5] <= this.z){
+                if(map.getLevel(x_rec, y_rec+1) <= z_rec){
                     return true;
                 }
             }else if(movimiento.equals("moveSW")){
 
-               if(radar[6][4]!=0 && radar[6][4] <= this.z){
+               if(map.getLevel(x_rec-1, y_rec+1) <= z_rec){
                     return true;
                 }
             }else if(movimiento.equals("moveW")){
 
-                if(radar[5][4]!=0 && radar[5][4] <= this.z){
+                if(map.getLevel(x_rec-1, y_rec) <= z_rec){
                     return true;
                 }
             }else if(movimiento.equals("moveNW")){
-                 if(radar[4][4]!=0 && radar[4][4] <= this.z){
+                 if(map.getLevel(x_rec-1, y_rec-1) <= z_rec){
                     return true;
                 }
             }else if(movimiento.equals("moveUP")){
-                if(this.z < this.alturaMax){
+                if(z_rec < this.alturaMax){
                     return true;
                 }
             }else if(movimiento.equals("moveDW")){
-                if(this.z > radar[5][5]){
+                if(z_rec > map.getLevel(x_rec, y_rec)){
                     return true;
                 }
             }
