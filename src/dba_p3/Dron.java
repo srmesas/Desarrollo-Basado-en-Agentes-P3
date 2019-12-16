@@ -105,7 +105,7 @@ class Dron extends SuperAgent {
     private boolean esta;
     private boolean primerAleman;
     JsonArray radarJSON;
-    private int[][] infraredR;
+    public int[][] infraredR;
 
 
     public Dron(AgentID aid) throws Exception {
@@ -139,8 +139,8 @@ class Dron extends SuperAgent {
         
         System.out.print("\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n");
         enviarSession(this.NOMBRE_HAWK, 20, 20);
-        enviarSession(this.NOMBRE_FLY1, 30, 30);
-        enviarSession(this.NOMBRE_FLY2, map.getWidth()-20, map.getHeight()-20);
+        //enviarSession(this.NOMBRE_FLY1, 30, 30);
+        enviarSession(this.NOMBRE_FLY2, 20, 20);
         System.out.print("\nbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\n");
         System.out.println("hola este es el mapa en la posicion -1 -1 " +map.getLevel(0, -1));
         do{
@@ -367,11 +367,10 @@ class Dron extends SuperAgent {
     }
     
     protected String recibirMensajeJSON() throws InterruptedException {
-         System.out.println("\nRespuesta del controlador: " + quiensoy +" "+ comandoEnvi);
+        System.out.println("\nRespuesta del controlador: " + quiensoy +" "+ comandoEnvi);
         ACLMessage inbox;
         try {
             inbox = this.receiveACLMessage();
-           
             String fuente = inbox.getContent();
             JsonObject objetoRespuesta = Json.parse(fuente).asObject();
            // System.out.println(inbox.getPerformativeInt());
@@ -838,7 +837,7 @@ class Dron extends SuperAgent {
                 
                 for (int i = 0; i < infraredR.length; i++) {
                    for (int j = 0; j < infraredR[i].length; j++) {
-                    infraredR[i][j] = prueba[indice];
+                    infraredR[i][j] =(int) prueba[indice];
                     indice++;
                     }
                 }
@@ -850,50 +849,60 @@ class Dron extends SuperAgent {
         }
         
         protected boolean esBueno(String movimiento){
-            
-            if(movimiento.equals("moveN")){
-                if(infrared[4][5]!=-1){
+            System.out.println(" infrared recibido " + infraredR.length/2);
+            int centro = infraredR.length/2;
+        switch (movimiento) {
+            case "moveN":
+                if(infraredR[centro-1][centro]!=-1){
                     return true;
                 }
-            }else if(movimiento.equals("moveNE")){
-                if(infrared[4][6]!=-1){
+                break;
+            case "moveNE":
+                if(infraredR[centro-1][centro+1]!=-1){
                     return true;
                 }
-            }else if(movimiento.equals("moveE")){
-                if(infrared[5][6]!=-1){
+                break;
+            case "moveE":
+                if(infraredR[centro][centro+1]!=-1){
                     return true;
                 }
-            }else if(movimiento.equals("moveSE")){
-                if(infrared[6][6]!= -1 ){
+                break;
+            case "moveSE":
+                if(infraredR[centro+1][centro+1]!= -1 ){
                     return true;
                 }
-            }else if(movimiento.equals("moveS")){
-                if(infrared[6][5]!=-1){
+                break;
+            case "moveS":
+                if(infraredR[centro+1][centro]!=-1){
                     return true;
                 }
-            }else if(movimiento.equals("moveSW")){
-
-               if(infrared[6][4]!=-1){
+                break;
+            case "moveSW":
+                if(infraredR[centro-1][centro-1]!=-1){
                     return true;
                 }
-            }else if(movimiento.equals("moveW")){
-
-                if(infrared[5][4]!=-1){
+                break;
+            case "moveW":
+                if(infraredR[centro][centro-1]!=-1){
                     return true;
                 }
-            }else if(movimiento.equals("moveNW")){
-                 if(infrared[4][4]!=-1){
+                break;
+            case "moveNW":
+                if(infraredR[centro-1][centro-1]!=-1){
                     return true;
                 }
-            }else if(movimiento.equals("moveUP")){
+                break;
+            case "moveUP":
                 if(z_rec < this.alturaMax){
                     return true;
                 }
-            }else if(movimiento.equals("moveDW")){
+                break;
+            case "moveDW":
                 if(z_rec > map.getLevel(x_rec, y_rec)){
                     return true;
                 }
-            }
+                break;
+        }
             return false;
         }
         

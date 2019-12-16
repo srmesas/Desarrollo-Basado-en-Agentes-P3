@@ -7,6 +7,8 @@ package dba_p3;
 
 import es.upv.dsic.gti_ia.core.AgentID;
 import es.upv.dsic.gti_ia.core.AgentsConnection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -14,10 +16,10 @@ import es.upv.dsic.gti_ia.core.AgentsConnection;
  */
 public class DBA_P3 {
     public static final String NOMBRE_HAWK = "h02";
-    public static final String Controlador = "juan144";
-    public static final String NOMBRE_FLY1 = "fl0444";
+    public static final String Controlador = "juan2";
+    public static final String NOMBRE_FLY1 = "f01";
     public static final String NOMBRE_FLY2 = "f01";
-    public static final String NOMBRE_RESCUE = "r1";
+    public static final String NOMBRE_RESCUE = "r2";
     
      public static void connect(){
         AgentsConnection.connect(
@@ -40,24 +42,25 @@ public class DBA_P3 {
         
         Dron D;
         DronHawk H;
-        DronFly F1,F2;
+        DronFly F1 = null,F2;
         DronRescate R;
         try{
             D = new Dron(new AgentID(Controlador));
             //H = new DronHawk(new AgentID(NOMBRE_HAWK));
-            F1 = new DronFly(new AgentID(NOMBRE_FLY1));
-//            F2 = new DronFly(new AgentID(NOMBRE_FLY2));
-            R = new DronRescate(new AgentID(NOMBRE_RESCUE));
+            //F1 = new DronFly(new AgentID(NOMBRE_FLY1));
+            F2 = new DronFly(new AgentID(NOMBRE_FLY2));
+            
+         //   R = new DronRescate(new AgentID(NOMBRE_RESCUE));
+           
 	} catch (Exception ex){
 		System.err.println("El agente ya existe en la plataforma");
 		return;
-	}
-
+        }
 	D.start();
         //Thread.sleep(1000);
        // H.start();
-        F1.start();
-//        F2.start();
+        //F1.start();
+        F2.start();
       //  R.start();
     }
     
