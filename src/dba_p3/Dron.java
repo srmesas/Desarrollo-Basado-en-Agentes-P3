@@ -431,9 +431,9 @@ class Dron extends SuperAgent {
     
     public void enviarMovimiento(AgentID agente){
         if(agente.name != this.NOMBRE_RESCUE){
-            siguienteMovimiento();
+            siguienteMovimiento(agente.name);
         }else{
-            siguienteMovimientoRescue();
+            siguienteMovimientoRescue(agente.name);
         }
         
         JsonObject objeto = new JsonObject();
@@ -450,51 +450,67 @@ class Dron extends SuperAgent {
         this.send(outbox);
     }
     
-    protected void siguienteMovimiento(){
+    protected void siguienteMovimiento(String NombreAgente){
         veoAleman();
         Random r = new Random();
         int ran = r.nextInt(7);
         
 //        
 //        
-        
-
-        switch(ran){
-
-            case 0:
-                    commandmov = "moveN";
-                  break; 
-            case 1:
-                    commandmov = "moveS";
-                   break; 
-            case 2:
-                    commandmov = "moveE";
-
-                    break; 
-            case 3:
-                    commandmov = "moveW";
-                break; 
-            case 4:
-                    commandmov = "moveNE";
-                break; 
-            case 5:
-                    commandmov = "moveSE";
-                break; 
-            case 6:
-                    commandmov = "moveSW";
-                break; 
-            case 7:
-                    commandmov = "moveNW";
-                    break; 
-
+        if(esAceptable("moveN") && esBueno("moveN")){
+            commandmov = "moveN";
+        }else if(esAceptable("moveNW") && esBueno("moveNW")){
+            commandmov = "moveNW";
+        }else if(esAceptable("moveW") && esBueno("moveW")){
+            commandmov = "moveW";
+        }else if(esAceptable("moveSW") && esBueno("moveSW")){
+            commandmov = "moveSW";
+        }else if(esAceptable("moveS") && esBueno("moveS")){
+            commandmov = "moveS";
+        }else if(esAceptable("moveSE") && esBueno("moveSE")){
+            commandmov = "moveSE";
+        }else if(esAceptable("moveE") && esBueno("moveE")){
+            commandmov = "moveE";
+        }else if(esAceptable("moveNE") && esBueno("moveNE")){
+            commandmov = "moveNE";
         }
-        System.out.println("el movimiento elegido " + commandmov);
-        if(!esBueno(commandmov)&& !esAceptable(commandmov)){
-            siguienteMovimiento();
-        }else{
-            guardarPosicionMemoria();
-        }    
-        checkFuel();
+
+//        switch(ran){
+//
+//            case 0:
+//                    commandmov = "moveN";
+//                  break; 
+//            case 1:
+//                    commandmov = "moveS";
+//                   break; 
+//            case 2:
+//                    commandmov = "moveE";
+//
+//                    break; 
+//            case 3:
+//                    commandmov = "moveW";
+//                break; 
+//            case 4:
+//                    commandmov = "moveNE";
+//                break; 
+//            case 5:
+//                    commandmov = "moveSE";
+//                break; 
+//            case 6:
+//                    commandmov = "moveSW";
+//                break; 
+//            case 7:
+//                    commandmov = "moveNW";
+//                    break; 
+//
+//        }
+//        System.out.println("el movimiento elegido " + commandmov);
+//        if(!esBueno(commandmov)&& !esAceptable(commandmov)){
+//            siguienteMovimiento(NombreAgente);
+//        }else{
+//            guardarPosicionMemoria();
+//        }    
+        checkFuel(NombreAgente);
         
         System.out.println(ANSI_YELLOW_BACKGROUND+arrayDeAlemanes+ ANSI_RESET + "  ");
         
@@ -518,7 +534,7 @@ class Dron extends SuperAgent {
         rescueAngle = (float) (Math.toDegrees(Math.atan2(yAleman - y_rec,xAleman- x_rec))+90);
     }
     
-    public void siguienteMovimientoRescue(){
+    public void siguienteMovimientoRescue(String NombreAgente){
         calcularRescate();
         if(arrayDeAlemanes.size() == 0){
             if (map.getLevel(x_rec, y_rec)>z_rec){
@@ -603,7 +619,7 @@ class Dron extends SuperAgent {
                 }
             }
             
-            checkFuel();
+            checkFuel(NombreAgente);
         }
     }
     
@@ -795,7 +811,7 @@ class Dron extends SuperAgent {
             return movimiento;   
         }
        
-        protected void checkFuel(){
+        protected void checkFuel(String NombreAgente){
             
             if((z_rec - mapR.getLevel(x_rec, y_rec))/5 > (this.fuel-10)/gasto){
                 System.out.println("\nNECESITA REPOSTAR "+fuel + " " + z_rec);
@@ -1375,32 +1391,32 @@ class Dron extends SuperAgent {
                 if(infraredR[i][j]==1){
                    
                     if(i==centro && j==centro){ //si esta en el centro
-                        rel_i = x_rec;
-                        rel_j = y_rec;
+                        rel_i = y_rec;
+                        rel_j = x_rec;
                         cuadrante="centro";
                     }
                     
                     if(i<centro && j<=centro){ //NW
-                        rel_i = x_rec-i;
-                        rel_j = y_rec-j;
+                        rel_i = y_rec-i;
+                        rel_j = x_rec-j;
                         cuadrante="nw";
                     }
                     
                     if(i>centro && j<=centro){ //SW
-                        rel_i = x_rec+i-centro;
-                        rel_j = y_rec-j-centro;
+                        rel_i = y_rec+i-centro;
+                        rel_j = x_rec-j-centro;
                         cuadrante="sw";
                     }
                     
                     if(i<centro && j>centro){ //NE
-                        rel_i = x_rec-i-centro;
-                        rel_j = y_rec+j-centro;
+                        rel_i = y_rec-i-centro;
+                        rel_j = x_rec+j-centro;
                         cuadrante="ne";
                     }
                     
                     if(i>centro && j>centro){ //SE
-                        rel_i = x_rec+i+1-centro;
-                        rel_j = y_rec+j-centro;
+                        rel_i = y_rec+i+1-centro;
+                        rel_j = x_rec+j-centro;
                         System.out.println(" i " + i + " j " + j);
                         cuadrante="se";
                     }

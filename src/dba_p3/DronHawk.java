@@ -199,10 +199,10 @@ public class DronHawk extends Dron{
             }
             movimiento=null;
             
-            if(contador == 20){
-                System.out.println("me salgo");
-                break;
-            }
+            //if(contador == 20){
+            //    System.out.println("me salgo");
+            //    break;
+            //}
             //contador++;
         }
 

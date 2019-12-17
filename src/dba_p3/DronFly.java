@@ -83,10 +83,10 @@ public class DronFly extends Dron{
             //} 
             movimiento=null;
             
-            if(contador == 48){
-                System.out.println("me salgo");
-                break;
-            }
+            //if(contador == 48){
+            //    System.out.println("me salgo");
+            //    break;
+            //}
             contador++;
         }
     }
