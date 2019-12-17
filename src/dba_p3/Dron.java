@@ -136,11 +136,11 @@ class Dron extends SuperAgent {
         } catch (InterruptedException ex) {
             Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+        // aleman en el 30 30 y el 72 72
         System.out.print("\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n");
         enviarSession(this.NOMBRE_HAWK, 20, 20);
         //enviarSession(this.NOMBRE_FLY1, 30, 30);
-        enviarSession(this.NOMBRE_FLY2, 20, 20);
+        enviarSession(this.NOMBRE_FLY2, 31, 31);
         System.out.print("\nbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\n");
         System.out.println("hola este es el mapa en la posicion -1 -1 " +map.getLevel(0, -1));
         do{
@@ -277,10 +277,10 @@ class Dron extends SuperAgent {
                     map.fromJson(img);
                     System.out.println("IMAGE DATA:");
                     /// 3) Cuyas dimensiones se pueden consultar
-                    System.out.println(map.getWidth()+" pixs width & "+map.getHeight()+" pixs height");
-                    this.dimX = map.getWidth();
-                    this.dimY = map.getHeight();
-                    //crearMemoria();
+                    //System.out.println(map.getWidth()+" pixs width & "+map.getHeight()+" pixs height");
+                    //this.dimX = map.getWidth();
+                    //this.dimY = map.getHeight();
+                    crearMemoria();
                     /// 4) Y cuyos valores se pueden consultar en getLevel(X,Y)
                     System.out.print("First row starts with: ");
                     for (int i=0; i<10; i++)
@@ -307,7 +307,7 @@ class Dron extends SuperAgent {
                 System.out.println("query");
                 String percepcion = objetoPercepcion.toString();
                 System.out.println("\nMensaje JSON recibido: \n <"+percepcion+"> \n"); 
-                this.x = objetoPercepcion.get("result").asObject().get("gps").asObject().get("y").asInt();
+                this.x = objetoPercepcion.get("result").asObject().get("gps").asObject().get("x").asInt();
                 this.y =objetoPercepcion.get("result").asObject().get("gps").asObject().get("y").asInt();
                 this.z =objetoPercepcion.get("result").asObject().get("gps").asObject().get("z").asInt();
                 
@@ -448,76 +448,43 @@ class Dron extends SuperAgent {
     }
     
     protected void siguienteMovimiento(){
-       int rel_i=0, rel_j=0;
-        System.out.println("entro en el siguiente movimiento");
-        System.out.println(infraredR.length);
-        System.out.println("entro en el siguiente movimiento");
-        for(int i=0; i<infraredR.length; i++){
-            for(int j=0; j<infraredR[i].length; j++){
-                if(infraredR[i][j]==1){
-                   
-                    if(i<5 && j==5){ //N
-                        rel_i = x_rec-i;
-                        rel_j = j;
-                    }
-                    
-                    if(i>5 && j==5){ //S
-                        rel_i = i+x_rec;
-                        rel_j = j;
-                    }
-                    
-                    if(i==5 && j>5){ //E
-                        rel_i = i;
-                        rel_j = j+y_rec;
-                    }
-                    
-                    if(i==5 && j<5){ //W
-                        rel_i = i;
-                        rel_j = y_rec-j;
-                    }
-                    
-                    if(i<5 && j>5){ //NE
-                        rel_i = x_rec-i;
-                        rel_j = j+y_rec;
-                    }
-                    
-                    if(i>5 && j>5){ //SE
-                        rel_i = i+x_rec;
-                        rel_j = j+y_rec;
-                    }
-                    
-                    if(i>5 && j<5){ //SW
-                        rel_i = i+x_rec;
-                        rel_j = y_rec-j;
-                    }
-                    
-                    if(i<5 && j<5){ //NW
-                        rel_i = x_rec-i;
-                        rel_j = y_rec-j;
-                        
-                    }
-                    
-                    if(i==5 && j==5){ //Igual
-                        rel_i = i;
-                        rel_j = j;
-                        break;
-                    }
-                    
-                
-                    System.out.println("he encontrado un aleman" + rel_i + " " + rel_j);
-                    
-                    esta = estaContenido(rel_i, rel_j);
-                    if(!esta)
-                        arrayDeAlemanes.add(new Aleman(rel_i, rel_j));
-                    
-                   } 
-                }
-            
-        }
-        
+        veoAleman();
         Random r = new Random();
         int ran = r.nextInt(7);
         
+//        
+//        
+        
+
+        switch(ran){
+
+            case 0:
+                    commandmov = "moveN";
+                  break; 
+            case 1:
+                    commandmov = "moveS";
+                   break; 
+            case 2:
+                    commandmov = "moveE";
+
+                    break; 
+            case 3:
+                    commandmov = "moveW";
+                break; 
+            case 4:
+                    commandmov = "moveNE";
+                break; 
+            case 5:
+                    commandmov = "moveSE";
+                break; 
+            case 6:
+                    commandmov = "moveSW";
+                break; 
+            case 7:
+                    commandmov = "moveNW";
+                    break; 
+
+        }
 //        if(esAceptable("moveN") && esBueno("moveN")){
 //            commandmov = "moveN";
 //        }else if(esAceptable("moveNW") && esBueno("moveNW")){
@@ -537,80 +504,11 @@ class Dron extends SuperAgent {
 //        }else if(esAceptable("moveUP") && esBueno("moveUP")){
 //            commandmov = "moveUP";
 //        }
-//        
-//        guardarPosicionMemoria();
-
-        switch(ran){
-
-            case 0:
-//                if (map.getLevel(x_rec-1, z_rec)>y_rec && map.getLevel(x_rec-1, y_rec) < alturaMax){
-//                    siguienteMovimiento();
-//                }
-//                else{
-                    commandmov = "moveN";
-               // }
-                  break; 
-            case 1:
-//                if (map.getLevel(x_rec+1, z_rec)>y_rec && map.getLevel(x_rec+1, y_rec) < alturaMax){
-//                    siguienteMovimiento();
-//                }
-//                else{
-                    commandmov = "moveS";
-               // }
-                   break; 
-            case 2:
-//                if (map.getLevel(x_rec, y_rec+1)>z_rec && map.getLevel(x_rec, y_rec+1) < alturaMax){
-//                    siguienteMovimiento();
-//                }
-//                else{
-                    commandmov = "moveE";
-//                }
-                    break; 
-            case 3:
-//                if (map.getLevel(x_rec, y_rec-1)>z_rec && map.getLevel(x_rec, y_rec-1) < alturaMax){
-//                    siguienteMovimiento();
-//                }
-              //  else{
-                    commandmov = "moveW";
-               // }
-                break; 
-            case 4:
-//                if (map.getLevel(x_rec-1, y_rec+1)>z_rec && map.getLevel(x_rec-1, y_rec+1) < alturaMax){
-//                    siguienteMovimiento();
-//                }
-                //else{
-                    commandmov = "moveNE";
-               // }
-                break; 
-            case 5:
-//                if (map.getLevel(x_rec+1, y_rec+1)>z_rec && map.getLevel(x_rec+1, y_rec+1) < alturaMax){
-//                    siguienteMovimiento();
-//                }
-               // else{
-                    commandmov = "moveSE";
-               // }
-                break; 
-            case 6:
-//                if (map.getLevel(x_rec+1, y_rec-1)>z_rec && map.getLevel(x_rec+1, y_rec-1) < alturaMax){
-//                    siguienteMovimiento();
-//                }
-//                else{
-                    commandmov = "moveSW";
-              //  }
-                break; 
-            case 7:
-//                if (map.getLevel(x_rec-1, y_rec-1)>z_rec && map.getLevel(x_rec-1, y_rec-1) < alturaMax){
-//                    siguienteMovimiento();
-//                }
-//                else{
-                    commandmov = "moveNW";
-               // }
-                    break; 
-
-        }
         System.out.println("el movimiento elegido " + commandmov);
-        if(!esBueno(commandmov)){
+        if(!esBueno(commandmov)&& !esAceptable(commandmov)){
             siguienteMovimiento();
+        }else{
+            guardarPosicionMemoria();
         }    
         checkFuel();
         
@@ -837,57 +735,57 @@ class Dron extends SuperAgent {
         protected boolean esBueno(String movimiento){
             System.out.println(" infrared recibido " + infraredR.length/2);
             int centro = infraredR.length/2;
-        switch (movimiento) {
-            case "moveN":
-                if(infraredR[centro-1][centro]!=-1){
-                    return true;
-                }
-                break;
-            case "moveNE":
-                if(infraredR[centro-1][centro+1]!=-1){
-                    return true;
-                }
-                break;
-            case "moveE":
-                if(infraredR[centro][centro+1]!=-1){
-                    return true;
-                }
-                break;
-            case "moveSE":
-                if(infraredR[centro+1][centro+1]!= -1 ){
-                    return true;
-                }
-                break;
-            case "moveS":
-                if(infraredR[centro+1][centro]!=-1){
-                    return true;
-                }
-                break;
-            case "moveSW":
-                if(infraredR[centro-1][centro-1]!=-1){
-                    return true;
-                }
-                break;
-            case "moveW":
-                if(infraredR[centro][centro-1]!=-1){
-                    return true;
-                }
-                break;
-            case "moveNW":
-                if(infraredR[centro-1][centro-1]!=-1){
-                    return true;
-                }
-                break;
-            case "moveUP":
-                if(z_rec < this.alturaMax){
-                    return true;
-                }
-                break;
-            case "moveDW":
-                if(z_rec > map.getLevel(x_rec, y_rec)){
-                    return true;
-                }
-                break;
+            switch (movimiento) {
+                case "moveN":
+                    if(infraredR[centro-1][centro]!=-1){
+                        return true;
+                    }
+                    break;
+                case "moveNE":
+                    if(infraredR[centro-1][centro+1]!=-1){
+                        return true;
+                    }
+                    break;
+                case "moveE":
+                    if(infraredR[centro][centro+1]!=-1){
+                        return true;
+                    }
+                    break;
+                case "moveSE":
+                    if(infraredR[centro+1][centro+1]!= -1 ){
+                        return true;
+                    }
+                    break;
+                case "moveS":
+                    if(infraredR[centro+1][centro]!=-1){
+                        return true;
+                    }
+                    break;
+                case "moveSW":
+                    if(infraredR[centro-1][centro-1]!=-1){
+                        return true;
+                    }
+                    break;
+                case "moveW":
+                    if(infraredR[centro][centro-1]!=-1){
+                        return true;
+                    }
+                    break;
+                case "moveNW":
+                    if(infraredR[centro-1][centro-1]!=-1){
+                        return true;
+                    }
+                    break;
+                case "moveUP":
+                    if(z_rec < this.alturaMax){
+                        return true;
+                    }
+                    break;
+                case "moveDW":
+                    if(z_rec > map.getLevel(x_rec, y_rec)){
+                        return true;
+                    }
+                    break;
         }
             return false;
         }
@@ -922,7 +820,7 @@ class Dron extends SuperAgent {
             return false;
         }else{
              for (int i = 0; i < arrayDeAlemanes.size(); i++) {
-                   if(x != arrayDeAlemanes.get(i).getX()&& y!= arrayDeAlemanes.get(i).getY()){
+                   if(x != arrayDeAlemanes.get(i).getX() && y!= arrayDeAlemanes.get(i).getY()){
                         return false;
                    }
             }
@@ -934,9 +832,9 @@ class Dron extends SuperAgent {
     * @author Manuel
     */
     protected void crearMemoria(){
-        this.mapaMemoria = new int[this.dimY][this.dimX];
-        for(int i=0; i<this.dimY; i++)
-            for(int j=0; j<this.dimX; j++)
+        this.mapaMemoria = new int[dimY][dimX];
+        for(int i=0; i<dimY; i++)
+            for(int j=0; j<dimX; j++)
                 this.mapaMemoria[i][j]=0; 
     }
     
@@ -1473,6 +1371,61 @@ class Dron extends SuperAgent {
         
         return false;
         
+    }
+    
+    public void veoAleman(){
+        int rel_i, rel_j;
+       String cuadrante=null;
+        int centro = infraredR.length/2;
+        for(int i=0; i<infraredR.length; i++){
+            for(int j=0; j<infraredR[i].length; j++){
+                rel_i=-1;
+                rel_j=-1;
+                if(infraredR[i][j]==1){
+                   
+                    if(i==centro && j==centro){ //si esta en el centro
+                        rel_i = x_rec;
+                        rel_j = y_rec;
+                        cuadrante="centro";
+                    }
+                    
+                    if(i<centro && j<=centro){ //NW
+                        rel_i = x_rec-i;
+                        rel_j = y_rec-j;
+                        cuadrante="nw";
+                    }
+                    
+                    if(i>centro && j<=centro){ //SW
+                        rel_i = x_rec+i-centro;
+                        rel_j = y_rec-j-centro;
+                        cuadrante="sw";
+                    }
+                    
+                    if(i<centro && j>centro){ //NE
+                        rel_i = x_rec-i-centro;
+                        rel_j = y_rec+j-centro;
+                        cuadrante="ne";
+                    }
+                    
+                    if(i>centro && j>centro){ //SE
+                        rel_i = x_rec+i+1-centro;
+                        rel_j = y_rec+j-centro;
+                        System.out.println(" i " + i + " j " + j);
+                        cuadrante="se";
+                    }
+                
+                    //System.out.println("he encontrado un aleman" + rel_i + " " + rel_j);
+                    if(rel_i!=-1 && rel_j!=-1){
+                        esta = estaContenido(rel_i, rel_j);
+                        
+                        if(!esta)
+                            arrayDeAlemanes.add(new Aleman(rel_i, rel_j,cuadrante));
+                        } 
+                    }
+                    
+                }
+            
+        }
     }
 }
 

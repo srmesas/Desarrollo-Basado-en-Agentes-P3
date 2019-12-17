@@ -55,29 +55,39 @@ public class DronFly extends Dron{
             } catch (InterruptedException ex) {
                 Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
             }
-            System.out.println("\n\tGPS: x:" + this.x + " y:" + this.y + " z:" + this.z);
-            enviarMensajeJSONControlador("moveRefuelStopRescue");//HACIA DIRECTOR
-            System.out.println("antes del while " +movimiento);
-       
-            try {
-                movimiento = recibirMovimiento();
-            } catch (InterruptedException ex) {
-                Logger.getLogger(DronHawk.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            System.out.println(movimiento);
-            enviarMensajeJSON("moveRefuelStopRescue");
-            try {
-                respuesta = recibirMensajeJSON();
-            } catch (InterruptedException ex) {
-                Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
-            }
+             System.out.println("\n\tGPS: x:" + this.x + " y:" + this.y + " z:" + this.z);
+//            if(alturaMax > z){
+//                movimiento = "moveUP";
+//                enviarMensajeJSON("moveRefuelStopRescue");
+//                System.out.println("subo subo subiendo");
+//                 try {
+//                    respuesta = recibirMensajeJSON();
+//                } catch (InterruptedException ex) {
+//                    Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
+//                }
+//            }else{
+                enviarMensajeJSONControlador("moveRefuelStopRescue");//HACIA DIRECTOR 
+                System.out.println("antes del while " +movimiento);
+                try {
+                    movimiento = recibirMovimiento();
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(DronHawk.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                System.out.println(movimiento);
+                enviarMensajeJSON("moveRefuelStopRescue");
+                try {
+                    respuesta = recibirMensajeJSON();
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            //} 
             movimiento=null;
             
-            if(contador == 20){
+            if(contador == 48){
                 System.out.println("me salgo");
                 break;
             }
-            //contador++;
+            contador++;
         }
     }
         

@@ -13,10 +13,12 @@ public class Aleman {
 
     private final int x;
     private final int y;
+    private final String cuadrante;
 
-    public Aleman(int x,int y) {
+    public Aleman(int x,int y,String cuadrante) {
         this.x=x;
         this.y=y;
+        this.cuadrante=cuadrante;
     }
 
     public int getX() {
@@ -29,8 +31,10 @@ public class Aleman {
 
     @Override
     public String toString() {
-        return "Aleman{" + "x=" + x + ", y=" + y + '}';
+        return "Aleman{" + "x=" + x + ", y=" + y + ", cuadrante=" + cuadrante + '}';
     }
+
+
     
     
     
