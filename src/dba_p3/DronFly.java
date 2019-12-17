@@ -83,7 +83,7 @@ public class DronFly extends Dron{
             } 
             movimiento=null;
             
-            if(contador == 480){
+            if(contador == 50){
                 System.out.println("me salgo");
                 break;
             }

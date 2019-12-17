@@ -1396,7 +1396,6 @@ class Dron extends SuperAgent {
                     if(i==centro && j==centro){ //si esta en el centro
                         rel_i = y_rec;
                         rel_j = x_rec;
-                        cuadrante="centro";
                     }
                     
                     if(i<centro && j==centro){ //N
@@ -1420,28 +1419,24 @@ class Dron extends SuperAgent {
                     }
                     
                     if(i<centro && j<centro){ //NW
-                        rel_i = y_rec-centro+i;
-                        rel_j = x_rec-centro+j;
-                        cuadrante="nw";
+                        rel_i = y_rec-i;
+                        rel_j = x_rec-j;
                     }
                     
                     if(i>centro && j<centro){ //SW
-                        rel_i = y_rec+centro+(infraredR.length-i);
-                        rel_j = x_rec-centro+j;
-                        cuadrante="sw";
+                        //rel_i = y_rec+centro+(infraredR.length-i);
+                        rel_i = y_rec-i;
+                        rel_j = x_rec-j+centro;
                     }
                     
                     if(i<centro && j>centro){ //NE
-                        rel_i = y_rec-centro+i;
-                        rel_j = x_rec+centro+(infraredR.length-j);
-                        cuadrante="ne";
+                        rel_i = y_rec+centro+i;
+                        rel_j = x_rec+(centro-j);
                     }
                     
                     if(i>centro && j>centro){ //SE
-                        rel_i = y_rec+centro+(infraredR.length-i);
-                        rel_j = x_rec+centro+(infraredR.length-j);
-                        System.out.println(" i " + i + " j " + j);
-                        cuadrante="se";
+                        rel_i = y_rec+(infraredR.length-i)+centro;
+                        rel_j = x_rec+(infraredR.length-j)+centro;
                     }
                 
                     //System.out.println("he encontrado un aleman" + rel_i + " " + rel_j);
@@ -1449,7 +1444,8 @@ class Dron extends SuperAgent {
                         
                         esta = estaContenido(rel_i, rel_j);
                         if(!esta)
-                            arrayDeAlemanes.add(new Aleman(rel_i, rel_j));
+                            System.out.println(ANSI_RED_BACKGROUND+"añado aleman"+ANSI_RESET);
+                            arrayDeAlemanes.add(new Aleman(rel_j, rel_i));
                         } 
                     }
                     
