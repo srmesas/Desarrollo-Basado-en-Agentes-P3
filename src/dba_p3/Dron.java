@@ -280,6 +280,7 @@ class Dron extends SuperAgent {
                     System.out.println(map.getWidth()+" pixs width & "+map.getHeight()+" pixs height");
                     this.dimX = map.getWidth();
                     this.dimY = map.getHeight();
+                    //crearMemoria();
                     /// 4) Y cuyos valores se pueden consultar en getLevel(X,Y)
                     System.out.print("First row starts with: ");
                     for (int i=0; i<10; i++)
@@ -394,43 +395,6 @@ class Dron extends SuperAgent {
             return "ERROR";
         }  
         return "ok";        
-    }
-
-    /**
-    *
-    * @author Manuel
-    */
-    protected void crearMemoria(){
-        this.mapaMemoria = new int[this.dimY][this.dimX];
-        for(int i=0; i<this.dimY; i++)
-            for(int j=0; j<this.dimX; j++)
-                this.mapaMemoria[i][j]=0; 
-    }
-    
-    /**
-    *
-    * @author Manuel
-    */
-    protected void guardarPosicionMemoria(){
-        this.mapaMemoria[this.y][this.x]++;
-    }
-    
-    /**
-    *
-    * @author Manuel
-    */
-    protected void mostrarMemoria(){
-        
-        for(int i=0; i<this.dimY; i++){
-            for(int j=0; j<this.dimX; j++){
-                if(this.mapaMemoria[i][j]!=0){
-                    System.out.print(ANSI_GREEN_BACKGROUND +this.mapaMemoria[i][j]+ ANSI_RESET + "  ");
-                }else{
-                    System.out.print(this.mapaMemoria[i][j]+" ");
-                }
-            }
-            System.out.print("\n");
-        }
     }
 
     public String getSession() {
@@ -553,6 +517,28 @@ class Dron extends SuperAgent {
         
         Random r = new Random();
         int ran = r.nextInt(7);
+        
+//        if(esAceptable("moveN") && esBueno("moveN")){
+//            commandmov = "moveN";
+//        }else if(esAceptable("moveNW") && esBueno("moveNW")){
+//            commandmov = "moveNW";
+//        }else if(esAceptable("moveW") && esBueno("moveW")){
+//            commandmov = "moveW";
+//        }else if(esAceptable("moveSW") && esBueno("moveSW")){
+//            commandmov = "moveSW";
+//        }else if(esAceptable("moveS") && esBueno("moveS")){
+//            commandmov = "moveS";
+//        }else if(esAceptable("moveSE") && esBueno("moveSE")){
+//            commandmov = "moveSE";
+//        }else if(esAceptable("moveE") && esBueno("moveE")){
+//            commandmov = "moveE";
+//        }else if(esAceptable("moveNE") && esBueno("moveNE")){
+//            commandmov = "moveNE";
+//        }else if(esAceptable("moveUP") && esBueno("moveUP")){
+//            commandmov = "moveUP";
+//        }
+//        
+//        guardarPosicionMemoria();
 
         switch(ran){
 
@@ -931,7 +917,7 @@ class Dron extends SuperAgent {
             }
         }
         
-     private boolean estaContenido(int x, int y){
+    private boolean estaContenido(int x, int y){
         if(arrayDeAlemanes.size()==0){
             return false;
         }else{
@@ -941,8 +927,552 @@ class Dron extends SuperAgent {
                    }
             }
         }  
-           return true;
-            
-        }    
+           return true;         
+    }  
+    /**
+    *
+    * @author Manuel
+    */
+    protected void crearMemoria(){
+        this.mapaMemoria = new int[this.dimY][this.dimX];
+        for(int i=0; i<this.dimY; i++)
+            for(int j=0; j<this.dimX; j++)
+                this.mapaMemoria[i][j]=0; 
+    }
+    
+    /**
+    *
+    * @author Manuel
+    */
+    protected void guardarPosicionMemoria(){
+        this.mapaMemoria[y_rec][x_rec]++;
+    }
+    
+    /**
+    *
+    * @author Manuel
+    */
+    protected void mostrarMemoria(){
+        
+        for(int i=0; i<this.dimY; i++){
+            for(int j=0; j<this.dimX; j++){
+                if(this.mapaMemoria[i][j]!=0){
+                    System.out.print(ANSI_GREEN_BACKGROUND +this.mapaMemoria[i][j]+ ANSI_RESET + "  ");
+                }else{
+                    System.out.print(this.mapaMemoria[i][j]+" ");
+                }
+            }
+            System.out.print("\n");
+        }
+    }
+    protected Boolean esAceptable(String movimiento){
+        
+        
+        if(movimiento == "moveN"){
+            if(this.y==0){
+                return false;
+            }else if(y_rec == this.dimY-1 && x_rec == this.dimX-1){
+                if(this.mapaMemoria[y_rec-1][x_rec]<=this.mapaMemoria[y_rec-1][x_rec-1]
+                && this.mapaMemoria[y_rec-1][x_rec]<=this.mapaMemoria[y_rec][x_rec-1]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else if(y_rec == this.dimY && x_rec == 0){
+                if(this.mapaMemoria[y_rec-1][x_rec]<=this.mapaMemoria[y_rec-1][x_rec+1] 
+                && this.mapaMemoria[y_rec-1][x_rec]<=this.mapaMemoria[y_rec][x_rec+1]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else if(x_rec==0){
+                if((this.mapaMemoria[y_rec-1][x_rec]<=this.mapaMemoria[y_rec-1][x_rec+1] 
+                && this.mapaMemoria[y_rec-1][x_rec]<=this.mapaMemoria[y_rec][x_rec+1] 
+                && this.mapaMemoria[y_rec-1][x_rec]<=this.mapaMemoria[y_rec+1][x_rec]
+                && this.mapaMemoria[y_rec-1][x_rec]<=this.mapaMemoria[y_rec+1][x_rec+1])){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else if(y_rec == this.dimY-1){
+                if(this.mapaMemoria[y_rec-1][x_rec]<=this.mapaMemoria[y_rec-1][x_rec-1] 
+                && this.mapaMemoria[y_rec-1][x_rec]<=this.mapaMemoria[y_rec-1][x_rec+1] 
+                && this.mapaMemoria[y_rec-1][x_rec]<=this.mapaMemoria[y_rec][x_rec-1]
+                && this.mapaMemoria[y_rec-1][x_rec]<=this.mapaMemoria[y_rec][x_rec+1]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else if(x_rec == this.dimX-1){
+                if(this.mapaMemoria[y_rec-1][x_rec]<=this.mapaMemoria[y_rec-1][x_rec-1] 
+                && this.mapaMemoria[y_rec-1][x_rec]<=this.mapaMemoria[y_rec][x_rec-1]
+                && this.mapaMemoria[y_rec-1][x_rec]<=this.mapaMemoria[y_rec+1][x_rec-1]
+                && this.mapaMemoria[y_rec-1][x_rec]<=this.mapaMemoria[y_rec+1][x_rec]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else{
+                if(this.mapaMemoria[y_rec-1][x_rec]<=this.mapaMemoria[y_rec-1][x_rec-1] 
+                && this.mapaMemoria[y_rec-1][x_rec]<=this.mapaMemoria[y_rec-1][x_rec+1] 
+                && this.mapaMemoria[y_rec-1][x_rec]<=this.mapaMemoria[y_rec][x_rec-1]
+                && this.mapaMemoria[y_rec-1][x_rec]<=this.mapaMemoria[y_rec][x_rec+1] 
+                && this.mapaMemoria[y_rec-1][x_rec]<=this.mapaMemoria[y_rec+1][x_rec-1]
+                && this.mapaMemoria[y_rec-1][x_rec]<=this.mapaMemoria[y_rec+1][x_rec]
+                && this.mapaMemoria[y_rec-1][x_rec]<=this.mapaMemoria[y_rec+1][x_rec+1]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }
+        }
+        
+        if(movimiento == "moveNE"){///////////////////////////////////////////////////////////////
+            if(y_rec == 0){
+                return false;
+            }else if(x_rec == this.dimX-1){
+                return false;
+            }else if(y_rec == this.dimY-1 && x_rec == 0){
+                if(this.mapaMemoria[y_rec-1][x_rec+1]<=this.mapaMemoria[y_rec-1][x_rec]
+                && this.mapaMemoria[y_rec-1][x_rec+1]<=this.mapaMemoria[y_rec][x_rec+1]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }    
+            }else if(x_rec == 0){
+                if(this.mapaMemoria[y_rec-1][x_rec+1]<=this.mapaMemoria[y_rec-1][x_rec] 
+                && this.mapaMemoria[y_rec-1][x_rec+1]<=this.mapaMemoria[y_rec][x_rec+1] 
+                && this.mapaMemoria[y_rec-1][x_rec+1]<=this.mapaMemoria[y_rec+1][x_rec]
+                && this.mapaMemoria[y_rec-1][x_rec+1]<=this.mapaMemoria[y_rec+1][x_rec+1]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else if(y_rec == this.dimY-1){
+                if(this.mapaMemoria[y_rec-1][x_rec+1]<=this.mapaMemoria[y_rec-1][x_rec-1] 
+                && this.mapaMemoria[y_rec-1][x_rec+1]<=this.mapaMemoria[y_rec-1][x_rec] 
+                && this.mapaMemoria[y_rec-1][x_rec+1]<=this.mapaMemoria[y_rec][x_rec-1]
+                && this.mapaMemoria[y_rec-1][x_rec+1]<=this.mapaMemoria[y_rec][x_rec+1]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else{
+                if(this.mapaMemoria[y_rec-1][x_rec+1]<=this.mapaMemoria[y_rec-1][x_rec-1] 
+                && this.mapaMemoria[y_rec-1][x_rec+1]<=this.mapaMemoria[y_rec-1][x_rec] 
+                && this.mapaMemoria[y_rec-1][x_rec+1]<=this.mapaMemoria[y_rec][x_rec-1]
+                && this.mapaMemoria[y_rec-1][x_rec+1]<=this.mapaMemoria[y_rec][x_rec+1] 
+                && this.mapaMemoria[y_rec-1][x_rec+1]<=this.mapaMemoria[y_rec+1][x_rec-1]
+                && this.mapaMemoria[y_rec-1][x_rec+1]<=this.mapaMemoria[y_rec+1][x_rec]
+                && this.mapaMemoria[y_rec-1][x_rec+1]<=this.mapaMemoria[y_rec+1][x_rec+1]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    //mostrarMemoria();
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }
+        }
+        
+        if(movimiento == "moveE"){
+            if(x_rec == this.dimX-1){
+                return false;
+            }else if(y_rec == 0 && x_rec == 0){
+                if(this.mapaMemoria[y_rec][x_rec+1]<=this.mapaMemoria[y_rec][x_rec] 
+                && this.mapaMemoria[y_rec][x_rec+1]<=this.mapaMemoria[y_rec+1][x_rec]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else if(y_rec == this.dimY-1 && x_rec == 0){
+                if(this.mapaMemoria[y_rec][x_rec+1]<=this.mapaMemoria[y_rec-1][x_rec] 
+                && this.mapaMemoria[y_rec][x_rec+1]<=this.mapaMemoria[y_rec-1][x_rec+1]
+                && this.mapaMemoria[y_rec][x_rec+1]<=this.mapaMemoria[y_rec][x_rec] ){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else if(y_rec == 0){
+                if(this.mapaMemoria[y_rec][x_rec+1]<=this.mapaMemoria[y_rec][x_rec-1] 
+                && this.mapaMemoria[y_rec][x_rec+1]<=this.mapaMemoria[y_rec][x_rec] 
+                && this.mapaMemoria[y_rec][x_rec+1]<=this.mapaMemoria[y_rec+1][x_rec-1]
+                && this.mapaMemoria[y_rec][x_rec+1]<=this.mapaMemoria[y_rec+1][x_rec]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else if(x_rec == 0){
+                if(this.mapaMemoria[y_rec][x_rec+1]<=this.mapaMemoria[y_rec-1][x_rec] 
+                && this.mapaMemoria[y_rec][x_rec+1]<=this.mapaMemoria[y_rec-1][x_rec+1]
+                && this.mapaMemoria[y_rec][x_rec+1]<=this.mapaMemoria[y_rec][x_rec]
+                && this.mapaMemoria[y_rec][x_rec+1]<=this.mapaMemoria[y_rec+1][x_rec]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else if(y_rec == this.dimY-1){
+                if(this.mapaMemoria[y_rec][x_rec+1]<=this.mapaMemoria[y_rec-1][x_rec-1] 
+                && this.mapaMemoria[y_rec][x_rec+1]<=this.mapaMemoria[y_rec-1][x_rec] 
+                && this.mapaMemoria[y_rec][x_rec+1]<=this.mapaMemoria[y_rec-1][x_rec+1]
+                && this.mapaMemoria[y_rec][x_rec+1]<=this.mapaMemoria[y_rec][x_rec-1] 
+                && this.mapaMemoria[y_rec][x_rec+1]<=this.mapaMemoria[y_rec][x_rec] ){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else{
+                if(this.mapaMemoria[y_rec][x_rec+1]<=this.mapaMemoria[y_rec-1][x_rec-1] 
+                && this.mapaMemoria[y_rec][x_rec+1]<=this.mapaMemoria[y_rec-1][x_rec] 
+                && this.mapaMemoria[y_rec][x_rec+1]<=this.mapaMemoria[y_rec-1][x_rec+1]
+                && this.mapaMemoria[y_rec][x_rec+1]<=this.mapaMemoria[y_rec][x_rec-1] 
+                && this.mapaMemoria[y_rec][x_rec+1]<=this.mapaMemoria[y_rec][x_rec] 
+                && this.mapaMemoria[y_rec][x_rec+1]<=this.mapaMemoria[y_rec+1][x_rec-1]
+                && this.mapaMemoria[y_rec][x_rec+1]<=this.mapaMemoria[y_rec+1][x_rec]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }
+        }
+        
+        if(movimiento == "moveSE"){
+            if(y_rec == this.dimY-1){
+                return false;
+            }else if(x_rec == this.dimX-1){
+                return false;
+            }else if(y_rec == 0 && x_rec == 0){
+                if(this.mapaMemoria[y_rec+1][x_rec+1]<=this.mapaMemoria[y_rec][x_rec+1]  
+                && this.mapaMemoria[y_rec+1][x_rec+1]<=this.mapaMemoria[y_rec+1][x_rec]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else if(y_rec == 0){
+                if(this.mapaMemoria[y_rec+1][x_rec+1]<=this.mapaMemoria[y_rec][x_rec-1]
+                && this.mapaMemoria[y_rec+1][x_rec+1]<=this.mapaMemoria[y_rec][x_rec+1] 
+                && this.mapaMemoria[y_rec+1][x_rec+1]<=this.mapaMemoria[y_rec+1][x_rec-1] 
+                && this.mapaMemoria[y_rec+1][x_rec+1]<=this.mapaMemoria[y_rec+1][x_rec]
+                && this.mapaMemoria[y_rec+1][x_rec+1]<=this.mapaMemoria[y_rec-1][x_rec]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else if(x_rec == 0){
+                if(this.mapaMemoria[y_rec+1][x_rec+1]<=this.mapaMemoria[y_rec-1][x_rec+1]
+                && this.mapaMemoria[y_rec+1][x_rec+1]<=this.mapaMemoria[y_rec][x_rec+1]
+                && this.mapaMemoria[y_rec+1][x_rec+1]<=this.mapaMemoria[y_rec+1][x_rec]
+                && this.mapaMemoria[y_rec+1][x_rec+1]<=this.mapaMemoria[y_rec-1][x_rec]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else{
+                if(this.mapaMemoria[y_rec+1][x_rec+1]<=this.mapaMemoria[y_rec-1][x_rec-1] 
+                && this.mapaMemoria[y_rec+1][x_rec+1]<=this.mapaMemoria[y_rec-1][x_rec+1] 
+                && this.mapaMemoria[y_rec+1][x_rec+1]<=this.mapaMemoria[y_rec][x_rec-1]
+                && this.mapaMemoria[y_rec+1][x_rec+1]<=this.mapaMemoria[y_rec][x_rec+1] 
+                && this.mapaMemoria[y_rec+1][x_rec+1]<=this.mapaMemoria[y_rec+1][x_rec-1] 
+                && this.mapaMemoria[y_rec+1][x_rec+1]<=this.mapaMemoria[y_rec+1][x_rec]
+                && this.mapaMemoria[y_rec+1][x_rec+1]<=this.mapaMemoria[y_rec-1][x_rec]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }
+        }
+        
+        if(movimiento == "moveS"){
+            if(y_rec == this.dimY-1){
+                return false;
+            }else if(y_rec == 0 && x_rec == 0){
+                if(this.mapaMemoria[y_rec+1][x_rec]<=this.mapaMemoria[y_rec][x_rec+1]
+                && this.mapaMemoria[y_rec+1][x_rec]<=this.mapaMemoria[y_rec+1][x_rec+1]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else if(y_rec == 0 && x_rec == this.dimX-1){
+                if(this.mapaMemoria[y_rec+1][x_rec]<=this.mapaMemoria[y_rec][x_rec-1]
+                && this.mapaMemoria[y_rec+1][x_rec]<=this.mapaMemoria[y_rec+1][x_rec-1] 
+                && this.mapaMemoria[y_rec+1][x_rec]<=this.mapaMemoria[y_rec-1][x_rec]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else if(y_rec == 0){
+                if(this.mapaMemoria[y_rec+1][x_rec]<=this.mapaMemoria[y_rec][x_rec-1]
+                && this.mapaMemoria[y_rec+1][x_rec]<=this.mapaMemoria[y_rec][x_rec+1] 
+                && this.mapaMemoria[y_rec+1][x_rec]<=this.mapaMemoria[y_rec+1][x_rec-1]
+                && this.mapaMemoria[y_rec+1][x_rec]<=this.mapaMemoria[y_rec+1][x_rec+1]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else if(y_rec == 0){
+                if(this.mapaMemoria[y_rec+1][x_rec]<=this.mapaMemoria[y_rec-1][x_rec+1]
+                && this.mapaMemoria[y_rec+1][x_rec]<=this.mapaMemoria[y_rec][x_rec+1]
+                && this.mapaMemoria[y_rec+1][x_rec]<=this.mapaMemoria[y_rec-1][x_rec]
+                && this.mapaMemoria[y_rec+1][x_rec]<=this.mapaMemoria[y_rec+1][x_rec+1]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else if(x_rec == this.dimX-1){
+                if(this.mapaMemoria[y_rec+1][x_rec]<=this.mapaMemoria[y_rec-1][x_rec-1] 
+                && this.mapaMemoria[y_rec+1][x_rec]<=this.mapaMemoria[y_rec][x_rec-1]
+                && this.mapaMemoria[y_rec+1][x_rec]<=this.mapaMemoria[y_rec+1][x_rec-1] 
+                && this.mapaMemoria[y_rec+1][x_rec]<=this.mapaMemoria[y_rec-1][x_rec]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else{
+                if(this.mapaMemoria[y_rec+1][x_rec]<=this.mapaMemoria[y_rec-1][x_rec-1] 
+                && this.mapaMemoria[y_rec+1][x_rec]<=this.mapaMemoria[y_rec-1][x_rec+1] 
+                && this.mapaMemoria[y_rec+1][x_rec]<=this.mapaMemoria[y_rec][x_rec-1]
+                && this.mapaMemoria[y_rec+1][x_rec]<=this.mapaMemoria[y_rec][x_rec+1] 
+                && this.mapaMemoria[y_rec+1][x_rec]<=this.mapaMemoria[y_rec+1][x_rec-1] 
+                && this.mapaMemoria[y_rec+1][x_rec]<=this.mapaMemoria[y_rec-1][x_rec]
+                && this.mapaMemoria[y_rec+1][x_rec]<=this.mapaMemoria[y_rec+1][x_rec+1]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }
+        }
+        
+        if(movimiento == "moveSW"){
+            if(y_rec == this.dimY-1){
+                return false;
+            }else if(x_rec == 0){
+                return false;
+            }else if(y_rec == 0 && x_rec == this.dimX-1){
+                if(this.mapaMemoria[y_rec+1][x_rec-1]<=this.mapaMemoria[y_rec][x_rec-1]
+                && this.mapaMemoria[y_rec+1][x_rec-1]<=this.mapaMemoria[y_rec+1][x_rec]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else if(y_rec == 0){
+                if(this.mapaMemoria[y_rec+1][x_rec-1]<=this.mapaMemoria[y_rec][x_rec-1]
+                && this.mapaMemoria[y_rec+1][x_rec-1]<=this.mapaMemoria[y_rec][x_rec+1] 
+                && this.mapaMemoria[y_rec+1][x_rec-1]<=this.mapaMemoria[y_rec+1][x_rec]
+                && this.mapaMemoria[y_rec+1][x_rec-1]<=this.mapaMemoria[y_rec+1][x_rec+1]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else if(x_rec == this.dimX-1){
+                if(this.mapaMemoria[y_rec+1][x_rec-1]<=this.mapaMemoria[y_rec-1][x_rec-1]
+                && this.mapaMemoria[y_rec+1][x_rec-1]<=this.mapaMemoria[y_rec][x_rec-1] 
+                && this.mapaMemoria[y_rec+1][x_rec-1]<=this.mapaMemoria[y_rec-1][x_rec] 
+                && this.mapaMemoria[y_rec+1][x_rec-1]<=this.mapaMemoria[y_rec+1][x_rec]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else{
+                if(this.mapaMemoria[y_rec+1][x_rec-1]<=this.mapaMemoria[y_rec-1][x_rec-1] 
+                && this.mapaMemoria[y_rec+1][x_rec-1]<=this.mapaMemoria[y_rec-1][x_rec+1] 
+                && this.mapaMemoria[y_rec+1][x_rec-1]<=this.mapaMemoria[y_rec][x_rec-1]
+                && this.mapaMemoria[y_rec+1][x_rec-1]<=this.mapaMemoria[y_rec][x_rec+1] 
+                && this.mapaMemoria[y_rec+1][x_rec-1]<=this.mapaMemoria[y_rec-1][x_rec] 
+                && this.mapaMemoria[y_rec+1][x_rec-1]<=this.mapaMemoria[y_rec+1][x_rec]
+                && this.mapaMemoria[y_rec+1][x_rec-1]<=this.mapaMemoria[y_rec+1][x_rec+1]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }
+        }
+        
+        if(movimiento == "moveW"){
+            if(x_rec == 0){
+                return false;
+            }else if(y_rec == 0 && x_rec == this.dimX-1){
+                if(this.mapaMemoria[y_rec][x_rec-1]<=this.mapaMemoria[y_rec+1][x_rec-1] 
+                && this.mapaMemoria[y_rec][x_rec-1]<=this.mapaMemoria[y_rec+1][x_rec]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else if(y_rec == this.dimY-1 && x_rec == this.dimX-1){
+                if(this.mapaMemoria[y_rec][x_rec-1]<=this.mapaMemoria[y_rec-1][x_rec-1]
+                && this.mapaMemoria[y_rec][x_rec-1]<=this.mapaMemoria[y_rec-1][x_rec]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else if(y_rec == 0){
+                if(this.mapaMemoria[y_rec][x_rec-1]<=this.mapaMemoria[y_rec][x_rec+1] 
+                && this.mapaMemoria[y_rec][x_rec-1]<=this.mapaMemoria[y_rec+1][x_rec-1] 
+                && this.mapaMemoria[y_rec][x_rec-1]<=this.mapaMemoria[y_rec+1][x_rec]
+                && this.mapaMemoria[y_rec][x_rec-1]<=this.mapaMemoria[y_rec+1][x_rec+1]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else if(y_rec == this.dimY-1){
+                if(this.mapaMemoria[y_rec][x_rec-1]<=this.mapaMemoria[y_rec-1][x_rec-1] 
+                && this.mapaMemoria[y_rec][x_rec-1]<=this.mapaMemoria[y_rec-1][x_rec+1] 
+                && this.mapaMemoria[y_rec][x_rec-1]<=this.mapaMemoria[y_rec-1][x_rec]
+                && this.mapaMemoria[y_rec][x_rec-1]<=this.mapaMemoria[y_rec][x_rec+1]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else if(x_rec == this.dimX-1){
+                if(this.mapaMemoria[y_rec][x_rec-1]<=this.mapaMemoria[y_rec-1][x_rec-1]
+                && this.mapaMemoria[y_rec][x_rec-1]<=this.mapaMemoria[y_rec-1][x_rec]
+                && this.mapaMemoria[y_rec][x_rec-1]<=this.mapaMemoria[y_rec+1][x_rec-1] 
+                && this.mapaMemoria[y_rec][x_rec-1]<=this.mapaMemoria[y_rec+1][x_rec]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else{
+                if(this.mapaMemoria[y_rec][x_rec-1]<=this.mapaMemoria[y_rec-1][x_rec-1] 
+                && this.mapaMemoria[y_rec][x_rec-1]<=this.mapaMemoria[y_rec-1][x_rec+1] 
+                && this.mapaMemoria[y_rec][x_rec-1]<=this.mapaMemoria[y_rec-1][x_rec]
+                && this.mapaMemoria[y_rec][x_rec-1]<=this.mapaMemoria[y_rec][x_rec+1] 
+                && this.mapaMemoria[y_rec][x_rec-1]<=this.mapaMemoria[y_rec+1][x_rec-1] 
+                && this.mapaMemoria[y_rec][x_rec-1]<=this.mapaMemoria[y_rec+1][x_rec]
+                && this.mapaMemoria[y_rec][x_rec-1]<=this.mapaMemoria[y_rec+1][x_rec+1]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }
+
+        }
+        
+        if(movimiento == "moveNW"){
+            if(y_rec == 0){
+                return false;
+            }else if(x_rec == 0){
+                return false;
+            }else if(y_rec == this.dimY-1 && x_rec == this.dimX-1){
+                if(this.mapaMemoria[y_rec-1][x_rec-1]<=this.mapaMemoria[y_rec-1][x_rec]
+                && this.mapaMemoria[y_rec-1][x_rec-1]<=this.mapaMemoria[y_rec][x_rec-1]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else if(y_rec == this.dimY-1){
+                if(this.mapaMemoria[y_rec-1][x_rec-1]<=this.mapaMemoria[y_rec-1][x_rec] 
+                && this.mapaMemoria[y_rec-1][x_rec-1]<=this.mapaMemoria[y_rec-1][x_rec+1] 
+                && this.mapaMemoria[y_rec-1][x_rec-1]<=this.mapaMemoria[y_rec][x_rec-1]
+                && this.mapaMemoria[y_rec-1][x_rec-1]<=this.mapaMemoria[y_rec][x_rec+1]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else if(x_rec == this.dimX-1){
+                if(this.mapaMemoria[y_rec-1][x_rec-1]<=this.mapaMemoria[y_rec-1][x_rec]
+                && this.mapaMemoria[y_rec-1][x_rec-1]<=this.mapaMemoria[y_rec][x_rec-1]
+                && this.mapaMemoria[y_rec-1][x_rec-1]<=this.mapaMemoria[y_rec+1][x_rec-1] 
+                && this.mapaMemoria[y_rec-1][x_rec-1]<=this.mapaMemoria[y_rec+1][x_rec]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }else{
+                if(this.mapaMemoria[y_rec-1][x_rec-1]<=this.mapaMemoria[y_rec-1][x_rec] 
+                && this.mapaMemoria[y_rec-1][x_rec-1]<=this.mapaMemoria[y_rec-1][x_rec+1] 
+                && this.mapaMemoria[y_rec-1][x_rec-1]<=this.mapaMemoria[y_rec][x_rec-1]
+                && this.mapaMemoria[y_rec-1][x_rec-1]<=this.mapaMemoria[y_rec][x_rec+1] 
+                && this.mapaMemoria[y_rec-1][x_rec-1]<=this.mapaMemoria[y_rec+1][x_rec-1] 
+                && this.mapaMemoria[y_rec-1][x_rec-1]<=this.mapaMemoria[y_rec+1][x_rec]
+                && this.mapaMemoria[y_rec-1][x_rec-1]<=this.mapaMemoria[y_rec+1][x_rec+1]){
+                    System.out.print("\nNo es un movimiento repe");
+                    return true;
+                }else{
+                    System.out.print("\nES UN MOVIMIENTO REPE");
+                    return false;
+                }
+            }
+
+        }
+        
+        return false;
+        
+    }
 }
 
