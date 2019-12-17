@@ -16,10 +16,10 @@ import java.util.logging.Logger;
  */
 public class DBA_P3 {
     public static final String NOMBRE_HAWK = "h02";
-    public static final String Controlador = "juan2";
+    public static final String Controlador = "juan22";
     public static final String NOMBRE_FLY1 = "f01";
     public static final String NOMBRE_FLY2 = "f01";
-    public static final String NOMBRE_RESCUE = "r2";
+    public static final String NOMBRE_RESCUE = "r222";
     
      public static void connect(){
         AgentsConnection.connect(
@@ -48,9 +48,8 @@ public class DBA_P3 {
             D = new Dron(new AgentID(Controlador));
             //H = new DronHawk(new AgentID(NOMBRE_HAWK));
             //F1 = new DronFly(new AgentID(NOMBRE_FLY1));
-            F2 = new DronFly(new AgentID(NOMBRE_FLY2));
-            
-         //   R = new DronRescate(new AgentID(NOMBRE_RESCUE));
+           // F2 = new DronFly(new AgentID(NOMBRE_FLY2));
+              R = new DronRescate(new AgentID(NOMBRE_RESCUE));
            
 	} catch (Exception ex){
 		System.err.println("El agente ya existe en la plataforma");
@@ -60,8 +59,8 @@ public class DBA_P3 {
         //Thread.sleep(1000);
        // H.start();
         //F1.start();
-        F2.start();
-      //  R.start();
+       // F2.start();
+        R.start();
     }
     
 }

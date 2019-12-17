@@ -5,7 +5,6 @@
  */
 package dba_p3;
 
-import DBAMap.DBAMap;
 import DBA.SuperAgent;
 import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonArray;
@@ -106,11 +105,12 @@ class Dron extends SuperAgent {
     private boolean primerAleman;
     JsonArray radarJSON;
     public int[][] infraredR;
-
+    JsonArray img;
+    public DBAMap mapR;
 
     public Dron(AgentID aid) throws Exception {
         super(aid);
-        this.mapa = "playground";
+        this.mapa = "map1";
         this.user = "Kazi";
         this.password = "moHhEBMN";
         
@@ -140,9 +140,10 @@ class Dron extends SuperAgent {
         System.out.print("\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n");
         enviarSession(this.NOMBRE_HAWK, 20, 20);
         //enviarSession(this.NOMBRE_FLY1, 30, 30);
-        enviarSession(this.NOMBRE_FLY2, 31, 31);
+       // enviarSession(this.NOMBRE_FLY2, 31, 31);
+        enviarSession(this.NOMBRE_RESCUE, 30, 30);
         System.out.print("\nbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\n");
-        System.out.println("hola este es el mapa en la posicion -1 -1 " +map.getLevel(0, -1));
+        System.out.println("hola este es el mapa en la posicion 30 30 " +map.getLevel(30, 30));
         do{
 //            enviarMensajeJSON("query");
 //            try {
@@ -271,13 +272,14 @@ class Dron extends SuperAgent {
                     this.dimY =objetoPercepcion.get("dimy").asInt();
                     System.out.println("x " + dimX +"  y:"+ dimY + " ");
                     
-                    JsonArray img = Json.parse(fuente).asObject().get("map").asArray();
+                    img = Json.parse(fuente).asObject().get("map").asArray();
                     //System.out.println(img);
                     map = new DBAMap();
                     map.fromJson(img);
+                    
                     System.out.println("IMAGE DATA:");
                     /// 3) Cuyas dimensiones se pueden consultar
-                    //System.out.println(map.getWidth()+" pixs width & "+map.getHeight()+" pixs height");
+                    System.out.println(map.getWidth()+" pixs width & "+map.getHeight()+" pixs height");
                     //this.dimX = map.getWidth();
                     //this.dimY = map.getHeight();
                     crearMemoria();
@@ -414,6 +416,7 @@ class Dron extends SuperAgent {
         objeto.add("session",session);
         objeto.add("inicioX", x);
         objeto.add("inicioY", y);
+        objeto.add("mapa", img);
         String resultado = objeto.toString();
                 
         outbox = new ACLMessage();
@@ -485,25 +488,6 @@ class Dron extends SuperAgent {
                     break; 
 
         }
-//        if(esAceptable("moveN") && esBueno("moveN")){
-//            commandmov = "moveN";
-//        }else if(esAceptable("moveNW") && esBueno("moveNW")){
-//            commandmov = "moveNW";
-//        }else if(esAceptable("moveW") && esBueno("moveW")){
-//            commandmov = "moveW";
-//        }else if(esAceptable("moveSW") && esBueno("moveSW")){
-//            commandmov = "moveSW";
-//        }else if(esAceptable("moveS") && esBueno("moveS")){
-//            commandmov = "moveS";
-//        }else if(esAceptable("moveSE") && esBueno("moveSE")){
-//            commandmov = "moveSE";
-//        }else if(esAceptable("moveE") && esBueno("moveE")){
-//            commandmov = "moveE";
-//        }else if(esAceptable("moveNE") && esBueno("moveNE")){
-//            commandmov = "moveNE";
-//        }else if(esAceptable("moveUP") && esBueno("moveUP")){
-//            commandmov = "moveUP";
-//        }
         System.out.println("el movimiento elegido " + commandmov);
         if(!esBueno(commandmov)&& !esAceptable(commandmov)){
             siguienteMovimiento();
@@ -690,6 +674,13 @@ class Dron extends SuperAgent {
                 session = objetoPercepcion.get("session").asString();
                 this.inicioX = objetoPercepcion.get("inicioX").asInt();
                 this.inicioY = objetoPercepcion.get("inicioY").asInt();
+                JsonArray radarJSONRec = objetoPercepcion.get("mapa").asArray();
+                mapR = new DBAMap();
+                try {
+                    mapR.fromJson(radarJSONRec);
+                } catch (IOException ex) {
+                    System.out.println("fallo al recibir el mapa en el agente");
+                }
             }
 
             return session;   
@@ -806,10 +797,10 @@ class Dron extends SuperAgent {
        
         protected void checkFuel(){
             
-            if((z_rec - map.getLevel(x_rec, y_rec))/5 > (this.fuel-10)/gasto){
+            if((z_rec - mapR.getLevel(x_rec, y_rec))/5 > (this.fuel-10)/gasto){
                 System.out.println("\nNECESITA REPOSTAR "+fuel + " " + z_rec);
                 commandmov = "moveDW";
-                if(z_rec - map.getLevel(x_rec, y_rec) == 0){
+                if(z_rec == mapR.getLevel(x_rec, y_rec)){
                     commandmov = "refuel";
                 }
             }
@@ -1426,6 +1417,19 @@ class Dron extends SuperAgent {
                 }
             
         }
+    }
+    
+    public boolean estoyEncimaAleman(){
+        int centro = infrared.length/2;
+        if(infrared[centro][centro]==1){
+            return true;
+        }
+        return false;
+    }
+    
+    
+    public int obtener(int x , int y){
+       return this.map.getLevel(x, y);
     }
 }
 

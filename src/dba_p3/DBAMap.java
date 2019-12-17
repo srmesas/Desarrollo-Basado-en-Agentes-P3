@@ -2,7 +2,7 @@
  * @file DBAMap 
  * @author Luis Castillo, DBA, l.castillo@decsai.ugr.es
  */
-package DBAMap;
+package dba_p3;
 
 import com.eclipsesource.json.JsonArray;
 import java.awt.Color;
@@ -17,7 +17,7 @@ import javax.imageio.ImageIO;
  * @author Luis Castillo Vidal @ DBA
  */
 public class DBAMap {
-    private BufferedImage _map;
+    public BufferedImage _map;
     
     /***
      * Default builder
@@ -117,7 +117,7 @@ public class DBAMap {
      * Comprueba que hay una imagen ya cargada
      * @return true si hay una imagen cargada, false en otro caso
      */
-    private boolean hasMap() {
+    public boolean hasMap() {
         return (_map != null);
     }      
 
@@ -127,7 +127,7 @@ public class DBAMap {
      * @param y Coordenada del mapa
      * @return El color (grises) del mapa en ese punto
      */
-    private Color getPixel(int x, int y) {
+    public Color getPixel(int x, int y) {
         if (this.hasMap() && 0 <= x && x < this.getWidth() && 0 <= y && y < this.getHeight())  {
             return new Color(_map.getRGB(x, y)); 
         }else  {
