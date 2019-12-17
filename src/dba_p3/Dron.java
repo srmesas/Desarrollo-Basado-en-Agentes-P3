@@ -823,16 +823,17 @@ class Dron extends SuperAgent {
         }
         
     private boolean estaContenido(int x, int y){
-       Aleman a = new Aleman(x, y);
-       boolean existe = arrayDeAlemanes.contains(a);
+        Aleman a = new Aleman(x, y);
+        //boolean existe = arrayDeAlemanes.contains(a);
         if(arrayDeAlemanes.size()==0){
             return false;
         }else{
-            if(existe){
-                return true;
-            }else{
-                return false;
+            for(int i=0; i < arrayDeAlemanes.size(); i++){
+                if(a.getX() == arrayDeAlemanes.get(i).getX() && a.getY() == arrayDeAlemanes.get(i).getY()){
+                    return true;
+                }
             }
+            return false;
         }
                    
     } 
@@ -1384,7 +1385,7 @@ class Dron extends SuperAgent {
     
     public void veoAleman(){
         int rel_i, rel_j;
-       String cuadrante=null;
+        String cuadrante=null;
         int centro = infraredR.length/2;
         for(int i=0; i<infraredR.length; i++){
             for(int j=0; j<infraredR[i].length; j++){
@@ -1398,27 +1399,47 @@ class Dron extends SuperAgent {
                         cuadrante="centro";
                     }
                     
-                    if(i<centro && j<=centro){ //NW
-                        rel_i = y_rec-i;
-                        rel_j = x_rec-j;
+                    if(i<centro && j==centro){ //N
+                        rel_i = y_rec-centro+i;
+                        rel_j = x_rec;
+                    }
+                    
+                    if(i>centro && j==centro){ //S
+                        rel_i = y_rec+centro+(infraredR.length-i);
+                        rel_j = x_rec;
+                    }
+                    
+                    if(i==centro && j<centro){ //W
+                        rel_i = y_rec;
+                        rel_j = x_rec-centro+j;
+                    }
+                    
+                    if(i==centro && j>centro){ //E
+                        rel_i = y_rec;
+                        rel_j = x_rec+centro+(infraredR.length-j);
+                    }
+                    
+                    if(i<centro && j<centro){ //NW
+                        rel_i = y_rec-centro+i;
+                        rel_j = x_rec-centro+j;
                         cuadrante="nw";
                     }
                     
-                    if(i>centro && j<=centro){ //SW
-                        rel_i = y_rec+i-centro;
-                        rel_j = x_rec-j-centro;
+                    if(i>centro && j<centro){ //SW
+                        rel_i = y_rec+centro+(infraredR.length-i);
+                        rel_j = x_rec-centro+j;
                         cuadrante="sw";
                     }
                     
                     if(i<centro && j>centro){ //NE
-                        rel_i = y_rec-i-centro;
-                        rel_j = x_rec+j-centro;
+                        rel_i = y_rec-centro+i;
+                        rel_j = x_rec+centro+(infraredR.length-j);
                         cuadrante="ne";
                     }
                     
                     if(i>centro && j>centro){ //SE
-                        rel_i = y_rec+i+1-centro;
-                        rel_j = x_rec+j-centro;
+                        rel_i = y_rec+centro+(infraredR.length-i);
+                        rel_j = x_rec+centro+(infraredR.length-j);
                         System.out.println(" i " + i + " j " + j);
                         cuadrante="se";
                     }
