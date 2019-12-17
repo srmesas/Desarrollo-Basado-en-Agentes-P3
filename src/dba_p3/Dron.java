@@ -823,19 +823,19 @@ class Dron extends SuperAgent {
         }
         
     private boolean estaContenido(int x, int y){
+       Aleman a = new Aleman(x, y);
+       boolean existe = arrayDeAlemanes.contains(a);
         if(arrayDeAlemanes.size()==0){
             return false;
         }else{
-            boolean valor = true;
-             for (int i = 0; i < arrayDeAlemanes.size(); i++) {
-                 System.out.println("posicion recibida x "+ x + " posicion y "+ y + " x " + arrayDeAlemanes.get(i).getX()+ " " + arrayDeAlemanes.get(i).getY());
-                   if(x != arrayDeAlemanes.get(i).getX() && y!= arrayDeAlemanes.get(i).getY()){
-                        valor = false;
-                   }
+            if(existe){
+                return true;
+            }else{
+                return false;
             }
-             return valor;
-        }         
-    }  
+        }
+                   
+    } 
     /**
     *
     * @author Manuel
@@ -1428,7 +1428,7 @@ class Dron extends SuperAgent {
                         
                         esta = estaContenido(rel_i, rel_j);
                         if(!esta)
-                            arrayDeAlemanes.add(new Aleman(rel_i, rel_j,cuadrante));
+                            arrayDeAlemanes.add(new Aleman(rel_i, rel_j));
                         } 
                     }
                     
@@ -1444,7 +1444,6 @@ class Dron extends SuperAgent {
         }
         return false;
     }
-    
     
     public int obtener(int x , int y){
        return this.map.getLevel(x, y);

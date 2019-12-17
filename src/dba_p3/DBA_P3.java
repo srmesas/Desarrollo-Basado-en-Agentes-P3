@@ -15,11 +15,11 @@ import java.util.logging.Logger;
  * @author jopoku
  */
 public class DBA_P3 {
-    public static final String NOMBRE_HAWK = "h02";
-    public static final String Controlador = "juan22";
-    public static final String NOMBRE_FLY1 = "f01";
-    public static final String NOMBRE_FLY2 = "f01";
-    public static final String NOMBRE_RESCUE = "r222";
+    public static final String NOMBRE_HAWK = "h023";
+    public static final String Controlador = "juan223";
+    public static final String NOMBRE_FLY1 = "f013";
+    public static final String NOMBRE_FLY2 = "f014";
+    public static final String NOMBRE_RESCUE = "r2225";
     
      public static void connect(){
         AgentsConnection.connect(
