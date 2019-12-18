@@ -393,7 +393,13 @@ class Dron extends SuperAgent {
                 System.out.println(fallo);
             }else if (inbox.getPerformativeInt() == ACLMessage.INFORM){
                 id = inbox.getConversationId();
-                percibirJSON(inbox);
+                AgentID receiver = inbox.getReceiver();
+                if(receiver.name.equals(NOMBRE_RESCUE)){
+                    percibirJSON(inbox);
+                }else{
+                    percibirJSON2(inbox);
+                }
+                
                 //System.out.println(" id : "+ id + "  on " + session);
             }
             
@@ -1499,6 +1505,118 @@ class Dron extends SuperAgent {
     }
     public void EliminarAleman(){
         arrayDeAlemanes.remove(0);
+    }
+    
+    protected void percibirJSON2(ACLMessage inbox){
+
+            //System.out.println("\nPercepciones: "+ quiensoy);
+            String fuente = inbox.getContent();
+            reply = inbox.getReplyWith();
+            System.out.println(reply);
+            JsonObject objetoPercepcion = Json.parse(fuente).asObject();
+           
+            if(comandoEnvi == "suscribe"){
+                try {
+                    session = objetoPercepcion.get("session").asString();
+                    this.dimX =objetoPercepcion.get("dimx").asInt();
+                    this.dimY =objetoPercepcion.get("dimy").asInt();
+                    //System.out.println("x " + dimX +"  y:"+ dimY + " ");
+                    
+                    img = Json.parse(fuente).asObject().get("map").asArray();
+                    //System.out.println(img);
+                    map = new DBAMap();
+                    map.fromJson(img);
+                    
+                    //System.out.println("IMAGE DATA:");
+                    /// 3) Cuyas dimensiones se pueden consultar
+                   // System.out.println(map.getWidth()+" pixs width & "+map.getHeight()+" pixs height");
+                    
+//                    this.dimX = map.getWidth();
+//                    this.dimY = map.getHeight();
+                    crearMemoria();
+                    /// 4) Y cuyos valores se pueden consultar en getLevel(X,Y)
+                   // System.out.print("First row starts with: ");
+//                    for (int i=0; i<10; i++)
+//                    //    System.out.print(map.getLevel(i, 0)+"-");
+//                    System.out.print("\nLast row ends with: ");
+//                    for (int i=0; i<10; i++)
+//                    //    System.out.print(map.getLevel(map.getWidth()-1-i, map.getHeight()-1)+"-");
+//                    System.out.println();
+                    System.out.println("Saving file ./maps/"+_filename+".png");
+                    map.save("./maps/"+_filename+".png");
+                } catch (IOException ex) {
+                     System.err.println("***ERROR "+ex.toString());
+                }
+                
+            }else if(comandoEnvi == "checkin"){
+                System.out.println(objetoPercepcion.get("result").asString());
+                gasto = objetoPercepcion.get("fuelrate").asFloat();
+                rango = objetoPercepcion.get("range").asFloat();
+                alturaMax = objetoPercepcion.get("maxlevel").asInt();
+                visibilidad = objetoPercepcion.get("visibility").asInt();
+                //System.out.println("gasto "+  gasto + " rango "+ rango +  " altura max " + alturaMax + " visibilidad "+ visibilidad);
+            }else if(comandoEnvi == "query"){
+               // System.out.println("query");
+                String percepcion = objetoPercepcion.toString();
+               // System.out.println("\nMensaje JSON recibido: \n <"+percepcion+"> \n"); 
+                this.x = objetoPercepcion.get("result").asObject().get("gps").asObject().get("x").asInt();
+                this.y =objetoPercepcion.get("result").asObject().get("gps").asObject().get("y").asInt();
+                this.z =objetoPercepcion.get("result").asObject().get("gps").asObject().get("z").asInt();
+                
+               // System.out.println("\n\tGPS: x:" + this.x + " y:" + this.y + " z:" + this.z);
+                
+                distance = objetoPercepcion.get("result").asObject().get("gonio").asObject().get("distance").asFloat();
+                angle = objetoPercepcion.get("result").asObject().get("gonio").asObject().get("angle").asFloat();
+                
+                radarJSON = objetoPercepcion.get("result").asObject().get("infrared").asArray();
+                
+                fuel = objetoPercepcion.get("result").asObject().get("fuel").asFloat();
+                
+                goal = objetoPercepcion.get("result").asObject().get("goal").asBoolean();
+                
+                status = objetoPercepcion.get("result").asObject().get("status").asString();
+                torescue = objetoPercepcion.get("result").asObject().get("torescue").asInt();
+                energy = objetoPercepcion.get("result").asObject().get("torescue").asInt();
+                cancel = objetoPercepcion.get("result").asObject().get("cancel").asBoolean();
+                
+                int rangoconver = (int) rango;
+              
+                for (int i = 0; i < radarJSON.size(); i++) {
+                    prueba[i] = radarJSON.get(i).asInt();
+                }
+                int indice=0;
+                infrared = new int[rangoconver][rangoconver];
+                
+                for (int i = 0; i < infrared.length; i++) {
+                   for (int j = 0; j < infrared[i].length; j++) {
+                    infrared[i][j] = prueba[indice];
+                    indice++;
+                    }
+                }
+                
+                for (int i = 0; i < infrared.length; i++) {
+               // System.out.print("\t\t\t\t");
+                for (int j = 0; j < infrared[i].length; j++) {
+                    if(i== rangoconver/2 && j== rangoconver/2){
+                    //    System.out.print(ANSI_GREEN_BACKGROUND +infrared[i][j] + ANSI_RESET + "  ");
+                    }else{
+                        if(infrared[i][j]==1){
+                    //        System.out.print(ANSI_YELLOW_BACKGROUND +infrared[i][j] + ANSI_RESET + "  ");
+                        }else{
+                    //        System.out.print(infrared[i][j] + "  ");
+                        }
+                    }
+                }
+                  //  System.out.println(" ");
+                }
+              //  System.out.println("distancia " + distance + " angulo "+angle);
+            }else if(comandoEnvi == "moveRefuelStopRescue"){
+             //   System.out.println("Estoy en moveRefuelStopRescue");
+             //   System.out.println(objetoPercepcion.get("result").asString());
+                //siguienteMovimiento();
+            }
+            
+            
     }
 }
 
