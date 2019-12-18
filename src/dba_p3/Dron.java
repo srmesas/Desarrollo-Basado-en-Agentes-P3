@@ -1398,11 +1398,12 @@ class Dron extends SuperAgent {
                     }
                     
                     if(i>centro && j==centro){ //S
+                        rel_i = y_rec+(i-centro);
                         //rel_i = y_rec+centro+(infraredR.length-i);
                         //rel_j = x_rec;
-                        rel_i = x_rec;
-                        rel_j = y_rec-i;
-                         cuadrante="S";
+                        //rel_i = y_rec-i;
+                        rel_j = x_rec;
+                        cuadrante="S";
                     }
                     
                     if(i==centro && j<centro){ //W
@@ -1413,9 +1414,10 @@ class Dron extends SuperAgent {
                     
                     
                     if(i==centro && j>centro){ //E
-                        rel_i = x_rec-(j-centro);
+                        rel_i = y_rec;
+                        //rel_i = x_rec-(j-centro);
                         //rel_j = x_rec+centro+(infraredR.length-j);
-                        rel_j = y_rec;
+                        rel_j = x_rec+(j-centro);
                         cuadrante="e";
                     }
                     
@@ -1427,8 +1429,8 @@ class Dron extends SuperAgent {
                     
                     if(i>centro && j<centro){ //SW
                         //rel_i = y_rec+centro+(infraredR.length-i);
-                        rel_i = x_rec-(centro-j);
-                        rel_j = y_rec+(i-centro);
+                        rel_i = y_rec+(i-centro);
+                        rel_j = x_rec-centro+j;
                         cuadrante="sw";
                     }
                     
