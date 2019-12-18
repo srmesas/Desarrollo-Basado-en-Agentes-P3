@@ -143,9 +143,9 @@ class Dron extends SuperAgent {
         // aleman en el 30 30 y el 72 72
         System.out.print("\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n");
         enviarSession(this.NOMBRE_HAWK, 20, 20);
-        enviarSession(this.NOMBRE_FLY1, 1,1);
+        enviarSession(this.NOMBRE_FLY1, 30,30);
        // enviarSession(this.NOMBRE_FLY2, 31, 31);
-        enviarSession(this.NOMBRE_RESCUE, 50, 50);
+        enviarSession(this.NOMBRE_RESCUE, 70, 70);
         System.out.print("\nbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\n");
         System.out.println("hola este es el mapa en la posicion 30 30 " +map.getLevel(300, 3000));
         do{
