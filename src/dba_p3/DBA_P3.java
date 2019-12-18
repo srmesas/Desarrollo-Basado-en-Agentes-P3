@@ -59,9 +59,9 @@ public class DBA_P3 {
 	D.start();
         //Thread.sleep(1000);
         H.start();
- //       F1.start();
-//        F2.start();
-//        R.start();
+        F1.start();
+        F2.start();
+        R.start();
     }
     
 }

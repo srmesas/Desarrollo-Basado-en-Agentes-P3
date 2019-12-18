@@ -497,7 +497,7 @@ class Dron extends SuperAgent {
         }else{
             guardarPosicionMemoria();
         }    
-        //checkFuel();
+        checkFuel();
         for (Aleman a : arrayDeAlemanes) {
             
             System.out.println(ANSI_YELLOW_BACKGROUND+" "+a.getX()+" "+a.getY() + ANSI_RESET + "  ");
@@ -610,7 +610,13 @@ class Dron extends SuperAgent {
                 }
             
             System.out.println(ANSI_GREEN_BACKGROUND+"siguiente movimiento del rescue " +  commandmov+ ANSI_RESET);
-            //checkFuel();
+            if((z_rec - mapR.getLevel(x_rec, y_rec))/5 > (this.fuel)){
+                System.out.println("\nNECESITA REPOSTAR "+fuel + " " + z_rec);
+                commandmov = "moveDW";
+                if(z_rec == mapR.getLevel(x_rec, y_rec)){
+                    commandmov = "refuel";
+                }
+            }
             if(!esBueno(commandmov)){
                 siguienteMovimientoRescue();
             }
