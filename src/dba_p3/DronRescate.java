@@ -114,11 +114,11 @@ public class DronRescate extends Dron{
             //} 
             movimiento=null;
             
-            if(contador == 500){
-                System.out.println("me salgo");
-                break;
-            }
-            contador++;
+//            if(contador == 500){
+//                System.out.println("me salgo");
+//                break;
+//            }
+//            contador++;
         }
     }
     
