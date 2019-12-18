@@ -58,6 +58,7 @@ public class DronHawk extends Dron{
                 } catch (InterruptedException ex) {
                     Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
                 }
+                
             }else{
                 enviarMensajeJSONControlador("moveRefuelStopRescue");//HACIA DIRECTOR 
                 System.out.println("antes del while " +movimiento);
@@ -76,11 +77,11 @@ public class DronHawk extends Dron{
             } 
             movimiento=null;
             
-//            if(contador == 50){
-//                System.out.println("me salgo");
-//                break;
-//            }
-//            contador++;
+            if(contador == 50){
+                System.out.println("me salgo");
+                break;
+            }
+            contador++;
         }
 
     }

@@ -110,6 +110,7 @@ class Dron extends SuperAgent {
     private int xAleman=-1;
     private int yAleman=-1;
     private float nombreAgente;
+    private float fuelR;
 
     public Dron(AgentID aid) throws Exception {
         super(aid);
@@ -140,11 +141,11 @@ class Dron extends SuperAgent {
         } catch (InterruptedException ex) {
             Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
         }
-        // aleman en el 30 30 y el 72 72
+        // aleman en el 30 30 y el 60 45
         System.out.print("\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n");
-        enviarSession(this.NOMBRE_HAWK, 60, 45);
+        enviarSession(this.NOMBRE_HAWK, 95, 70);
         enviarSession(this.NOMBRE_FLY1, 30,30);
-        enviarSession(this.NOMBRE_FLY2, 90 , 90);
+        enviarSession(this.NOMBRE_FLY2, 5 , 5);
         enviarSession(this.NOMBRE_RESCUE, 55, 55);
         System.out.print("\nbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\n");
         System.out.println("hola este es el mapa en la posicion 30 30 " +map.getLevel(300, 3000));
@@ -497,7 +498,8 @@ class Dron extends SuperAgent {
         }else{
             guardarPosicionMemoria();
         }    
-        checkFuel();
+        //checkFuel();
+        
         for (Aleman a : arrayDeAlemanes) {
             
             System.out.println(ANSI_YELLOW_BACKGROUND+" "+a.getX()+" "+a.getY() + ANSI_RESET + "  ");
@@ -536,7 +538,7 @@ class Dron extends SuperAgent {
     
     public void siguienteMovimientoRescue(){
  
-        if(arrayDeAlemanes.size() == 0){
+        if(arrayDeAlemanes.size() == 0 || fuelR<=30){
             if (map.getLevel(x_rec, y_rec) < z_rec){
                 commandmov = "moveDW";
             }else{
@@ -609,14 +611,14 @@ class Dron extends SuperAgent {
                     }
                 }
             
-            System.out.println(ANSI_GREEN_BACKGROUND+"siguiente movimiento del rescue " +  commandmov+ ANSI_RESET);
-            if((z_rec - mapR.getLevel(x_rec, y_rec))/5 > (this.fuel)){
-                System.out.println("\nNECESITA REPOSTAR "+fuel + " " + z_rec);
-                commandmov = "moveDW";
-                if(z_rec == mapR.getLevel(x_rec, y_rec)){
-                    commandmov = "refuel";
-                }
-            }
+//            System.out.println(ANSI_GREEN_BACKGROUND+"siguiente movimiento del rescue " +  commandmov+ ANSI_RESET);
+//            if((z_rec - mapR.getLevel(x_rec, y_rec))/5 > fuelR){
+//                System.out.println("\nNECESITA REPOSTAR "+fuelR + " " + z_rec);
+//                   commandmov = "moveDW";
+//                if(z_rec == mapR.getLevel(x_rec, y_rec)){
+//                   commandmov = "refuel";
+//                }
+//            }
             if(!esBueno(commandmov)){
                 siguienteMovimientoRescue();
             }
@@ -720,7 +722,7 @@ class Dron extends SuperAgent {
                 z_rec = objetoRespuesta.get("z").asInt();
                 gonioAngle = objetoRespuesta.get("angulo").asFloat();
                 distance_rec = objetoRespuesta.get("distancia").asFloat();
-                fuel = objetoRespuesta.get("fuel").asFloat();
+                fuelR = objetoRespuesta.get("fuel").asFloat();
 //                fuel = objetoRespuesta.get("fuel").asFloat();
                 //nombreAgente = objetoRespuesta.get("nombreAgente").asFloat();
                 float rangoR = objetoRespuesta.get("rango").asFloat();
