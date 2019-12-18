@@ -25,9 +25,11 @@ public class DronRescate extends Dron{
     private String commandmov;
     private int [][] elevation =  new int[11][11];
     private int contador=1;
-    public DronRescate(AgentID aid) throws Exception {
+    private Dron Padre;
+    public DronRescate(AgentID aid, Dron D) throws Exception {
         super(aid);
         setQuiensoy("rescue");
+        Padre = D;
     }
     
     public void execute(){ // lo que hace el agente
@@ -69,21 +71,24 @@ public class DronRescate extends Dron{
                 System.out.println("valor de la altura " + z + " " + mapR.getLevel(x, y));
                 
                 if(mapR.getLevel(x, y) < z){
-                movimiento = "moveDW";
-                enviarMensajeJSON("moveRefuelStopRescue");
-                System.out.println("bajo bajo bajando rescue");
-                 try {
-                    respuesta = recibirMensajeJSON();
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                    movimiento = "moveDW";
+                    enviarMensajeJSON("moveRefuelStopRescue");
+                    System.out.println("bajo bajo bajando rescue");
+                    try {
+                        respuesta = recibirMensajeJSON();
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }else{
                     movimiento = "rescue";
                     enviarMensajeJSON("moveRefuelStopRescue");
                     System.out.println("rescato rescato rescato");
-                    contador=60;
+                    //contador=60;
                      try {
                         respuesta = recibirMensajeJSON();
+                        if(respuesta.equals("ok")){
+                            Padre.EliminarAleman();
+                        }
                     } catch (InterruptedException ex) {
                         Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -109,7 +114,7 @@ public class DronRescate extends Dron{
             //} 
             movimiento=null;
             
-            if(contador == 60){
+            if(contador == 500){
                 System.out.println("me salgo");
                 break;
             }
