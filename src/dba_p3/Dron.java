@@ -1385,70 +1385,58 @@ class Dron extends SuperAgent {
                 rel_j=-1;
                 if(infraredR[i][j]==1){
                    
-                    if(i==centro && j==centro){ //si esta en el centro
-                        rel_i = y_rec;
-                        rel_j = x_rec;
-                        cuadrante="centro";
-                    }
-                    
-                    if(i<centro && j==centro){ //N
+                      if(i<centro && j==centro){ //N
                         rel_i = y_rec-centro+i;
                         rel_j = x_rec;
-                        cuadrante="n";
                     }
                     
                     if(i>centro && j==centro){ //S
-                        rel_i = y_rec;
-                        rel_j = x_rec-(j-centro);
-                        cuadrante="s";
+                        rel_i = y_rec+centro+(infraredR.length-i);
+                        rel_j = x_rec;
                     }
                     
                     if(i==centro && j<centro){ //W
-                        rel_i = y_rec+(centro-j);
-                        rel_j = x_rec;
-                        cuadrante="w";
+                        rel_i = y_rec;
+                        rel_j = x_rec-centro+j;
                     }
                     
                     if(i==centro && j>centro){ //E
                         rel_i = y_rec;
-                        //rel_j = x_rec+centro+(infraredR.length-j);
-                        rel_j = x_rec-(j-centro);
-                        cuadrante="e";
+                        rel_j = x_rec+centro+(infraredR.length-j);
                     }
                     
                     if(i<centro && j<centro){ //NW
-               
-                        rel_i = y_rec+(centro-j);
-                        rel_j = x_rec+(centro-i);
+                        rel_i = y_rec-centro+i;
+                        rel_j = x_rec-centro+j;
                         cuadrante="nw";
                     }
                     
                     if(i>centro && j<centro){ //SW
-                        //rel_i = y_rec+centro+(infraredR.length-i);
-                        rel_i = y_rec+(centro-j);
-                        rel_j = x_rec-(i-centro);
+                        rel_i = y_rec+centro+(infraredR.length-i);
+                        rel_j = x_rec-centro+j;
                         cuadrante="sw";
                     }
                     
                     if(i<centro && j>centro){ //NE
-                        rel_i = y_rec-(j-centro);
-                        rel_j = x_rec+(centro-i);
+                        rel_i = y_rec-centro+i;
+                        rel_j = x_rec+centro+(infraredR.length-j);
                         cuadrante="ne";
                     }
                     
-                    if(i>centro && j>centro){ //SE
-                        rel_i = y_rec-(j-centro);
-                        rel_j = x_rec-(i-centro);
+                     if(i>centro && j>centro){ //SE
+                        rel_i = y_rec+centro+(infraredR.length-i);
+                        rel_j = x_rec+centro+(infraredR.length-j);
+                        System.out.println(" i " + i + " j " + j);
                         cuadrante="se";
                     }
                 
                     //System.out.println("he encontrado un aleman" + rel_i + " " + rel_j);
                     if(rel_i!=-1 && rel_j!=-1){
                         
-                        esta = estaContenido(rel_j, rel_i);
+                        esta = estaContenido(rel_i, rel_j);
                         if(!esta)
                             //System.out.println(ANSI_RED_BACKGROUND+"añado aleman "+ arrayDeAlemanes.size()+ANSI_RESET);
-                            arrayDeAlemanes.add(new Aleman(rel_j, rel_i));
+                            arrayDeAlemanes.add(new Aleman(rel_i, rel_j));
                             System.out.println("x " + i +"y "+ j);
                             System.out.println(ANSI_RED_BACKGROUND+"añado aleman despues "+ arrayDeAlemanes.size()+" " + cuadrante +ANSI_RESET);
                         } 
