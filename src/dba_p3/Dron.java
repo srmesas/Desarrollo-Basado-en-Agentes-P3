@@ -107,6 +107,9 @@ class Dron extends SuperAgent {
     public int[][] infraredR;
     JsonArray img;
     public DBAMap mapR;
+    private int xAleman=-1;
+    private int yAleman=-1;
+    private float nombreAgente;
 
     public Dron(AgentID aid) throws Exception {
         super(aid);
@@ -119,6 +122,7 @@ class Dron extends SuperAgent {
         this.NOMBRE_FLY1 = DBA_P3.NOMBRE_FLY1;
         this.NOMBRE_FLY2 = DBA_P3.NOMBRE_FLY2;
         this.NOMBRE_RESCUE = DBA_P3.NOMBRE_RESCUE;
+        System.out.println(" "+controlador +" "+ NOMBRE_FLY1 + " "+ NOMBRE_FLY2+ " "+ NOMBRE_RESCUE);
     }
     
     @Override // opcional
@@ -141,7 +145,7 @@ class Dron extends SuperAgent {
         enviarSession(this.NOMBRE_HAWK, 20, 20);
         enviarSession(this.NOMBRE_FLY1, 30, 30);
        // enviarSession(this.NOMBRE_FLY2, 31, 31);
-        enviarSession(this.NOMBRE_RESCUE, 30, 30);
+        enviarSession(this.NOMBRE_RESCUE, 50, 50);
         System.out.print("\nbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\n");
         System.out.println("hola este es el mapa en la posicion 30 30 " +map.getLevel(30, 30));
         do{
@@ -430,10 +434,11 @@ class Dron extends SuperAgent {
     }
     
     public void enviarMovimiento(AgentID agente){
-        if(agente.name != this.NOMBRE_RESCUE){
+        System.out.println(ANSI_GREEN_BACKGROUND+"Nombre del agente "+ agente.name+" " +NOMBRE_RESCUE+ ANSI_RESET);
+        if(!agente.name.equals(NOMBRE_RESCUE)){
             siguienteMovimiento();
         }else{
-            siguienteMovimientoRescue(agente.name);
+            siguienteMovimientoRescue();
         }
         
         JsonObject objeto = new JsonObject();
@@ -454,26 +459,6 @@ class Dron extends SuperAgent {
         veoAleman();
         Random r = new Random();
         int ran = r.nextInt(7);
-        
-//        
-////        
-//        if(esAceptable("moveN") && esBueno("moveN")){
-//            commandmov = "moveN";
-//        }else if(esAceptable("moveNW") && esBueno("moveNW")){
-//            commandmov = "moveNW";
-//        }else if(esAceptable("moveW") && esBueno("moveW")){
-//            commandmov = "moveW";
-//        }else if(esAceptable("moveSW") && esBueno("moveSW")){
-//            commandmov = "moveSW";
-//        }else if(esAceptable("moveS") && esBueno("moveS")){
-//            commandmov = "moveS";
-//        }else if(esAceptable("moveSE") && esBueno("moveSE")){
-//            commandmov = "moveSE";
-//        }else if(esAceptable("moveE") && esBueno("moveE")){
-//            commandmov = "moveE";
-//        }else if(esAceptable("moveNE") && esBueno("moveNE")){
-//            commandmov = "moveNE";
-//        }
 
         switch(ran){
 
@@ -511,51 +496,51 @@ class Dron extends SuperAgent {
             guardarPosicionMemoria();
         }    
         //checkFuel();
+        for (Aleman a : arrayDeAlemanes) {
+            
+            System.out.println(ANSI_YELLOW_BACKGROUND+" "+a.getX()+" "+a.getY() + ANSI_RESET + "  ");
+        }
         
-        System.out.println(ANSI_YELLOW_BACKGROUND+arrayDeAlemanes+ ANSI_RESET + "  ");
         
     }
     
     private float calcularDistancia2Puntos(int x1, int y1, int x2, int y2){
-        float distancia = (float) Math.sqrt(Math.pow(x1-x2,2) + Math.pow(y1-y2,2));
+        float distancia = (float) Math.sqrt(Math.pow(x2-x1,2) + Math.pow(y2-y1,2));
         return distancia;
     }
     
     private void calcularRescate(){
-        int xAleman=0;// = arrayDeAlemanes.
-        int yAleman=0;//DATOS FALSEADOS
+//        xAleman=0;// = arrayDeAlemanes.
+//        yAleman=0;//DATOS FALSEADOS
         distanceRescueDron = calcularDistancia2Puntos(x_rec,xAleman,y_rec,yAleman);//c
-        int xCentro = map.getWidth()/2;
-        int yCentro = map.getHeight()/2;
-        float a = calcularDistancia2Puntos(x_rec,xCentro,y_rec,yCentro);
-        float b = calcularDistancia2Puntos(xAleman,xCentro,yAleman,yCentro);
+//        int xCentro = map.getWidth()/2;
+//        int yCentro = map.getHeight()/2;
+//        float a = calcularDistancia2Puntos(x_rec,xCentro,y_rec,yCentro);
+//        float b = calcularDistancia2Puntos(xAleman,xCentro,yAleman,yCentro);
         //Cálculo del angulo del triángulo que se forma con el centro
         //rescueAngle = (float) Math.acos((Math.pow(a, 2)+Math.pow(b, 2)-Math.pow(distanceRescueDron, 2)/(2*a*b)));
-        rescueAngle = (float) (Math.toDegrees(Math.atan2(yAleman - y_rec,xAleman- x_rec))+90);
+        float intermedio = (float) (Math.toDegrees(Math.atan2(yAleman - y_rec,xAleman- x_rec))+90);
+        System.out.println(ANSI_YELLOW_BACKGROUND+" datos de alemanes fijados"+ xAleman +" "+ yAleman+" "+ rescueAngle +ANSI_RESET);
+        //rescueAngle = Math.abs(rescueAngle);
+        rescueAngle = 360 + intermedio;
+        //rescueAngle = rescueAngle;
+        
+        
     }
     
-    public void siguienteMovimientoRescue(String NombreAgente){
-        calcularRescate();
+    public void siguienteMovimientoRescue(){
+ 
         if(arrayDeAlemanes.size() == 0){
-            if (map.getLevel(x_rec, y_rec)>z_rec){
+            if (map.getLevel(x_rec, y_rec) < z_rec){
                 commandmov = "moveDW";
             }else{
                 commandmov = "refuel";
             }
-        }else{
-            if(distanceRescueDron <= 1){
-                System.out.println("encontre una alemannn eeeeehhhh");
-                if(distanceRescueDron==0){
-                    if (map.getLevel(x_rec, y_rec)<z_rec){
-                        System.out.println("VOY BAJANDO; BAJANDO; BAJANDO");
-                        commandmov = "moveDW";
-                    }else{
-                        System.out.println("RESCATO A UN ALEMAAAAAAAAANSSSSSS");
-                        commandmov = "rescue";
-                        // arrayDeAlemanes.add(a); QUITAR DEL ARRAY
-                    }  
-                }
-            }else{
+        }else{ 
+            fijarAleman();
+            System.out.println(" aleman en la x" + xAleman + " aleman en la y "+ yAleman);
+            calcularRescate();
+            System.out.println(ANSI_GREEN_BACKGROUND+" el rescue angle es " + rescueAngle+" distancia "+ distanceRescueDron +ANSI_RESET);
                 if (this.rescueAngle<0 && this.rescueAngle<=22.5 && this.rescueAngle>337.5 && this.rescueAngle <=360){
                     if (map.getLevel(x_rec-1, y_rec)>z_rec){
                         commandmov = "moveUP";
@@ -617,10 +602,15 @@ class Dron extends SuperAgent {
                         commandmov = "moveNW";
                     }
                 }
-            }
             
+            System.out.println(ANSI_GREEN_BACKGROUND+"siguiente movimiento del rescue " +  commandmov+ ANSI_RESET);
             //checkFuel();
+            if(!esBueno(commandmov)){
+                siguienteMovimientoRescue();
+            }
         }
+        
+        
     }
     
      protected void enviarMensajeJSONControlador(String comando) {
@@ -638,7 +628,7 @@ class Dron extends SuperAgent {
                 objeto.add("angulo",angle);
                 objeto.add("fuel",fuel);
                 objeto.add("rango",rango);
-               
+               // objeto.add("nombreAgente", quiensoy);
                 objeto.add("infrared",radarJSON);
                 
                 resultado = objeto.toString();
@@ -716,6 +706,8 @@ class Dron extends SuperAgent {
                 gonioAngle = objetoRespuesta.get("angulo").asFloat();
                 distance_rec = objetoRespuesta.get("distancia").asFloat();
                 fuel = objetoRespuesta.get("fuel").asFloat();
+//                fuel = objetoRespuesta.get("fuel").asFloat();
+                //nombreAgente = objetoRespuesta.get("nombreAgente").asFloat();
                 float rangoR = objetoRespuesta.get("rango").asFloat();
                 JsonArray radarJSONRec = objetoRespuesta.get("infrared").asArray();
                 int rangoconverR = (int) rangoR;
@@ -1387,8 +1379,8 @@ class Dron extends SuperAgent {
         int rel_i, rel_j;
         String cuadrante=null;
         int centro = infraredR.length/2;
-        for(int i=0; i<infraredR.length; i++){
-            for(int j=0; j<infraredR[i].length; j++){
+        for(int j=0; j<infraredR.length; j++){
+            for(int i=0; i<infraredR[j].length; i++){
                 rel_i=-1;
                 rel_j=-1;
                 if(infraredR[i][j]==1){
@@ -1396,56 +1388,69 @@ class Dron extends SuperAgent {
                     if(i==centro && j==centro){ //si esta en el centro
                         rel_i = y_rec;
                         rel_j = x_rec;
+                        cuadrante="centro";
                     }
                     
                     if(i<centro && j==centro){ //N
                         rel_i = y_rec-centro+i;
                         rel_j = x_rec;
+                        cuadrante="n";
                     }
                     
                     if(i>centro && j==centro){ //S
-                        rel_i = y_rec+centro+(infraredR.length-i);
-                        rel_j = x_rec;
+                        rel_i = y_rec;
+                        rel_j = x_rec-(j-centro);
+                        cuadrante="s";
                     }
                     
                     if(i==centro && j<centro){ //W
-                        rel_i = y_rec;
-                        rel_j = x_rec-centro+j;
+                        rel_i = y_rec+(centro-j);
+                        rel_j = x_rec;
+                        cuadrante="w";
                     }
                     
                     if(i==centro && j>centro){ //E
                         rel_i = y_rec;
-                        rel_j = x_rec+centro+(infraredR.length-j);
+                        //rel_j = x_rec+centro+(infraredR.length-j);
+                        rel_j = x_rec-(j-centro);
+                        cuadrante="e";
                     }
                     
                     if(i<centro && j<centro){ //NW
-                        rel_i = y_rec-i;
-                        rel_j = x_rec-j;
+               
+                        rel_i = y_rec+(centro-j);
+                        rel_j = x_rec+(centro-i);
+                        cuadrante="nw";
                     }
                     
                     if(i>centro && j<centro){ //SW
                         //rel_i = y_rec+centro+(infraredR.length-i);
-                        rel_i = y_rec-i;
-                        rel_j = x_rec-j+centro;
+                        rel_i = y_rec+(centro-j);
+                        rel_j = x_rec-(i-centro);
+                        cuadrante="sw";
                     }
                     
                     if(i<centro && j>centro){ //NE
-                        rel_i = y_rec+centro+i;
-                        rel_j = x_rec+(centro-j);
+                        rel_i = y_rec-(j-centro);
+                        rel_j = x_rec+(centro-i);
+                        cuadrante="ne";
                     }
                     
                     if(i>centro && j>centro){ //SE
-                        rel_i = y_rec+(infraredR.length-i)+centro;
-                        rel_j = x_rec+(infraredR.length-j)+centro;
+                        rel_i = y_rec-(j-centro);
+                        rel_j = x_rec-(i-centro);
+                        cuadrante="se";
                     }
                 
                     //System.out.println("he encontrado un aleman" + rel_i + " " + rel_j);
                     if(rel_i!=-1 && rel_j!=-1){
                         
-                        esta = estaContenido(rel_i, rel_j);
+                        esta = estaContenido(rel_j, rel_i);
                         if(!esta)
-                            System.out.println(ANSI_RED_BACKGROUND+"añado aleman"+ANSI_RESET);
+                            //System.out.println(ANSI_RED_BACKGROUND+"añado aleman "+ arrayDeAlemanes.size()+ANSI_RESET);
                             arrayDeAlemanes.add(new Aleman(rel_j, rel_i));
+                            System.out.println("x " + i +"y "+ j);
+                            System.out.println(ANSI_RED_BACKGROUND+"añado aleman despues "+ arrayDeAlemanes.size()+" " + cuadrante +ANSI_RESET);
                         } 
                     }
                     
@@ -1464,6 +1469,11 @@ class Dron extends SuperAgent {
     
     public int obtener(int x , int y){
        return this.map.getLevel(x, y);
+    }
+    public void fijarAleman(){
+  
+             xAleman= arrayDeAlemanes.get(0).getX();
+             yAleman= arrayDeAlemanes.get(0).getY();
     }
 }
 

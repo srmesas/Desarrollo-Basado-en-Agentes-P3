@@ -33,8 +33,6 @@ public class DronRescate extends Dron{
     public void execute(){ // lo que hace el agente
         
         
-        System.out.println("\nDrone "+ quiensoy + " " + session+ " x " + inicioX + " y " + inicioY);
-
         while (session==null) {            
             try {
                 recibirSession();
@@ -55,8 +53,19 @@ public class DronRescate extends Dron{
             } catch (InterruptedException ex) {
                 Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
             }
-            System.out.println("estoy encima de un aleman " + estoyEncimaAleman());
-            if(estoyEncimaAleman()){
+             System.out.println("\n\tGPS: x:" + this.x + " y:" + this.y + " z:" + this.z);
+//            if(alturaMax > z){
+//                movimiento = "moveUP";
+//                enviarMensajeJSON("moveRefuelStopRescue");
+//                System.out.println("subo subo subiendo");
+//                 try {
+//                    respuesta = recibirMensajeJSON();
+//                } catch (InterruptedException ex) {
+//                    Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
+//                }
+//            }else{
+                 System.out.println("estoy encima de un aleman " + estoyEncimaAleman());
+                if(estoyEncimaAleman()){
                 System.out.println("valor de la altura " + z + " " + mapR.getLevel(x, y));
                 
                 if(mapR.getLevel(x, y) < z){
@@ -72,36 +81,39 @@ public class DronRescate extends Dron{
                     movimiento = "rescue";
                     enviarMensajeJSON("moveRefuelStopRescue");
                     System.out.println("rescato rescato rescato");
+                    contador=60;
                      try {
                         respuesta = recibirMensajeJSON();
                     } catch (InterruptedException ex) {
                         Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
                     }
+                    
                 }
-            }
-//            System.out.println("\n\tGPS: x:" + this.x + " y:" + this.y + " z:" + this.z);
-//            enviarMensajeJSONControlador("moveRefuelStopRescue");//HACIA DIRECTOR
-//            System.out.println("antes del while " +movimiento);
-//       
-//            try {
-//                movimiento = recibirMovimiento();
-//            } catch (InterruptedException ex) {
-//                Logger.getLogger(DronHawk.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//            System.out.println(movimiento);
-//            enviarMensajeJSON("moveRefuelStopRescue");
-//            try {
-//                respuesta = recibirMensajeJSON();
-//            } catch (InterruptedException ex) {
-//                Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
-//            }
+                }else{
+                    enviarMensajeJSONControlador("moveRefuelStopRescue");//HACIA DIRECTOR 
+                    System.out.println("antes del while " +movimiento);
+                    try {
+                        movimiento = recibirMovimiento();
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(DronHawk.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    System.out.println(movimiento);
+                    enviarMensajeJSON("moveRefuelStopRescue");
+                    try {
+                        respuesta = recibirMensajeJSON();
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                
+            //} 
             movimiento=null;
-            contador++;
-//            if(contador == 2){
-//                System.out.println("me salgo");
-//                break;
-//            }
             
+            if(contador == 60){
+                System.out.println("me salgo");
+                break;
+            }
+            contador++;
         }
     }
     
