@@ -94,6 +94,9 @@ public class DronRescate extends Dron{
                     }
                     
                 }
+                }else if(x == Padre.xAleman && y == Padre.yAleman){
+                    System.out.println("estoy encima de un aleman que no existe");
+                    Padre.EliminarAleman();
                 }else{
                     enviarMensajeJSONControlador("moveRefuelStopRescue");//HACIA DIRECTOR 
                     System.out.println("antes del while " +movimiento);

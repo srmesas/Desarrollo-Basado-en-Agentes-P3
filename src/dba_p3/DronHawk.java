@@ -77,7 +77,7 @@ public class DronHawk extends Dron{
             } 
             movimiento=null;
             
-            if(contador == 50){
+            if(contador == 66){
                 System.out.println("me salgo");
                 break;
             }

@@ -107,8 +107,8 @@ class Dron extends SuperAgent {
     public int[][] infraredR;
     JsonArray img;
     public DBAMap mapR;
-    private int xAleman=-1;
-    private int yAleman=-1;
+    public int xAleman=-1;
+    public int yAleman=-1;
     private float nombreAgente;
     private float fuelR;
 
@@ -141,9 +141,9 @@ class Dron extends SuperAgent {
         } catch (InterruptedException ex) {
             Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
         }
-        // aleman en el 30 30 y el 60 45
+        // aleman en el 30 30 y el 60 45  30 60
         System.out.print("\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n");
-        enviarSession(this.NOMBRE_HAWK, 95, 70);
+        enviarSession(this.NOMBRE_HAWK, 33, 60);
         enviarSession(this.NOMBRE_FLY1, 30,30);
         enviarSession(this.NOMBRE_FLY2, 5 , 5);
         enviarSession(this.NOMBRE_RESCUE, 55, 55);
@@ -538,7 +538,7 @@ class Dron extends SuperAgent {
     
     public void siguienteMovimientoRescue(){
  
-        if(arrayDeAlemanes.size() == 0 || fuelR<=30){
+        if(arrayDeAlemanes.size() == 0 || fuelR<=50){
             if (map.getLevel(x_rec, y_rec) < z_rec){
                 commandmov = "moveDW";
             }else{
