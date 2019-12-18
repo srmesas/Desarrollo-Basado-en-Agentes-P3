@@ -108,9 +108,7 @@ public class DBAMap {
      * @return Altura del terreno en (x,y)
      */
     public int getLevel(int x, int y) {
-        int resultado = getPixel(x,y).getBlue();
-       // System.out.println("lo que recibo del mapa y envio " + x + " " + y + " " + resultado);
-          return resultado;
+          return getPixel(x,y).getBlue();
     }
     
     /**

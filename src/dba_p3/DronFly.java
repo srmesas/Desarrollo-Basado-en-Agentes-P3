@@ -56,16 +56,16 @@ public class DronFly extends Dron{
                 Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
             }
              System.out.println("\n\tGPS: x:" + this.x + " y:" + this.y + " z:" + this.z);
-//            if(alturaMax > z){
-//                movimiento = "moveUP";
-//                enviarMensajeJSON("moveRefuelStopRescue");
-//                System.out.println("subo subo subiendo");
-//                 try {
-//                    respuesta = recibirMensajeJSON();
-//                } catch (InterruptedException ex) {
-//                    Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
-//                }
-//            }else{
+            if(alturaMax > z){
+                movimiento = "moveUP";
+                enviarMensajeJSON("moveRefuelStopRescue");
+                System.out.println("subo subo subiendo");
+                 try {
+                    respuesta = recibirMensajeJSON();
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }else{
                 enviarMensajeJSONControlador("moveRefuelStopRescue");//HACIA DIRECTOR 
                 System.out.println("antes del while " +movimiento);
                 try {
@@ -80,14 +80,15 @@ public class DronFly extends Dron{
                 } catch (InterruptedException ex) {
                     Logger.getLogger(Dron.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            //} 
+            } 
             movimiento=null;
             
-            if(contador == 5){
-                System.out.println("me salgo");
-                break;
-            }
+//            if(contador == 1){
+//                System.out.println("me salgo");
+//                break;
+//            }
             contador++;
+            System.out.println(ANSI_YELLOW_BACKGROUND+" el contador es : "+contador+ANSI_RESET);
         }
     }
         
