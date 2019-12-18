@@ -42,14 +42,15 @@ public class DBA_P3 {
         
         Dron D;
         DronHawk H;
-        DronFly F1 = null,F2;
+        DronFly F1;
         DronRescate R;
+        DronFly2 F2;
         try{
             D = new Dron(new AgentID(Controlador));
-            H = new DronHawk(new AgentID(NOMBRE_HAWK));
-            F1 = new DronFly(new AgentID(NOMBRE_FLY1));
-           // F2 = new DronFly(new AgentID(NOMBRE_FLY2));
-            R = new DronRescate(new AgentID(NOMBRE_RESCUE), D);
+           // H = new DronHawk(new AgentID(NOMBRE_HAWK));
+           // F1 = new DronFly(new AgentID(NOMBRE_FLY1));
+            F2 = new DronFly2(new AgentID(NOMBRE_FLY2));
+          //  R = new DronRescate(new AgentID(NOMBRE_RESCUE), D);
            
 	} catch (Exception ex){
             System.err.println("El agente ya existe en la plataforma");
@@ -57,10 +58,10 @@ public class DBA_P3 {
         }
 	D.start();
         //Thread.sleep(1000);
-        H.start();
-        F1.start();
-       // F2.start();
-        R.start();
+      //  H.start();
+       // F1.start();
+        F2.start();
+       // R.start();
     }
     
 }

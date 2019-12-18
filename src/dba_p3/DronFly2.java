@@ -5,30 +5,28 @@
  */
 package dba_p3;
 
-import com.eclipsesource.json.Json;
-import com.eclipsesource.json.JsonObject;
-import es.upv.dsic.gti_ia.core.ACLMessage;
+import static dba_p3.Dron.ANSI_YELLOW_BACKGROUND;
 import es.upv.dsic.gti_ia.core.AgentID;
-import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
  *
- * @author srmesas
+ * @author jopoku
  */
-public class DronFly extends Dron{
+public class DronFly2 extends DronFly{
     
     int contador=0;
     private String commandmov;
     
-    public DronFly(AgentID aid) throws Exception {
+    public DronFly2(AgentID aid) throws Exception {
         super(aid);
         setQuiensoy("fly");
-        //this.inicioX = 20;
-        //this.inicioY = 5;
-
     }
+    
+        
+
+    
     
     public void execute(){ // lo que hace el agente
         
@@ -93,5 +91,6 @@ public class DronFly extends Dron{
     }
         
    
+    
     
 }

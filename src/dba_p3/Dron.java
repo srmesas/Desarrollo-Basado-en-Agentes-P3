@@ -144,7 +144,7 @@ class Dron extends SuperAgent {
         System.out.print("\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n");
         enviarSession(this.NOMBRE_HAWK, 80, 75);
         enviarSession(this.NOMBRE_FLY1, 30,30);
-       // enviarSession(this.NOMBRE_FLY2, 31, 31);
+        enviarSession(this.NOMBRE_FLY2, 31, 31);
         enviarSession(this.NOMBRE_RESCUE, 35, 35);
         System.out.print("\nbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\n");
         System.out.println("hola este es el mapa en la posicion 30 30 " +map.getLevel(300, 3000));
@@ -521,10 +521,14 @@ class Dron extends SuperAgent {
 //        float b = calcularDistancia2Puntos(xAleman,xCentro,yAleman,yCentro);
         //Cálculo del angulo del triángulo que se forma con el centro
         //rescueAngle = (float) Math.acos((Math.pow(a, 2)+Math.pow(b, 2)-Math.pow(distanceRescueDron, 2)/(2*a*b)));
+        rescueAngle=0;
         float intermedio = (float) (Math.toDegrees(Math.atan2(yAleman - y_rec,xAleman- x_rec))+90);
         System.out.println(ANSI_YELLOW_BACKGROUND+" datos de alemanes fijados"+ xAleman +" "+ yAleman+" "+ rescueAngle +ANSI_RESET);
         //rescueAngle = Math.abs(rescueAngle);
         rescueAngle = 360 + intermedio;
+        if(rescueAngle>=360){
+            rescueAngle= rescueAngle - 360;
+        }
         //rescueAngle = rescueAngle;
         
         
@@ -538,10 +542,10 @@ class Dron extends SuperAgent {
             }else{
                 commandmov = "refuel";
             }
-        }else{ 
+        }else{
             fijarAleman();
             System.out.println(" aleman en la x" + xAleman + " aleman en la y "+ yAleman);
-            calcularRescate();
+
             System.out.println(ANSI_GREEN_BACKGROUND+" el rescue angle es " + rescueAngle+" distancia "+ distanceRescueDron +ANSI_RESET);
                 if (this.rescueAngle<0 && this.rescueAngle<=22.5 && this.rescueAngle>337.5 && this.rescueAngle <=360){
                     if (map.getLevel(x_rec-1, y_rec)>z_rec){
@@ -611,7 +615,10 @@ class Dron extends SuperAgent {
                 siguienteMovimientoRescue();
             }
         }
-        
+        for (Aleman a : arrayDeAlemanes) {
+            
+            System.out.println(ANSI_YELLOW_BACKGROUND+" "+a.getX()+" "+a.getY() + ANSI_RESET + "  ");
+        }
         
     }
     
@@ -1480,6 +1487,7 @@ class Dron extends SuperAgent {
     public void fijarAleman(){
              xAleman= arrayDeAlemanes.get(0).getX();
              yAleman= arrayDeAlemanes.get(0).getY();
+             calcularRescate();
     }
     public void EliminarAleman(){
         arrayDeAlemanes.remove(0);
