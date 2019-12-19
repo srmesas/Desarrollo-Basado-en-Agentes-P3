@@ -111,7 +111,11 @@ class Dron extends SuperAgent {
     public int yAleman=-1;
     private float nombreAgente;
     private float fuelR;
-
+    
+    /**
+    *
+    * @author jopoku Manuel
+    */
     public Dron(AgentID aid) throws Exception {
         super(aid);
         this.mapa = "playground";
@@ -130,7 +134,10 @@ class Dron extends SuperAgent {
     public void init(){ // lo que hace el agente
 
     }
-    
+    /**
+    *
+    * @author jopoku
+    */
     @Override //obligatorio
     public void execute(){ // lo que hace el agente
         System.out.println("primer drone "+quiensoy);
@@ -175,7 +182,10 @@ class Dron extends SuperAgent {
     public void finalize(){ // lo que hace el agente
 
     }
-    
+    /**
+    *
+    * @author jopoku Manuel
+    */
     protected void enviarMensajeJSON(String comando) {
         comandoEnvi = comando;
         JsonObject objeto;
@@ -261,7 +271,10 @@ class Dron extends SuperAgent {
             break;
         }
     }
-    
+    /**
+    *
+    * @author jopoku Manuel
+    */
     protected void percibirJSON(ACLMessage inbox){
 
             System.out.println("\nPercepciones: "+ quiensoy);
@@ -373,7 +386,10 @@ class Dron extends SuperAgent {
             
             
     }
-    
+    /**
+    *
+    * @author jopoku Manuel
+    */
     protected String recibirMensajeJSON() throws InterruptedException {
         System.out.println("\nRespuesta del controlador: " + quiensoy +" "+ comandoEnvi);
         ACLMessage inbox;
@@ -409,7 +425,7 @@ class Dron extends SuperAgent {
         }  
         return "ok";        
     }
-
+    
     public String getSession() {
         return session;
     }
@@ -421,7 +437,10 @@ class Dron extends SuperAgent {
     public void setAgente(String agente) {
         this.agente = agente;
     }
-    
+    /**
+    *
+    * @author jopoku Manuel
+    */
     public void enviarSession(String agente, int x, int y){
         JsonObject objeto = new JsonObject();
         objeto.add("session",session);
@@ -439,7 +458,10 @@ class Dron extends SuperAgent {
         outbox.setPerformative(ACLMessage.INFORM);
         this.send(outbox);
     }
-    
+    /**
+    *
+    * @author jopoku Manuel
+    */
     public void enviarMovimiento(AgentID agente){
         System.out.println(ANSI_GREEN_BACKGROUND+"Nombre del agente "+ agente.name+" " +NOMBRE_RESCUE+ ANSI_RESET);
         if(!agente.name.equals(NOMBRE_RESCUE)){
@@ -463,7 +485,10 @@ class Dron extends SuperAgent {
         outbox.setPerformative(ACLMessage.INFORM);
         this.send(outbox);
     }
-    
+    /**
+    *
+    * @author jopoku Manuel Ismael
+    */
     protected void siguienteMovimiento(){
         veoAleman();
         Random r = new Random();
@@ -513,12 +538,18 @@ class Dron extends SuperAgent {
         
         
     }
-    
+    /**
+    *
+    * @author Manuel
+    */
     private float calcularDistancia2Puntos(int x1, int y1, int x2, int y2){
         float distancia = (float) Math.sqrt(Math.pow(x2-x1,2) + Math.pow(y2-y1,2));
         return distancia;
     }
-    
+    /**
+    *
+    * @author jopoku Manuel
+    */
     private void calcularRescate(){
 //        xAleman=0;// = arrayDeAlemanes.
 //        yAleman=0;//DATOS FALSEADOS
@@ -541,7 +572,10 @@ class Dron extends SuperAgent {
         
         
     }
-    
+    /**
+    *
+    * @author jopoku Manuel
+    */
     public void siguienteMovimientoRescue(){
  
         if(arrayDeAlemanes.size() == 0 || fuelR<=55){
@@ -635,7 +669,10 @@ class Dron extends SuperAgent {
         }
         
     }
-    
+    /**
+    *
+    * @author jopoku Manuel
+    */
      protected void enviarMensajeJSONControlador(String comando) {
         comandoEnvi = comando;
         JsonObject objeto;
@@ -689,7 +726,10 @@ class Dron extends SuperAgent {
             break;
         }
     }
-     
+    /**
+    *
+    * @author jopoku Manuel
+    */ 
         protected String recibirSession() throws InterruptedException {
             ACLMessage inbox;
             inbox = this.receiveACLMessage();
@@ -714,7 +754,10 @@ class Dron extends SuperAgent {
 
             return session;   
         }
-        
+        /**
+        *
+        * @author jopoku Manuel
+        */
         protected AgentID recibirPosiciones() throws InterruptedException {
             ACLMessage inbox;
             inbox = this.receiveACLMessage();
@@ -753,7 +796,10 @@ class Dron extends SuperAgent {
             System.out.println(level);
             return emisor;
         }
-        
+        /**
+        *
+        * @author jopoku Manuel Ismael
+        */
         protected boolean esBueno(String movimiento){
             System.out.println(" infrared recibido " + infraredR.length/2);
             int centro = infraredR.length/2;
@@ -811,7 +857,10 @@ class Dron extends SuperAgent {
         }
             return false;
         }
-        
+        /**
+        *
+        * @author jopoku Manuel
+        */
         protected String recibirMovimiento() throws InterruptedException {
             ACLMessage inbox;
             inbox = this.receiveACLMessage();
@@ -825,7 +874,10 @@ class Dron extends SuperAgent {
 
             return movimiento;   
         }
-       
+        /**
+        *
+        * @author jopoku Manuel
+        */
         protected void checkFuel(){
             
             if((z_rec - mapR.getLevel(x_rec, y_rec))/5 > (this.fuel)/gasto){
@@ -836,7 +888,10 @@ class Dron extends SuperAgent {
                 }
             }
         }
-        
+        /**
+        *
+        * @author jopoku Manuel
+        */
     private boolean estaContenido(int x, int y){
         Aleman a = new Aleman(x, y);
         //boolean existe = arrayDeAlemanes.contains(a);
@@ -888,6 +943,10 @@ class Dron extends SuperAgent {
             System.out.print("\n");
         }
     }
+    /**
+    *
+    * @author Manuel
+    */
     protected Boolean esAceptable(String movimiento){
         
         
@@ -1397,7 +1456,10 @@ class Dron extends SuperAgent {
         return false;
         
     }
-    
+    /**
+    *
+    * @author jopoku Manuel
+    */
     public void veoAleman(){
         int rel_i, rel_j;
         String cuadrante=null;
@@ -1486,7 +1548,10 @@ class Dron extends SuperAgent {
             
         }
     }
-    
+    /**
+    *
+    * @author jopoku
+    */
     public boolean estoyEncimaAleman(){
         int centro = infrared.length/2;
         if(infrared[centro][centro]==1){
@@ -1494,15 +1559,26 @@ class Dron extends SuperAgent {
         }
         return false;
     }
-    
+    /**
+    *
+    * @author jopoku
+    */
     public int obtener(int x , int y){
        return this.map.getLevel(x, y);
     }
+    /**
+    *
+    * @author jopoku
+    */
     public void fijarAleman(){
              xAleman= arrayDeAlemanes.get(0).getX();
              yAleman= arrayDeAlemanes.get(0).getY();
              calcularRescate();
     }
+    /**
+    *
+    * @author jopoku
+    */
     public void EliminarAleman(){
         arrayDeAlemanes.remove(0);
     }

@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author jopoku
+ * @author Manuel Jopoku 
  */
 public class DronFly2 extends DronFly{
     
