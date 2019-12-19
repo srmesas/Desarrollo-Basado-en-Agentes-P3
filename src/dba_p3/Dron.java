@@ -25,7 +25,7 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author jopoku
+ * @author jopoku, Ismael
  */
 class Dron extends SuperAgent {
     
@@ -136,7 +136,7 @@ class Dron extends SuperAgent {
     }
     /**
     *
-    * @author jopoku
+    * @author jopoku, Ismael
     */
     @Override //obligatorio
     public void execute(){ // lo que hace el agente
@@ -273,7 +273,7 @@ class Dron extends SuperAgent {
     }
     /**
     *
-    * @author jopoku Manuel
+    * @author jopoku Manuel, Ismael
     */
     protected void percibirJSON(ACLMessage inbox){
 
@@ -487,7 +487,7 @@ class Dron extends SuperAgent {
     }
     /**
     *
-    * @author jopoku Manuel Ismael
+    * @author jopoku Manuel, Ismael
     */
     protected void siguienteMovimiento(){
         veoAleman();
@@ -574,7 +574,7 @@ class Dron extends SuperAgent {
     }
     /**
     *
-    * @author jopoku Manuel
+    * @author jopoku Manuel, Ismael
     */
     public void siguienteMovimientoRescue(){
  
@@ -798,7 +798,7 @@ class Dron extends SuperAgent {
         }
         /**
         *
-        * @author jopoku Manuel Ismael
+        * @author jopoku Manuel, Ismael
         */
         protected boolean esBueno(String movimiento){
             System.out.println(" infrared recibido " + infraredR.length/2);
@@ -876,7 +876,7 @@ class Dron extends SuperAgent {
         }
         /**
         *
-        * @author jopoku Manuel
+        * @author jopoku Manuel, Ismael
         */
         protected void checkFuel(){
             
@@ -945,7 +945,7 @@ class Dron extends SuperAgent {
     }
     /**
     *
-    * @author Manuel
+    * @author Manuel, Ismael
     */
     protected Boolean esAceptable(String movimiento){
         
