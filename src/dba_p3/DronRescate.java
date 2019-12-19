@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author Manuel Jopoku 
+ * @author Manuel Jopoku Ismael
  */
 public class DronRescate extends Dron{
     
